@@ -1,0 +1,892 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 12,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "next-env.d.ts",
+      "file_type": "code",
+      "source_file": "next-env.d.ts",
+      "source_location": "L1",
+      "id": "next_env_d_ts",
+      "community": 13,
+      "norm_label": "next-env.d.ts"
+    },
+    {
+      "label": "next.config.ts",
+      "file_type": "code",
+      "source_file": "next.config.ts",
+      "source_location": "L1",
+      "id": "next_config_ts",
+      "community": 14,
+      "norm_label": "next.config.ts"
+    },
+    {
+      "label": "postcss.config.mjs",
+      "file_type": "code",
+      "source_file": "postcss.config.mjs",
+      "source_location": "L1",
+      "id": "postcss_config_mjs",
+      "community": 15,
+      "norm_label": "postcss.config.mjs"
+    },
+    {
+      "label": "prisma.config.ts",
+      "file_type": "code",
+      "source_file": "prisma.config.ts",
+      "source_location": "L1",
+      "id": "prisma_config_ts",
+      "community": 16,
+      "norm_label": "prisma.config.ts"
+    },
+    {
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\layout.tsx",
+      "source_location": "L1",
+      "id": "src_app_layout_tsx",
+      "community": 4,
+      "norm_label": "layout.tsx"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "src\\app\\layout.tsx",
+      "source_location": "L11",
+      "id": "layout_rootlayout",
+      "community": 4,
+      "norm_label": "rootlayout()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\page.tsx",
+      "source_location": "L1",
+      "id": "src_app_page_tsx",
+      "community": 5,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "Home()",
+      "file_type": "code",
+      "source_file": "src\\app\\page.tsx",
+      "source_location": "L3",
+      "id": "page_home",
+      "community": 5,
+      "norm_label": "home()"
+    },
+    {
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\layout.tsx",
+      "source_location": "L1",
+      "id": "src_app_shop_layout_tsx",
+      "community": 6,
+      "norm_label": "layout.tsx"
+    },
+    {
+      "label": "ShopLayout()",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\layout.tsx",
+      "source_location": "L17",
+      "id": "layout_shoplayout",
+      "community": 6,
+      "norm_label": "shoplayout()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\shop\\page.tsx",
+      "source_location": "L1",
+      "id": "src_app_shop_shop_page_tsx",
+      "community": 17,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\shop\\order-success\\page.tsx",
+      "source_location": "L1",
+      "id": "src_app_shop_shop_order_success_page_tsx",
+      "community": 7,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "OrderSuccessContent()",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\shop\\order-success\\page.tsx",
+      "source_location": "L11",
+      "id": "page_ordersuccesscontent",
+      "community": 7,
+      "norm_label": "ordersuccesscontent()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\(shop)\\[slug]\\page.tsx",
+      "source_location": "L1",
+      "id": "src_app_shop_slug_page_tsx",
+      "community": 18,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "src\\app\\api\\auth\\[...nextauth]\\route.ts",
+      "source_location": "L1",
+      "id": "src_app_api_auth_nextauth_route_ts",
+      "community": 19,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "src\\app\\api\\checkout\\create-order\\route.ts",
+      "source_location": "L1",
+      "id": "src_app_api_checkout_create_order_route_ts",
+      "community": 3,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "POST()",
+      "file_type": "code",
+      "source_file": "src\\app\\api\\checkout\\verify\\route.ts",
+      "source_location": "L9",
+      "id": "route_post",
+      "community": 3,
+      "norm_label": "post()"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "src\\app\\api\\checkout\\verify\\route.ts",
+      "source_location": "L1",
+      "id": "src_app_api_checkout_verify_route_ts",
+      "community": 3,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L1",
+      "id": "src_app_portfolio_page_tsx",
+      "community": 1,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "handleResize()",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L43",
+      "id": "page_handleresize",
+      "community": 1,
+      "norm_label": "handleresize()"
+    },
+    {
+      "label": "handleScroll()",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L50",
+      "id": "page_handlescroll",
+      "community": 1,
+      "norm_label": "handlescroll()"
+    },
+    {
+      "label": "sequence()",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L62",
+      "id": "page_sequence",
+      "community": 1,
+      "norm_label": "sequence()"
+    },
+    {
+      "label": "toggleMute()",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L73",
+      "id": "page_togglemute",
+      "community": 1,
+      "norm_label": "togglemute()"
+    },
+    {
+      "label": "handlePaintingClick()",
+      "file_type": "code",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L78",
+      "id": "page_handlepaintingclick",
+      "community": 1,
+      "norm_label": "handlepaintingclick()"
+    },
+    {
+      "label": "Providers.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\animation\\Providers.tsx",
+      "source_location": "L1",
+      "id": "src_components_animation_providers_tsx",
+      "community": 8,
+      "norm_label": "providers.tsx"
+    },
+    {
+      "label": "Providers()",
+      "file_type": "code",
+      "source_file": "src\\components\\animation\\Providers.tsx",
+      "source_location": "L7",
+      "id": "providers_providers",
+      "community": 8,
+      "norm_label": "providers()"
+    },
+    {
+      "label": "CartDrawer.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L1",
+      "id": "src_components_shop_cartdrawer_tsx",
+      "community": 2,
+      "norm_label": "cartdrawer.tsx"
+    },
+    {
+      "label": "loadScript()",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L13",
+      "id": "cartdrawer_loadscript",
+      "community": 2,
+      "norm_label": "loadscript()"
+    },
+    {
+      "label": "handleEsc()",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L51",
+      "id": "cartdrawer_handleesc",
+      "community": 2,
+      "norm_label": "handleesc()"
+    },
+    {
+      "label": "handleCheckout()",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L58",
+      "id": "cartdrawer_handlecheckout",
+      "community": 2,
+      "norm_label": "handlecheckout()"
+    },
+    {
+      "label": "ProductCard.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\ProductCard.tsx",
+      "source_location": "L1",
+      "id": "src_components_shop_productcard_tsx",
+      "community": 9,
+      "norm_label": "productcard.tsx"
+    },
+    {
+      "label": "ProductCard()",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\ProductCard.tsx",
+      "source_location": "L27",
+      "id": "productcard_productcard",
+      "community": 9,
+      "norm_label": "productcard()"
+    },
+    {
+      "label": "ShopNav.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\ShopNav.tsx",
+      "source_location": "L1",
+      "id": "src_components_shop_shopnav_tsx",
+      "community": 10,
+      "norm_label": "shopnav.tsx"
+    },
+    {
+      "label": "ShopNav()",
+      "file_type": "code",
+      "source_file": "src\\components\\shop\\ShopNav.tsx",
+      "source_location": "L16",
+      "id": "shopnav_shopnav",
+      "community": 10,
+      "norm_label": "shopnav()"
+    },
+    {
+      "label": "CameraRig.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\CameraRig.tsx",
+      "source_location": "L1",
+      "id": "src_components_three_camerarig_tsx",
+      "community": 11,
+      "norm_label": "camerarig.tsx"
+    },
+    {
+      "label": "CameraRig()",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\CameraRig.tsx",
+      "source_location": "L15",
+      "id": "camerarig_camerarig",
+      "community": 11,
+      "norm_label": "camerarig()"
+    },
+    {
+      "label": "CommissionDoor.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\CommissionDoor.tsx",
+      "source_location": "L1",
+      "id": "src_components_three_commissiondoor_tsx",
+      "community": 20,
+      "norm_label": "commissiondoor.tsx"
+    },
+    {
+      "label": "Corridor.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\Corridor.tsx",
+      "source_location": "L1",
+      "id": "src_components_three_corridor_tsx",
+      "community": 21,
+      "norm_label": "corridor.tsx"
+    },
+    {
+      "label": "DoodleSprite.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\DoodleSprite.tsx",
+      "source_location": "L1",
+      "id": "src_components_three_doodlesprite_tsx",
+      "community": 22,
+      "norm_label": "doodlesprite.tsx"
+    },
+    {
+      "label": "Painting.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\three\\Painting.tsx",
+      "source_location": "L1",
+      "id": "src_components_three_painting_tsx",
+      "community": 23,
+      "norm_label": "painting.tsx"
+    },
+    {
+      "label": "Fonts.tsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\Fonts.tsx",
+      "source_location": "L1",
+      "id": "src_components_ui_fonts_tsx",
+      "community": 24,
+      "norm_label": "fonts.tsx"
+    },
+    {
+      "label": "audio.ts",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L1",
+      "id": "src_lib_audio_ts",
+      "community": 0,
+      "norm_label": "audio.ts"
+    },
+    {
+      "label": "AudioController",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L5",
+      "id": "audio_audiocontroller",
+      "community": 0,
+      "norm_label": "audiocontroller"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L11",
+      "id": "audio_audiocontroller_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".play()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L44",
+      "id": "audio_audiocontroller_play",
+      "community": 0,
+      "norm_label": ".play()"
+    },
+    {
+      "label": ".playWhenReady()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L52",
+      "id": "audio_audiocontroller_playwhenready",
+      "community": 0,
+      "norm_label": ".playwhenready()"
+    },
+    {
+      "label": ".pause()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L59",
+      "id": "audio_audiocontroller_pause",
+      "community": 0,
+      "norm_label": ".pause()"
+    },
+    {
+      "label": ".toggle()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L67",
+      "id": "audio_audiocontroller_toggle",
+      "community": 0,
+      "norm_label": ".toggle()"
+    },
+    {
+      "label": ".setVolume()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L80",
+      "id": "audio_audiocontroller_setvolume",
+      "community": 0,
+      "norm_label": ".setvolume()"
+    },
+    {
+      "label": ".getStatus()",
+      "file_type": "code",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L86",
+      "id": "audio_audiocontroller_getstatus",
+      "community": 0,
+      "norm_label": ".getstatus()"
+    },
+    {
+      "label": "prisma.ts",
+      "file_type": "code",
+      "source_file": "src\\lib\\prisma.ts",
+      "source_location": "L1",
+      "id": "src_lib_prisma_ts",
+      "community": 25,
+      "norm_label": "prisma.ts"
+    },
+    {
+      "label": "razorpay.ts",
+      "file_type": "code",
+      "source_file": "src\\lib\\razorpay.ts",
+      "source_location": "L1",
+      "id": "src_lib_razorpay_ts",
+      "community": 26,
+      "norm_label": "razorpay.ts"
+    },
+    {
+      "label": "cart.ts",
+      "file_type": "code",
+      "source_file": "src\\lib\\store\\cart.ts",
+      "source_location": "L1",
+      "id": "src_lib_store_cart_ts",
+      "community": 27,
+      "norm_label": "cart.ts"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\layout.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "src_app_layout_tsx",
+      "_tgt": "layout_rootlayout",
+      "source": "src_app_layout_tsx",
+      "target": "layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\page.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_app_page_tsx",
+      "_tgt": "page_home",
+      "source": "src_app_page_tsx",
+      "target": "page_home",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\(shop)\\layout.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "src_app_shop_layout_tsx",
+      "_tgt": "layout_shoplayout",
+      "source": "src_app_shop_layout_tsx",
+      "target": "layout_shoplayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\(shop)\\shop\\order-success\\page.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "src_app_shop_shop_order_success_page_tsx",
+      "_tgt": "page_ordersuccesscontent",
+      "source": "src_app_shop_shop_order_success_page_tsx",
+      "target": "page_ordersuccesscontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\api\\checkout\\create-order\\route.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "src_app_api_checkout_create_order_route_ts",
+      "_tgt": "route_post",
+      "source": "src_app_api_checkout_create_order_route_ts",
+      "target": "route_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\api\\checkout\\verify\\route.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "src_app_api_checkout_verify_route_ts",
+      "_tgt": "route_post",
+      "source": "route_post",
+      "target": "src_app_api_checkout_verify_route_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "src_app_portfolio_page_tsx",
+      "_tgt": "page_handleresize",
+      "source": "src_app_portfolio_page_tsx",
+      "target": "page_handleresize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "src_app_portfolio_page_tsx",
+      "_tgt": "page_handlescroll",
+      "source": "src_app_portfolio_page_tsx",
+      "target": "page_handlescroll",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "src_app_portfolio_page_tsx",
+      "_tgt": "page_sequence",
+      "source": "src_app_portfolio_page_tsx",
+      "target": "page_sequence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "src_app_portfolio_page_tsx",
+      "_tgt": "page_togglemute",
+      "source": "src_app_portfolio_page_tsx",
+      "target": "page_togglemute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "src_app_portfolio_page_tsx",
+      "_tgt": "page_handlepaintingclick",
+      "source": "src_app_portfolio_page_tsx",
+      "target": "page_handlepaintingclick",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "page_sequence",
+      "_tgt": "audio_audiocontroller_playwhenready",
+      "source": "page_sequence",
+      "target": "audio_audiocontroller_playwhenready"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\app\\portfolio\\page.tsx",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "page_togglemute",
+      "_tgt": "audio_audiocontroller_toggle",
+      "source": "page_togglemute",
+      "target": "audio_audiocontroller_toggle"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\animation\\Providers.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_components_animation_providers_tsx",
+      "_tgt": "providers_providers",
+      "source": "src_components_animation_providers_tsx",
+      "target": "providers_providers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "src_components_shop_cartdrawer_tsx",
+      "_tgt": "cartdrawer_loadscript",
+      "source": "src_components_shop_cartdrawer_tsx",
+      "target": "cartdrawer_loadscript",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "src_components_shop_cartdrawer_tsx",
+      "_tgt": "cartdrawer_handleesc",
+      "source": "src_components_shop_cartdrawer_tsx",
+      "target": "cartdrawer_handleesc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "src_components_shop_cartdrawer_tsx",
+      "_tgt": "cartdrawer_handlecheckout",
+      "source": "src_components_shop_cartdrawer_tsx",
+      "target": "cartdrawer_handlecheckout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\CartDrawer.tsx",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "cartdrawer_handlecheckout",
+      "_tgt": "cartdrawer_loadscript",
+      "source": "cartdrawer_loadscript",
+      "target": "cartdrawer_handlecheckout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\ProductCard.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "src_components_shop_productcard_tsx",
+      "_tgt": "productcard_productcard",
+      "source": "src_components_shop_productcard_tsx",
+      "target": "productcard_productcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\shop\\ShopNav.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "src_components_shop_shopnav_tsx",
+      "_tgt": "shopnav_shopnav",
+      "source": "src_components_shop_shopnav_tsx",
+      "target": "shopnav_shopnav",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\three\\CameraRig.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "src_components_three_camerarig_tsx",
+      "_tgt": "camerarig_camerarig",
+      "source": "src_components_three_camerarig_tsx",
+      "target": "camerarig_camerarig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "src_lib_audio_ts",
+      "_tgt": "audio_audiocontroller",
+      "source": "src_lib_audio_ts",
+      "target": "audio_audiocontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_constructor",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_play",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_play",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_playwhenready",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_playwhenready",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_pause",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_pause",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_toggle",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_toggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L80",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_setvolume",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_setvolume",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller",
+      "_tgt": "audio_audiocontroller_getstatus",
+      "source": "audio_audiocontroller",
+      "target": "audio_audiocontroller_getstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller_playwhenready",
+      "_tgt": "audio_audiocontroller_play",
+      "source": "audio_audiocontroller_play",
+      "target": "audio_audiocontroller_playwhenready",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller_toggle",
+      "_tgt": "audio_audiocontroller_play",
+      "source": "audio_audiocontroller_play",
+      "target": "audio_audiocontroller_toggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller_toggle",
+      "_tgt": "audio_audiocontroller_playwhenready",
+      "source": "audio_audiocontroller_playwhenready",
+      "target": "audio_audiocontroller_toggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\audio.ts",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_src": "audio_audiocontroller_toggle",
+      "_tgt": "audio_audiocontroller_pause",
+      "source": "audio_audiocontroller_pause",
+      "target": "audio_audiocontroller_toggle",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}
