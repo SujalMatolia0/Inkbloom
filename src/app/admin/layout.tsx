@@ -8,6 +8,8 @@ import { LogoutButton } from "@/components/ui/LogoutButton";
 
 import { SidebarNav } from "@/components/admin/SidebarNav";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({
   children,
 }: {

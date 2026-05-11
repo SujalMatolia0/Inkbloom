@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+export const dynamic = 'force-dynamic';
 import { ChangePassword } from "@/components/profile/ChangePassword";
 import { OrderHistory } from "@/components/profile/OrderHistory";
 import { CommissionHistory } from "@/components/profile/CommissionHistory";

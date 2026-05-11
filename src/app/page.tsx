@@ -12,8 +12,7 @@ import { Marquee } from '@/components/ui/Marquee';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { CreativeLoader } from '@/components/ui/CreativeLoader';
 
-// Next.js ISR Caching
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 async function ShopSectionWrapper() {
   const products = await prisma.product.findMany({

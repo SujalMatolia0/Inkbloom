@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function JournalPostPage({
   params,

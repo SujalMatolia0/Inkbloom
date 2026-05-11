@@ -7,7 +7,7 @@ import { Navbar } from "@/components/ui/Navbar";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 
-export const revalidate = 60; // Revalidate every minute
+export const dynamic = 'force-dynamic';
 
 export default async function ProductDetailPage({
   params,
