@@ -8,9 +8,14 @@ import { ArrowRight, Sparkles, Palette, ShieldCheck, HeartHandshake } from 'luci
 export const dynamic = 'force-dynamic';
 
 export default async function ShopPage() {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (error) {
+    console.error('Failed to fetch products for shop page:', error);
+  }
 
   const availableCount = products.filter((p) => p.stock > 0 && p.category !== 'Wall Art').length;
   const bespokeCount = products.filter((p) => p.stock === 0 || p.category === 'Wall Art').length;

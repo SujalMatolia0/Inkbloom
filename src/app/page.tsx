@@ -13,23 +13,49 @@ import { FaqSection, type FaqData } from '@/components/FaqSection';
 import { Marquee } from '@/components/ui/Marquee';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { CreativeLoader } from '@/components/ui/CreativeLoader';
+import { VINYAS_CATALOG } from '@/data/artworks';
 
 export const dynamic = 'force-dynamic';
 
 async function ShopSectionWrapper() {
-  const products = await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 6,
-  });
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 6,
+    });
+  } catch (error) {
+    console.error('Failed to fetch products for homepage:', error);
+  }
+
+  // Graceful fallback to catalog artworks if DB query is empty/failed
+  if (!products || products.length === 0) {
+    products = VINYAS_CATALOG.slice(0, 6).map((art) => ({
+      id: art.id,
+      title: art.title,
+      slug: art.id,
+      description: art.description,
+      price: art.price,
+      images: [art.image],
+      stock: 1,
+      category: art.category,
+    }));
+  }
+
   return <ShopSection products={products} />;
 }
 
 async function JournalSectionWrapper() {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' },
-    take: 3,
-  });
+  let posts: any[] = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { published: true },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    });
+  } catch (error) {
+    console.error('Failed to fetch journal posts for homepage:', error);
+  }
   return <JournalSection posts={posts} />;
 }
 
