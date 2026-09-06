@@ -86,10 +86,10 @@ export function ProductCard({
   if (bentoVariant === "featured-large") {
     return (
       <>
-        <div className={`group relative md:col-span-2 md:row-span-2 bg-[#1C1410] border-2 border-charcoal text-linen flex flex-col justify-between transition-all duration-300 hover:shadow-[8px_8px_0px_0px_#C17B5C] ${className}`}>
+        <div className={`group relative md:col-span-2 md:row-span-2 bg-[#18110D] border-1.5 border-charcoal text-linen flex flex-col justify-between transition-all duration-300 hover:shadow-[6px_6px_0px_0px_#C17B5C] ${className}`}>
           
           {/* Media Header Container */}
-          <div className="relative aspect-[16/10] md:aspect-[16/11] w-full overflow-hidden bg-charcoal/20 border-b-1.5 border-charcoal/40">
+          <div className="relative aspect-[16/10] md:aspect-[16/11] w-full overflow-hidden bg-charcoal/30 border-b-1.5 border-charcoal/40">
             <Link href={`/shop/${product.slug}`} className="absolute inset-0 z-0 block">
               <Image
                 src={product.image}
@@ -97,18 +97,18 @@ export function ProductCard({
                 fill
                 priority={priority}
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1C1410] via-transparent to-black/30 opacity-70" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#18110D] via-transparent to-black/25 opacity-80" />
             </Link>
 
             {/* Badges & Spotlight Tag */}
             <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2">
-              <span className="text-[9.5px] font-bold uppercase tracking-widest px-2.5 py-1 bg-terra text-linen shadow-md border border-terra/80 flex items-center gap-1.5">
+              <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 bg-terra text-linen shadow-md border border-terra/80 flex items-center gap-1.5">
                 <Sparkles size={11} className="text-terra-pale" />
                 <span>Spotlight Feature</span>
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 bg-linen/95 text-charcoal shadow-md border border-charcoal/30">
+              <span className="text-[8.5px] font-bold uppercase tracking-widest px-2.5 py-1 bg-linen/95 text-charcoal shadow-md border border-charcoal/30">
                 {getBadgeLabel()}
               </span>
             </div>
@@ -126,7 +126,7 @@ export function ProductCard({
           </div>
 
           {/* Details & Actions Footer */}
-          <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 gap-4 bg-[#1C1410]">
+          <div className="p-5 sm:p-6 flex flex-col justify-between flex-1 gap-4 bg-[#18110D]">
             <div>
               <div className="flex items-center justify-between gap-2 text-[10px] font-mono uppercase tracking-widest text-terra-pale/80 mb-1">
                 <span>{subcategory || product.category} · Studio Masterpiece</span>
@@ -221,7 +221,7 @@ export function ProductCard({
   if (bentoVariant === "wide") {
     return (
       <>
-        <div className={`group relative md:col-span-2 bg-white/70 border-1.5 border-charcoal hover:border-terra flex flex-col sm:flex-row justify-between transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(45,45,45,0.9)] overflow-hidden ${className}`}>
+        <div className={`group relative md:col-span-2 bg-[#F6F1EA] border-1.5 border-charcoal hover:border-terra flex flex-col sm:flex-row justify-between transition-all duration-300 hover:shadow-[5px_5px_0px_0px_rgba(45,45,45,0.9)] overflow-hidden ${className}`}>
           
           {/* Left Media */}
           <div className="relative aspect-[4/3] sm:aspect-auto sm:w-5/12 overflow-hidden bg-charcoal/5 border-b-1.5 sm:border-b-0 sm:border-r-1.5 border-charcoal/20 shrink-0">
@@ -232,7 +232,7 @@ export function ProductCard({
                 fill
                 priority={priority}
                 sizes="(max-width: 768px) 100vw, 35vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
             </Link>
 
@@ -244,7 +244,7 @@ export function ProductCard({
           </div>
 
           {/* Right Details */}
-          <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-3 bg-linen/20">
+          <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-3 bg-[#F6F1EA]">
             <div>
               <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-widest text-charcoal/60 mb-0.5">
                 <span>{subcategory || product.category}</span>
@@ -335,10 +335,10 @@ export function ProductCard({
   // 3. STANDARD BENTO TILE
   return (
     <>
-      <div className={`group relative bg-white/60 border-1.5 border-charcoal hover:border-terra flex flex-col justify-between transition-all duration-300 hover:shadow-[6px_6px_0px_0px_rgba(45,45,45,0.9)] ${className}`}>
+      <div className={`group relative bg-[#F6F1EA] border-1.5 border-charcoal hover:border-terra flex flex-col justify-between transition-all duration-300 hover:shadow-[5px_5px_0px_0px_rgba(45,45,45,0.9)] overflow-hidden ${className}`}>
         
         {/* Card Media Container */}
-        <div className="relative aspect-[4/5] sm:aspect-[3/4] w-full overflow-hidden bg-charcoal/5 border-b-1.5 border-charcoal/20">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-charcoal/5 border-b-1.5 border-charcoal/20">
           <Link href={`/shop/${product.slug}`} className="absolute inset-0 z-0 block">
             <Image
               src={product.image}
@@ -346,7 +346,7 @@ export function ProductCard({
               fill
               priority={priority}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             />
           </Link>
 
@@ -428,7 +428,7 @@ export function ProductCard({
         </div>
 
         {/* Card Details Bottom Section */}
-        <div className="p-3.5 flex flex-col justify-between flex-1 gap-2 bg-linen/20">
+        <div className="p-3.5 flex flex-col justify-between flex-1 gap-2 bg-[#F6F1EA]">
           <div>
             <div className="flex items-center justify-between gap-1 text-[9px] font-mono uppercase tracking-widest text-charcoal/55 mb-0.5">
               <span>{subcategory || product.category}</span>

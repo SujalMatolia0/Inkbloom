@@ -136,7 +136,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
   return (
     <div className="w-full">
       {/* Category Navigation Bar */}
-      <div className="sticky top-[58px] z-30 bg-[#F5EFE6]/98 backdrop-blur-md border-b-1.5 border-charcoal px-6 md:px-16 py-3 transition-all shadow-sm">
+      <div className="sticky top-[58px] z-30 bg-[#F0EBE3]/95 backdrop-blur-md border-b-1.5 border-charcoal px-6 md:px-16 py-3 transition-all shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           
           {/* Main Category Tabs */}
@@ -158,7 +158,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
                   className={`flex items-center gap-2 px-3.5 py-2 text-[11px] font-bold tracking-wider uppercase whitespace-nowrap transition-all border-1.5 cursor-pointer ${
                     isActive
                       ? "bg-charcoal border-charcoal text-linen shadow-[2px_2px_0px_0px_rgba(193,123,92,1)]"
-                      : "bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal hover:text-charcoal hover:bg-white"
+                      : "bg-[#F6F1EA] border-charcoal/25 text-charcoal/80 hover:border-charcoal hover:text-charcoal hover:bg-white"
                   }`}
                 >
                   <Icon size={12} className={isActive ? "text-terra-pale" : "text-charcoal/60"} />
@@ -185,7 +185,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search artworks..."
-                className="w-full pl-8 pr-7 py-2 bg-white/95 border-1.5 border-charcoal/30 text-xs text-charcoal placeholder:text-charcoal/45 font-sans focus:outline-none focus:border-terra transition-colors"
+                className="w-full pl-8 pr-7 py-2 bg-[#F6F1EA] border-1.5 border-charcoal/30 text-xs text-charcoal placeholder:text-charcoal/45 font-sans focus:outline-none focus:border-terra transition-colors"
               />
               {searchQuery && (
                 <button
@@ -198,7 +198,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
             </div>
 
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-1.5 border-1.5 border-charcoal/30 bg-white/95 px-2.5 py-2 text-xs text-charcoal">
+            <div className="flex items-center gap-1.5 border-1.5 border-charcoal/30 bg-[#F6F1EA] px-2.5 py-2 text-xs text-charcoal">
               <SlidersHorizontal size={12} className="text-charcoal/50" />
               <select
                 value={sortBy}
@@ -213,7 +213,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
             </div>
 
             {/* Bento / Grid Layout Switcher */}
-            <div className="hidden sm:flex items-center border-1.5 border-charcoal/30 bg-white/95 p-0.5">
+            <div className="hidden sm:flex items-center border-1.5 border-charcoal/30 bg-[#F6F1EA] p-0.5">
               <button
                 onClick={() => setLayoutMode("bento")}
                 title="Bento Editorial Layout"
@@ -251,7 +251,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
                   className={`text-[10px] font-bold tracking-wide uppercase px-3 py-1 border-1.5 transition-all cursor-pointer ${
                     isActive
                       ? "bg-terra border-charcoal text-linen shadow-sm"
-                      : "border-charcoal/25 text-charcoal/80 hover:border-charcoal hover:text-charcoal bg-white/80"
+                      : "border-charcoal/25 text-charcoal/80 hover:border-charcoal hover:text-charcoal bg-[#F6F1EA]"
                   }`}
                 >
                   {sub.label}
