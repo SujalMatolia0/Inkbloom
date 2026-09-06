@@ -67,7 +67,7 @@ export default function ResetPasswordForm() {
           html{scroll-behavior:smooth}
           body{font-family:var(--font-body);background:var(--li);color:var(--ch);overflow-x:hidden}
           .accent-bar{height:3px;background:var(--te);position:fixed;top:0;left:0;right:0;z-index:200}
-          nav{position:fixed;top:3px;left:0;right:0;height:56px;z-index:100;background:rgba(240,235,227,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--ch);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+          nav{position:fixed;top:0;left:0;right:0;height:58px;z-index:100;background:rgba(240,235,227,0.96);backdrop-filter:blur(18px);border-bottom:1.5px solid var(--ch);border-top:3px solid var(--te);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
           .nav-logo{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--ch);text-decoration:none}
           .nav-logo span{color:var(--te);font-style:italic}
           .nav-links{display:flex;gap:32px;list-style:none}
@@ -155,7 +155,7 @@ export default function ResetPasswordForm() {
         html{scroll-behavior:smooth}
         body{font-family:var(--font-body);background:var(--li);color:var(--ch);overflow-x:hidden}
         .accent-bar{height:3px;background:var(--te);position:fixed;top:0;left:0;right:0;z-index:200}
-        nav{position:fixed;top:3px;left:0;right:0;height:56px;z-index:100;background:rgba(240,235,227,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--ch);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+        nav{position:fixed;top:0;left:0;right:0;height:58px;z-index:100;background:rgba(240,235,227,0.96);backdrop-filter:blur(18px);border-bottom:1.5px solid var(--ch);border-top:3px solid var(--te);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
         .nav-logo{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--ch);text-decoration:none}
         .nav-logo span{color:var(--te);font-style:italic}
         .nav-links{display:flex;gap:32px;list-style:none}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
+import { submitCommission } from "@/app/actions/commissions";
 import { 
   ChevronDown, 
   ChevronUp, 
@@ -23,6 +24,62 @@ export default function CommissionPage() {
   const [budgetValue, setBudgetValue] = useState(8000);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Form input states
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [vision, setVision] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !vision.trim()) {
+      setFormStatus("error");
+      setStatusMessage("Please fill in your name, email, and vision description.");
+      return;
+    }
+    setFormStatus("submitting");
+
+    const compiledInstructions = `
+[Commission Brief]
+Medium: ${selectedMedium}
+Size: ${selectedSize}
+Budget: ₹${budgetValue.toLocaleString("en-IN")}
+Subject: ${subject || "Not specified"}
+Vision / Concept:
+${vision}
+Additional Notes:
+${additionalNotes || "None"}
+Reference Attached: ${fileName || "None"}
+    `.trim();
+
+    const formData = new FormData();
+    formData.append("name", name.trim());
+    formData.append("email", email.trim());
+    formData.append("instructions", compiledInstructions);
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
+
+    try {
+      const res = await submitCommission(formData);
+      if (res.success) {
+        setFormStatus("success");
+        setStatusMessage("Thank you! Your commission brief has been recorded. The artist will review your concept and email your personalized quote within 48 hours.");
+      } else {
+        setFormStatus("error");
+        setStatusMessage(res.error || "Something went wrong submitting your request. Please try again.");
+      }
+    } catch (err) {
+      setFormStatus("error");
+      setStatusMessage("Network error submitting request. Please try again.");
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -174,11 +231,11 @@ export default function CommissionPage() {
           </p>
         </div>
         <div className="medium-right">
-          <div className="medium-grid">
+          <div className="medium-grid reveal">
             {mediums.map((m) => (
               <div 
                 key={m.name} 
-                className={`medium-card reveal ${selectedMedium === m.name ? "active" : ""}`}
+                className={`medium-card ${selectedMedium === m.name ? "active" : ""}`}
                 onClick={() => setSelectedMedium(m.name)}
               >
                 <div className="medium-check">
@@ -199,118 +256,209 @@ export default function CommissionPage() {
 
       {/* FORM SECTION */}
       <section className="form-section">
-        {/* LEFT — Detailed Form */}
-        <div className="form-left">
-          <div className="sec-label">Commission Form</div>
-          <h2 className="font-serif text-[clamp(28px,3.5vw,40px)] font-bold text-charcoal leading-[1.05] tracking-tight mb-12">
-            Tell me about <em className="italic text-terracotta">your piece.</em>
-          </h2>
-
-          <div className="field-group reveal">
-            <label className="field-label">Your Name</label>
-            <input className="field-input" type="text" placeholder="Full name"/>
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Email Address</label>
-            <input className="field-input" type="email" placeholder="you@example.com"/>
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Subject / Piece Type</label>
-            <input className="field-input" type="text" placeholder="e.g. Pet portrait, landscape, abstract study"/>
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Canvas Size</label>
-            <div className="size-grid">
-              {sizes.map((s) => (
-                <button 
-                  key={s.id}
-                  className={`size-btn ${selectedSize === s.id ? "active" : ""}`}
-                  onClick={() => setSelectedSize(s.id)}
-                >
-                  {s.label} <br />
-                  <span className="text-[8px] font-normal tracking-normal">{s.sub}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Budget Range</label>
-            <div className="budget-row">
-              <span className="text-[9px] font-bold tracking-widest uppercase text-charcoal/40">Min ₹2,000</span>
-              <span className="budget-val">₹{budgetValue.toLocaleString('en-IN')}</span>
-              <span className="text-[9px] font-bold tracking-widest uppercase text-charcoal/40">Max ₹50,000</span>
-            </div>
-            <input 
-              type="range" 
-              min="2000" 
-              max="50000" 
-              step="500" 
-              value={budgetValue} 
-              onChange={(e) => setBudgetValue(parseInt(e.target.value))}
-            />
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Upload Reference Image (Optional)</label>
-            <div className="upload-area">
-              <Upload className="mb-3 opacity-30" size={28} />
-              <div className="upload-label">Click to upload or drag & drop</div>
-              <div className="upload-hint">PNG, JPG, PDF up to 10MB</div>
-            </div>
-          </div>
-          <div className="field-group reveal">
-            <label className="field-label">Describe Your Vision</label>
-            <textarea className="field-input" rows={5} placeholder="Describe the mood, colours, composition, and any personal details that matter to you…"></textarea>
-          </div>
-        </div>
-
-        {/* RIGHT — Summary & Submit */}
-        <div className="form-right">
-          <div className="hero-right-bg opacity-[0.05]"></div>
-          <div className="form-right-inner">
-            <div className="sec-label text-linen/50">Almost There</div>
-            <h2 className="font-serif text-[clamp(26px,3vw,36px)] font-bold text-linen leading-[1.05] tracking-tight mb-3">
-              Start your <em className="italic text-charcoal/70">commission.</em>
+        <form onSubmit={handleSubmit} className="contents">
+          {/* LEFT — Detailed Form */}
+          <div className="form-left">
+            <div className="sec-label">Commission Form</div>
+            <h2 className="font-serif text-[clamp(28px,3.5vw,40px)] font-bold text-charcoal leading-[1.05] tracking-tight mb-12">
+              Tell me about <em className="italic text-terracotta">your piece.</em>
             </h2>
-            <p className="text-[12px] text-linen/60 leading-[1.7] mb-8">
-              Limited slots available this month. I personally review every brief and respond within 48 hours.
-            </p>
 
-            {/* Pricing reference */}
-            <div className="mb-8">
-              <div className="text-[8.5px] font-bold tracking-[0.16em] uppercase text-linen/45 mb-4">Typical Price Range</div>
-              <div className="pricing-tags">
-                <span className="p-tag">Small · ₹2k–5k</span>
-                <span className="p-tag featured">Medium · ₹5k–15k</span>
-                <span className="p-tag">Large · ₹15k–40k</span>
+            <div className="field-group reveal">
+              <label className="field-label">Your Name *</label>
+              <input 
+                className="field-input" 
+                type="text" 
+                placeholder="Full name" 
+                required 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="field-group reveal">
+              <label className="field-label">Email Address *</label>
+              <input 
+                className="field-input" 
+                type="email" 
+                placeholder="you@example.com" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="field-group reveal">
+              <label className="field-label">Subject / Piece Type</label>
+              <input 
+                className="field-input" 
+                type="text" 
+                placeholder="e.g. Pet portrait, landscape, abstract study"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+            </div>
+            <div className="field-group reveal">
+              <label className="field-label">Canvas Size</label>
+              <div className="size-grid">
+                {sizes.map((s) => (
+                  <button 
+                    key={s.id}
+                    type="button"
+                    className={`size-btn ${selectedSize === s.id ? "active" : ""}`}
+                    onClick={() => setSelectedSize(s.id)}
+                  >
+                    {s.label} <br />
+                    <span className="text-[8px] font-normal tracking-normal">{s.sub}</span>
+                  </button>
+                ))}
               </div>
             </div>
-
-            <input className="form-field-dark" type="text" placeholder="Your name (confirm)"/>
-            <input className="form-field-dark" type="email" placeholder="Email address (confirm)"/>
-            <textarea className="form-field-dark" rows={3} placeholder="Anything else to add?" style={{ resize: 'none' }}></textarea>
-
-            <button className="btn-submit-comm">Submit Commission →</button>
-            <p className="right-note">
-              By submitting, you agree to a 50% deposit upon approval. No work begins until you confirm and pay. All commissions come with an authenticity certificate.
-            </p>
-
-            {/* Trust indicators */}
-            <div className="mt-10 pt-10 border-t border-linen/15 flex flex-col gap-5">
-              <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
-                <ShieldCheck size={14} className="stroke-linen" />
-                Money-back guarantee if you're not satisfied with the sketch
+            <div className="field-group reveal">
+              <label className="field-label">Budget Range</label>
+              <div className="budget-row">
+                <span className="text-[9px] font-bold tracking-widest uppercase text-charcoal/40">Min ₹2,000</span>
+                <span className="budget-val">₹{budgetValue.toLocaleString('en-IN')}</span>
+                <span className="text-[9px] font-bold tracking-widest uppercase text-charcoal/40">Max ₹50,000</span>
               </div>
-              <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
-                <Globe size={14} className="stroke-linen" />
-                Made in Jaipur, ships worldwide with full insurance
+              <input 
+                type="range" 
+                min="2000" 
+                max="50000" 
+                step="500" 
+                value={budgetValue} 
+                onChange={(e) => setBudgetValue(parseInt(e.target.value))}
+              />
+            </div>
+            <div className="field-group reveal">
+              <label className="field-label">Upload Reference Image (Optional)</label>
+              <label className="upload-area cursor-pointer">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setSelectedFile(file);
+                      setFileName(file.name);
+                    }
+                  }}
+                />
+                <Upload className="mb-3 opacity-30" size={28} />
+                <div className="upload-label">
+                  {fileName ? `Selected: ${fileName}` : "Click to upload or drag & drop"}
+                </div>
+                <div className="upload-hint">PNG, JPG, PDF up to 10MB</div>
+              </label>
+            </div>
+            <div className="field-group reveal">
+              <label className="field-label">Describe Your Vision *</label>
+              <textarea 
+                className="field-input" 
+                rows={5} 
+                placeholder="Describe the mood, colours, composition, and any personal details that matter to you…"
+                required
+                value={vision}
+                onChange={(e) => setVision(e.target.value)}
+              ></textarea>
+            </div>
+          </div>
+
+          {/* RIGHT — Summary & Submit */}
+          <div className="form-right">
+            <div className="hero-right-bg opacity-[0.05]"></div>
+            <div className="form-right-inner">
+              <div className="sec-label text-linen/50">Almost There</div>
+              <h2 className="font-serif text-[clamp(26px,3vw,36px)] font-bold text-linen leading-[1.05] tracking-tight mb-3">
+                Start your <em className="italic text-charcoal/70">commission.</em>
+              </h2>
+              <p className="text-[12px] text-linen/60 leading-[1.7] mb-8">
+                Limited slots available this month. I personally review every brief and respond within 48 hours.
+              </p>
+
+              {/* Pricing reference */}
+              <div className="mb-8">
+                <div className="text-[8.5px] font-bold tracking-[0.16em] uppercase text-linen/45 mb-4">Typical Price Range</div>
+                <div className="pricing-tags">
+                  <span className="p-tag">Small · ₹2k–5k</span>
+                  <span className="p-tag featured">Medium · ₹5k–15k</span>
+                  <span className="p-tag">Large · ₹15k–40k</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
-                <Mail size={14} className="stroke-linen" />
-                Quote delivered within 48 hours, no obligation
+
+              <div className="mb-4">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-linen/60 block mb-1.5">Additional Notes or Timeline</label>
+                <textarea 
+                  className="form-field-dark" 
+                  rows={3} 
+                  placeholder="Any deadline, gift date, or specific framing request?"
+                  style={{ resize: 'none' }}
+                  value={additionalNotes}
+                  onChange={(e) => setAdditionalNotes(e.target.value)}
+                ></textarea>
+              </div>
+
+              {formStatus === "error" && (
+                <div className="p-3 mb-4 bg-red-950/40 border border-red-500/50 text-red-200 text-xs">
+                  {statusMessage}
+                </div>
+              )}
+
+              {formStatus === "success" ? (
+                <div className="p-5 bg-moss/20 border-2 border-moss text-linen mb-6">
+                  <div className="flex items-center gap-2 font-bold text-sm text-moss mb-2">
+                    <span>✓</span> Commission Brief Submitted!
+                  </div>
+                  <p className="text-xs text-linen/80 leading-relaxed">
+                    {statusMessage}
+                  </p>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setFormStatus("idle");
+                      setName("");
+                      setEmail("");
+                      setSubject("");
+                      setVision("");
+                      setAdditionalNotes("");
+                      setFileName("");
+                    }}
+                    className="mt-4 px-3 py-1.5 bg-linen text-charcoal text-[10px] font-bold uppercase tracking-wider"
+                  >
+                    Submit Another Brief
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  type="submit" 
+                  disabled={formStatus === "submitting"}
+                  className="btn-submit-comm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formStatus === "submitting" ? "Submitting Brief..." : "Submit Commission →"}
+                </button>
+              )}
+
+              <p className="right-note">
+                By submitting, you agree to a 50% deposit upon approval. No work begins until you confirm and pay. All commissions come with an authenticity certificate.
+              </p>
+
+              {/* Trust indicators */}
+              <div className="mt-10 pt-10 border-t border-linen/15 flex flex-col gap-5">
+                <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
+                  <ShieldCheck size={14} className="stroke-linen" />
+                  Money-back guarantee if you're not satisfied with the sketch
+                </div>
+                <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
+                  <Globe size={14} className="stroke-linen" />
+                  Made in Jaipur, ships worldwide with full insurance
+                </div>
+                <div className="flex items-center gap-3 text-[10.5px] text-linen/55">
+                  <Mail size={14} className="stroke-linen" />
+                  Quote delivered within 48 hours, no obligation
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </section>
 
       {/* PAST COMMISSIONS */}

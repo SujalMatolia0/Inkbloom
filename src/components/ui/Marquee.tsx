@@ -1,13 +1,13 @@
 export function Marquee() {
   const items = [
-    'Original Paintings',
+    'Mixed Media Art',
     'Custom Commissions',
-    'Handmade Goods',
-    'Watercolour Art',
-    'Ink Illustrations',
-    'Limited Editions',
-    'Doodle Prints',
-    'Mixed Media',
+    'Handmade Gifts',
+    'Wall Art',
+    'Portraits',
+    'Murti Painting',
+    'Craft Work',
+    'Made to Order',
   ];
 
   return (

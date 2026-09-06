@@ -27,8 +27,8 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Inkbloom — Art & Craft Marketplace",
-  description: "An immersive art experience — original paintings, custom commissions, and handmade goods.",
+  title: "Vinyas — Mixed Media Studio by Anki Matolia",
+  description: "Original mixed media art, custom commissions & handmade gifts from a soulful studio in Ratangarh, Rajasthan.",
 };
 
 import { Navbar } from "@/components/ui/Navbar";

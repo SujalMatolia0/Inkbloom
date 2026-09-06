@@ -29,11 +29,15 @@ export default async function AdminCommissionsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-serif text-[36px] font-bold text-linen mb-2">
-            Commissions
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-terra/10 border border-terra/30 text-terra-pale text-[9.5px] font-bold tracking-widest uppercase mb-3">
+            <span>✦</span>
+            <span>Studio Vinyas · Bespoke Commissions</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-linen mb-1">
+            Custom Commissions
           </h1>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-linen/40">
-            Manage custom artwork requests
+          <p className="text-xs text-linen/50">
+            Bridal varmala floral preseravation, realistic charcoal portraits, and cafe murals
           </p>
         </div>
       </div>

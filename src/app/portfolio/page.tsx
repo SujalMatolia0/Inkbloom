@@ -1,10 +1,12 @@
 "use client";
 
-import { Suspense, useState, useEffect, useRef, useCallback } from "react";
+import { Suspense, useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { motion, AnimatePresence } from "framer-motion";
-import Player from "react-lottie-player";
-import { Volume2, VolumeX, X, ShoppingCart } from "lucide-react";
+import { Volume2, VolumeX, X, ShoppingCart, ArrowRight, RotateCcw, Check, Sparkles, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useCartStore } from "@/lib/store/cart";
 
 // Lazy — Howler creates an AudioContext on import, keep it off other pages
 let _audio: typeof import("@/lib/audio") | null = null;
@@ -17,29 +19,7 @@ import { Corridor } from "@/components/three/Corridor";
 import { CameraRig } from "@/components/three/CameraRig";
 import { Painting, preloadPaintingTextures } from "@/components/three/Painting";
 import { CommissionDoor } from "@/components/three/CommissionDoor";
-
-// 8 unique paintings — one per slot, no repeats
-const PAINTINGS = [
-  "https://picsum.photos/seed/ink1/800/1100",
-  "https://picsum.photos/seed/ink2/800/1100",
-  "https://picsum.photos/seed/ink3/800/1100",
-  "https://picsum.photos/seed/ink4/800/1100",
-  "https://picsum.photos/seed/ink5/800/1100",
-  "https://picsum.photos/seed/ink6/800/1100",
-  "https://picsum.photos/seed/ink7/800/1100",
-  "https://picsum.photos/seed/ink8/800/1100",
-];
-
-// Corridor is 32 units long (z: 1 → -31).
-// Camera travels z: 2 → -23.
-// 8 painting slots spaced 3 units apart, alternating left/right walls.
-// Slot z positions: -3, -6, -9, -12, -15, -18, -21, -24
-const PAINTING_SLOTS = PAINTINGS.map((url, i) => ({
-  url,
-  z: -3 - i * 3,                          // -3 to -24, all inside corridor
-  side: i % 2 === 0 ? -1 : 1,             // alternate left/right
-  index: i,
-}));
+import { GALLERY_3D_ARTWORKS } from "@/data/artworks";
 
 const LOADING_TEXTS = [
   "Curating the collection...",
@@ -48,12 +28,41 @@ const LOADING_TEXTS = [
 ];
 
 export default function PortfolioPage() {
+  const router = useRouter();
+  const addItem = useCartStore((state) => state.addItem);
+
+  const [galleryArtworks, setGalleryArtworks] = useState<any[]>(GALLERY_3D_ARTWORKS);
   const [loading, setLoading] = useState(true);
   const [loadingText, setLoadingText] = useState(LOADING_TEXTS[0]);
   const [isAudioMuted, setIsAudioMuted] = useState(true);
   const [selectedPainting, setSelectedPainting] = useState<any>(null);
   const [isDesktop, setIsDesktop] = useState(true);
   const [hasStarted, setHasStarted] = useState(false);
+
+  // Dynamic 8 painting slots along corridor walls based on curated gallery
+  const paintingSlots = useMemo(() => {
+    return galleryArtworks.slice(0, 8).map((art, i) => ({
+      url: art.image,
+      z: -3 - i * 3,
+      side: i % 2 === 0 ? -1 : 1,
+      index: i,
+      title: art.title,
+      art,
+    }));
+  }, [galleryArtworks]);
+
+  const paintingsList = useMemo(() => {
+    return galleryArtworks.slice(0, 8).map((art) => art.image);
+  }, [galleryArtworks]);
+
+  // Door interaction states
+  const [isNearDoor, setIsNearDoor] = useState(false);
+  const [showDoorModal, setShowDoorModal] = useState(false);
+  const hasDismissedDoorRef = useRef(false);
+
+  // Cart feedback state
+  const [cartSuccessId, setCartSuccessId] = useState<number | null>(null);
+
   const hudProgressRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,10 +71,10 @@ export default function PortfolioPage() {
     window.scrollTo(0, 0);
     
     // Hide global navbar and footer
-    document.body.classList.add('no-navbar', 'no-footer');
+    document.body.classList.add("no-navbar", "no-footer");
     
     return () => {
-      document.body.classList.remove('no-navbar', 'no-footer');
+      document.body.classList.remove("no-navbar", "no-footer");
     };
   }, []);
 
@@ -81,7 +90,7 @@ export default function PortfolioPage() {
       if (!hudProgressRef.current) return;
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+      const progress = Math.min(Math.max(scrollY / (maxScroll || 1), 0), 1);
       hudProgressRef.current.style.width = `${progress * 100}%`;
     };
     
@@ -90,24 +99,41 @@ export default function PortfolioPage() {
   }, []); 
 
   useEffect(() => {
-    preloadPaintingTextures(PAINTINGS);
+    preloadPaintingTextures(paintingsList);
+
+    // Fetch dynamic admin-curated gallery artworks
+    async function loadCuratedGallery() {
+      try {
+        const res = await fetch('/api/gallery');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.artworks && data.artworks.length > 0) {
+            setGalleryArtworks(data.artworks);
+            preloadPaintingTextures(data.artworks.map((a: any) => a.image));
+          }
+        }
+      } catch (e) {
+        console.warn('Using default curated collection fallback:', e);
+      }
+    }
+    loadCuratedGallery();
 
     const sequence = async () => {
       for (const text of LOADING_TEXTS) {
         setLoadingText(text);
-        await new Promise(r => setTimeout(r, 700));
+        await new Promise((r) => setTimeout(r, 700));
       }
       setLoading(false);
     };
     sequence();
-  }, []);
+  }, [paintingsList]);
 
   const startExperience = async () => {
     setHasStarted(true);
     
     // Request Fullscreen on document
     if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch(err => {
+      document.documentElement.requestFullscreen().catch((err) => {
         console.warn(`Error attempting to enable full-screen mode: ${err.message}`);
       });
     }
@@ -118,24 +144,73 @@ export default function PortfolioPage() {
   };
 
   const toggleMute = useCallback(() => {
-    getAudio().then(audio => {
+    getAudio().then((audio) => {
       audio?.toggle();
-      setIsAudioMuted(s => !s);
+      setIsAudioMuted((s) => !s);
     });
   }, []);
 
   const handlePaintingClick = useCallback((index: number) => {
+    const art = galleryArtworks[index];
+    if (!art) return;
     setSelectedPainting({
-      id: index,
-      url: PAINTINGS[index],
-      title: `Artwork #${index + 1}`,
-      price: "₹8,400",
-      year: "2025",
-      size: '18" x 24"',
-      medium: "Oil on Canvas",
-      isSold: index % 4 === 0,
+      id: art.id || index,
+      url: art.image,
+      title: art.title,
+      priceNumber: art.price,
+      price: art.priceFormatted || `₹${art.price?.toLocaleString('en-IN')}`,
+      year: art.year || '2025',
+      size: art.size || 'Studio Original',
+      medium: art.medium || 'Mixed Media Artwork',
+      category: art.category,
+      subcategory: art.subcategory || art.category,
+      tag: art.tag || `${art.category} Piece`,
+      description: art.description,
+      isSold: art.isCommissionOnly,
+      slug: art.slug,
     });
+  }, [galleryArtworks]);
+
+  // Door approach & leave triggers
+  const handleNearDoor = useCallback(() => {
+    setIsNearDoor(true);
+    if (!hasDismissedDoorRef.current) {
+      setShowDoorModal(true);
+    }
   }, []);
+
+  const handleLeaveDoor = useCallback(() => {
+    setIsNearDoor(false);
+    hasDismissedDoorRef.current = false;
+    setShowDoorModal(false);
+  }, []);
+
+  const handleReturnToStart = useCallback(() => {
+    setShowDoorModal(false);
+    hasDismissedDoorRef.current = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleGoToCommission = useCallback(() => {
+    router.push("/commission");
+  }, [router]);
+
+  const handleDismissDoorModal = useCallback(() => {
+    hasDismissedDoorRef.current = true;
+    setShowDoorModal(false);
+  }, []);
+
+  const handleAddToCart = (painting: any) => {
+    addItem({
+      id: painting.id || `gallery-artwork-${painting.slug}`,
+      title: painting.title,
+      price: painting.priceNumber || 8400,
+      image: painting.url,
+      slug: painting.slug || `artwork-${painting.id}`,
+    });
+    setCartSuccessId(painting.id);
+    setTimeout(() => setCartSuccessId(null), 3500);
+  };
 
   return (
     <div ref={containerRef} className="relative w-full min-h-screen bg-linen overflow-x-hidden">
@@ -154,7 +229,7 @@ export default function PortfolioPage() {
               ) : (
                 <button 
                   onClick={startExperience}
-                  className="btn-primary px-10 py-4 text-xs tracking-widest uppercase animate-pulse"
+                  className="btn-primary px-10 py-4 text-xs tracking-widest uppercase animate-pulse shadow-[6px_6px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
                 >
                   Enter Gallery
                 </button>
@@ -174,61 +249,175 @@ export default function PortfolioPage() {
             {isDesktop ? (
               <Canvas
                 shadows={false}
-                camera={{ position: [0, 1.7, 2], fov: 65, near: 0.1, far: 50 }}
+                camera={{ position: [0, 1.7, 1.5], fov: 65, near: 0.1, far: 50 }}
                 gl={{
                   antialias: true,
                   powerPreference: "high-performance",
                   toneMapping: 4, 
                   toneMappingExposure: 1.1,
                 }}
-                dpr={[1, 2]}
-                style={{ width: '100vw', height: '100vh', touchAction: 'none' }}
+                dpr={[1, 1.5]}
+                style={{ width: "100vw", height: "100vh", touchAction: "none" }}
               >
                 <Suspense fallback={null}>
-                   <hemisphereLight args={["#FFF8F0", "#C4A882", 0.5]} />
+                  <hemisphereLight args={["#FFF8F0", "#C4A882", 0.12]} />
                   <Corridor />
 
-                  {PAINTING_SLOTS.map((slot) => (
+                  {paintingSlots.map((slot: any) => (
                     <Painting
-                      key={`painting-${slot.index}`}
+                      key={`painting-${slot.index}-${slot.url}`}
                       url={slot.url}
                       position={[slot.side * 2.7, 1.8, slot.z]}
                       rotation={[0, slot.side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}
-                      title={`Artwork #${slot.index + 1}`}
-                      isSold={slot.index % 4 === 0}
+                      title={slot.title}
+                      isSold={slot.art?.isCommissionOnly}
                       onSelect={() => handlePaintingClick(slot.index)}
                     />
                   ))}
 
-                  <CommissionDoor />
+                  <CommissionDoor onNearDoor={handleNearDoor} onLeaveDoor={handleLeaveDoor} />
                   <CameraRig isReady={true} />
                 </Suspense>
               </Canvas>
             ) : (
-              <MobileGallery paintings={PAINTINGS} onSelect={handlePaintingClick} />
+              <MobileGallery 
+                paintings={paintingsList} 
+                onSelect={handlePaintingClick} 
+                onGoToCommission={handleGoToCommission}
+                onReturnToStart={handleReturnToStart}
+              />
             )}
           </div>
 
           {/* Vignette */}
           <div
             className="fixed inset-0 pointer-events-none z-10"
-            style={{ background: 'radial-gradient(ellipse at center, transparent 55%, rgba(28,20,16,0.6) 100%)' }}
+            style={{ background: "radial-gradient(ellipse at center, transparent 55%, rgba(28,20,16,0.6) 100%)" }}
           />
 
-          {/* Scroll progress HUD */}
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[120px] h-[1px] bg-charcoal/25 z-50 pointer-events-none">
-            <div ref={hudProgressRef} className="h-full bg-terra" style={{ width: '0%' }} />
+          {/* Top Left Navigation: Exit to Studio */}
+          <div className="fixed top-8 left-8 z-[60] flex items-center gap-3">
+            <Link
+              href="/"
+              className="px-4 py-2.5 bg-linen/90 backdrop-blur-md border border-charcoal/30 text-[11px] font-bold tracking-widest uppercase text-charcoal hover:border-charcoal hover:bg-linen shadow-[3px_3px_0px_0px_rgba(45,45,45,0.8)] transition-all flex items-center gap-2"
+            >
+              <Home size={14} />
+              <span>Exit Gallery</span>
+            </Link>
           </div>
 
-          {/* Scroll driver */}
-          <div className="relative z-0 h-[400vh] w-full pointer-events-none" />
-
-          {/* Mute button */}
-          <div className="fixed top-24 right-8 z-[60]">
-            <button onClick={toggleMute} className="nav-btn bg-linen/80 backdrop-blur-sm">
+          {/* Top Right Controls: Mute Audio */}
+          <div className="fixed top-8 right-8 z-[60]">
+            <button 
+              onClick={toggleMute} 
+              aria-label={isAudioMuted ? "Unmute audio" : "Mute audio"}
+              className="nav-btn bg-linen/90 backdrop-blur-md border border-charcoal/30 shadow-[3px_3px_0px_0px_rgba(45,45,45,0.8)] hover:bg-linen transition-all"
+            >
               {isAudioMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </button>
           </div>
+
+          {/* Scroll progress HUD */}
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[140px] h-[2px] bg-charcoal/20 z-50 pointer-events-none">
+            <div ref={hudProgressRef} className="h-full bg-terra" style={{ width: "0%" }} />
+          </div>
+
+          {/* Scroll driver (controls 3D corridor camera trajectory) */}
+          <div className="relative z-0 h-[400vh] w-full pointer-events-none" />
+
+          {/* Floating trigger if modal was dismissed while standing near door */}
+          <AnimatePresence>
+            {isNearDoor && !showDoorModal && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 15 }}
+                className="fixed bottom-12 right-8 z-[60]"
+              >
+                <button
+                  onClick={() => setShowDoorModal(true)}
+                  className="btn-primary py-3 px-6 text-xs font-bold tracking-widest uppercase flex items-center gap-2.5 shadow-[4px_4px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                >
+                  <Sparkles size={15} />
+                  <span>Studio Doorway</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Studio Door Destination Screen / Modal */}
+          <AnimatePresence>
+            {showDoorModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-charcoal/65 backdrop-blur-md"
+              >
+                <motion.div
+                  initial={{ scale: 0.92, y: 24, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.92, y: 24, opacity: 0 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  className="relative w-full max-w-lg bg-linen border-2 border-charcoal p-8 md:p-10 shadow-[10px_10px_0px_0px_rgba(45,45,45,1)]"
+                >
+                  {/* Close button */}
+                  <button
+                    onClick={handleDismissDoorModal}
+                    className="absolute top-4 right-4 p-2 text-charcoal/50 hover:text-charcoal hover:bg-charcoal/5 rounded-full transition-colors"
+                    aria-label="Dismiss modal"
+                  >
+                    <X size={20} />
+                  </button>
+
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-terra/10 border border-terra/30 text-terra text-[10px] font-bold tracking-widest uppercase mb-4">
+                    <span>✦</span>
+                    <span>Studio Doorway</span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal leading-tight">
+                    You have reached the <em className="italic text-terra">Studio Door.</em>
+                  </h3>
+
+                  {/* Description */}
+                  <p className="mt-4 text-sm text-charcoal/80 leading-relaxed font-sans">
+                    You have reached the end of the gallery corridor. The doors to our private atelier stand before you. Would you like to commission a bespoke piece of art, or return to the start of the corridor to view the collection again?
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={handleGoToCommission}
+                      className="flex-1 btn-primary py-3.5 px-6 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(45,45,45,1)] transition-all"
+                    >
+                      <span>Commission Art</span>
+                      <ArrowRight size={15} />
+                    </button>
+
+                    <button
+                      onClick={handleReturnToStart}
+                      className="flex-1 btn-outline py-3.5 px-6 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-charcoal/5 transition-colors"
+                    >
+                      <RotateCcw size={15} />
+                      <span>Back to Start</span>
+                    </button>
+                  </div>
+
+                  {/* Secondary Dismiss */}
+                  <div className="mt-5 text-center">
+                    <button
+                      onClick={handleDismissDoorModal}
+                      className="text-[11px] text-charcoal/50 hover:text-charcoal underline underline-offset-4 transition-colors"
+                    >
+                      Stay here &amp; look around
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Painting info card */}
           <AnimatePresence>
@@ -243,33 +432,72 @@ export default function PortfolioPage() {
                 <button
                   onClick={() => setSelectedPainting(null)}
                   className="absolute top-4 right-4 text-charcoal/40 hover:text-charcoal nav-btn"
+                  aria-label="Close details"
                 >
                   <X size={18} />
                 </button>
-                <div className="flex gap-8">
-                  <div className="w-32 h-44 border-1.5 border-charcoal overflow-hidden flex-shrink-0">
+                <div className="flex flex-col sm:flex-row gap-6 md:gap-8">
+                  <div className="w-full sm:w-36 h-48 sm:h-52 border-1.5 border-charcoal overflow-hidden flex-shrink-0 bg-charcoal/5">
                     <img src={selectedPainting.url} alt={selectedPainting.title} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex flex-col flex-1">
-                    <h2 className="text-2xl font-serif font-bold text-charcoal leading-none">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 bg-terra/10 border border-terra/30 text-terra">
+                        {selectedPainting.tag || selectedPainting.category}
+                      </span>
+                      <span className="text-[10px] font-mono text-charcoal/60 uppercase">
+                        {selectedPainting.subcategory} · {selectedPainting.category}
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-serif font-bold text-charcoal leading-tight">
                       {selectedPainting.title}
                     </h2>
-                    <p className="mt-2 text-xs font-sans text-charcoal/60 uppercase tracking-wider">
+                    <p className="mt-1.5 text-[11px] font-sans text-charcoal/60 uppercase tracking-wider">
                       {selectedPainting.medium} • {selectedPainting.size} • {selectedPainting.year}
                     </p>
-                    <p className="mt-4 text-[13px] text-charcoal/80 leading-relaxed line-clamp-3">
-                      This piece explores the intersection of editorial cleanliness and raw joy. Crafted with passion in our Jaipur studio.
+                    <p className="mt-3 text-[12.5px] text-charcoal/80 leading-relaxed">
+                      {selectedPainting.description}
                     </p>
-                    <div className="mt-auto pt-6 flex items-center justify-between">
-                      <span className="text-xl font-bold text-terra">{selectedPainting.price}</span>
+                    <div className="mt-auto pt-5 flex items-center justify-between gap-4 flex-wrap">
+                      <div>
+                        <div className="text-[9px] uppercase tracking-wider text-charcoal/50">Artisan Valuation</div>
+                        <span className="text-2xl font-bold text-terra">{selectedPainting.price}</span>
+                      </div>
                       {selectedPainting.isSold ? (
-                        <button className="btn-outline py-2 px-4 text-[10px]">
-                          Commission Similar
+                        <button 
+                          onClick={handleGoToCommission}
+                          className="btn-primary py-2.5 px-5 text-[10px] tracking-wider uppercase flex items-center gap-2 shadow-[3px_3px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                        >
+                          <span>Commission Similar Art</span>
+                          <ArrowRight size={13} />
                         </button>
                       ) : (
-                        <button className="btn-primary flex items-center gap-2 py-2 px-4 text-[10px]">
-                          <ShoppingCart size={14} /> Add to Cart
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => handleAddToCart(selectedPainting)}
+                            className="btn-primary flex items-center gap-2 py-2.5 px-5 text-[10px] tracking-wider uppercase shadow-[3px_3px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                          >
+                            {cartSuccessId === selectedPainting.id ? (
+                              <>
+                                <Check size={14} className="text-moss" />
+                                <span>Added to Cart!</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingCart size={14} />
+                                <span>Add to Cart</span>
+                              </>
+                            )}
+                          </button>
+                          {cartSuccessId === selectedPainting.id && (
+                            <Link 
+                              href="/cart"
+                              className="text-[11px] font-bold text-terra underline underline-offset-2 hover:text-charcoal transition-colors"
+                            >
+                              View Cart →
+                            </Link>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -283,13 +511,32 @@ export default function PortfolioPage() {
   );
 }
 
-function MobileGallery({ paintings, onSelect }: { paintings: string[]; onSelect: (i: number) => void }) {
+function MobileGallery({ 
+  paintings, 
+  onSelect,
+  onGoToCommission,
+  onReturnToStart,
+}: { 
+  paintings: string[]; 
+  onSelect: (i: number) => void;
+  onGoToCommission: () => void;
+  onReturnToStart: () => void;
+}) {
   return (
     <div className="flex flex-col h-full bg-linen p-6 overflow-y-auto pb-32">
-      <header className="mb-12 mt-8">
-        <h1 className="text-5xl font-serif font-bold text-charcoal tracking-tighter">Portfolio</h1>
-        <div className="w-12 h-1 bg-terra mt-2" />
+      <header className="mb-8 mt-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-serif font-bold text-charcoal tracking-tighter">Portfolio</h1>
+          <div className="w-12 h-1 bg-terra mt-1" />
+        </div>
+        <Link
+          href="/"
+          className="px-3 py-1.5 bg-linen border border-charcoal/30 text-[10px] font-bold tracking-widest uppercase text-charcoal"
+        >
+          Exit
+        </Link>
       </header>
+
       <div className="grid gap-8">
         {paintings.map((url, i) => (
           <motion.div
@@ -308,6 +555,31 @@ function MobileGallery({ paintings, onSelect }: { paintings: string[]; onSelect:
             />
           </motion.div>
         ))}
+      </div>
+
+      {/* End of Gallery Card for Mobile */}
+      <div className="mt-12 p-6 bg-linen border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(45,45,45,1)] text-center">
+        <div className="text-[10px] font-bold tracking-widest uppercase text-terra mb-2">✦ The Studio Door</div>
+        <h3 className="font-serif text-2xl font-bold text-charcoal mb-3">End of the Collection</h3>
+        <p className="text-xs text-charcoal/70 mb-6 leading-relaxed">
+          Commission a custom original piece from Studio Vinyas in Ratangarh, Rajasthan, or return to the beginning of the gallery.
+        </p>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onGoToCommission}
+            className="btn-primary py-3 text-xs tracking-wider uppercase flex items-center justify-center gap-2"
+          >
+            <span>Commission Art</span>
+            <ArrowRight size={14} />
+          </button>
+          <button
+            onClick={onReturnToStart}
+            className="btn-outline py-3 text-xs tracking-wider uppercase flex items-center justify-center gap-2"
+          >
+            <RotateCcw size={14} />
+            <span>Back to Start</span>
+          </button>
+        </div>
       </div>
     </div>
   );

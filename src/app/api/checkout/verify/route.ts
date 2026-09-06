@@ -22,6 +22,8 @@ export async function POST(req: Request) {
       items,
       total,
       address,
+      couponCode,
+      discount,
     } = await req.json();
 
     // Validate required fields
@@ -95,6 +97,8 @@ export async function POST(req: Request) {
             address: address || "Not provided",
             paymentId: razorpay_payment_id,
             status: 'PENDING',
+            couponCode: couponCode ? String(couponCode).trim().toUpperCase() : null,
+            discount: typeof discount === 'number' ? discount : 0,
             items: {
               create: items.map((item: any) => ({
                 productId: item.productId,
@@ -122,6 +126,18 @@ export async function POST(req: Request) {
               },
             },
           });
+        }
+
+        // Increment coupon usedCount if valid coupon provided
+        if (couponCode) {
+          try {
+            await tx.coupon.update({
+              where: { code: String(couponCode).trim().toUpperCase() },
+              data: { usedCount: { increment: 1 } },
+            });
+          } catch (couponError) {
+            console.warn("Could not increment coupon usedCount:", couponError);
+          }
         }
 
         return newOrder;

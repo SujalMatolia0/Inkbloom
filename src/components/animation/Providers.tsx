@@ -13,9 +13,10 @@ export function Providers({ children }: { children: ReactNode }) {
   // Portfolio uses GSAP ScrollTrigger on native scroll events.
   // Lenis replaces native scroll with a virtual one, which breaks
   // ScrollTrigger.onUpdate — the camera never moves without this guard.
-  const isPortfolio = pathname?.startsWith("/portfolio");
+  // Admin pages require native scrolling for data tables, forms and dashboard.
+  const disableLenis = pathname?.startsWith("/portfolio") || pathname?.startsWith("/admin");
 
-  if (isPortfolio) {
+  if (disableLenis) {
     return (
       <SessionProvider>
         <ScrollReveal />

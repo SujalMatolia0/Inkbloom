@@ -58,9 +58,12 @@ export function Navbar() {
   };
 
   return (
-    <nav>
+    <nav
+      style={{ top: 0, position: 'fixed' }}
+      className="fixed top-0 left-0 right-0 w-full h-[58px] z-50 bg-[#F0EBE3] border-b-[1.5px] border-charcoal border-t-[3px] border-terra px-6 md:px-12 flex items-center justify-between shadow-sm"
+    >
       <Link href="/" className="nav-logo">
-        Ink<span>bloom</span>
+        Vin<span>yas</span>
       </Link>
       
       <ul className="nav-links">

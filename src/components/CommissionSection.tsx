@@ -32,38 +32,34 @@ export function CommissionSection() {
             Custom <em>Commissions.</em>
           </h2>
           <p className="comm-left-body">
-            From personal portraits to large-scale editorial murals, I love
-            bringing your unique visions to life with ink and soul.
+            From intimate portraits to large wall art and murti painting, Anki brings your ideas to life with patience and craft. Every piece is personal — because it's made for you.
           </p>
 
           <div className="comm-steps">
             <div className="comm-step">
               <div className="step-num">1</div>
               <div>
-                <div className="step-title">The Brief</div>
+                <div className="step-title">Your Brief</div>
                 <div className="step-desc">
-                  Share your idea, size requirements and any reference images
-                  you might have.
+                  Share your idea, reference images, size and any special details you want captured.
                 </div>
               </div>
             </div>
             <div className="comm-step">
               <div className="step-num">2</div>
               <div>
-                <div className="step-title">The Sketch</div>
+                <div className="step-title">The Plan</div>
                 <div className="step-desc">
-                  I'll provide a rough layout and colour palette for your
-                  approval before starting.
+                  Anki will share a rough sketch and colour direction before starting the final piece.
                 </div>
               </div>
             </div>
             <div className="comm-step">
               <div className="step-num">3</div>
               <div>
-                <div className="step-title">The Artwork</div>
+                <div className="step-title">Your Artwork</div>
                 <div className="step-desc">
-                  I create the piece in my studio, sending you progress updates
-                  along the way.
+                  Made by hand in Ratangarh, with progress photos sent along the way.
                 </div>
               </div>
             </div>
@@ -77,8 +73,7 @@ export function CommissionSection() {
               Start a <em>Project.</em>
             </h3>
             <p className="comm-right-body">
-              Fill out the form below and I'll get back to you within 24 hours
-              with a custom quote.
+              Fill out the form and Anki will get back to you within 24 hours.
             </p>
 
             <form onSubmit={handleSubmit}>
@@ -97,11 +92,12 @@ export function CommissionSection() {
                 required
               />
               <select className="form-field" name="projectType">
-                <option>Select Project Type</option>
-                <option>Original Painting</option>
-                <option>Digital Illustration</option>
-                <option>Mural / Large Scale</option>
-                <option>Other</option>
+                <option value="">Select Project Type</option>
+                <option value="Portrait">Portrait</option>
+                <option value="Wall Art">Wall Art</option>
+                <option value="Murti Painting">Murti Painting</option>
+                <option value="Handmade Gift">Handmade Gift</option>
+                <option value="Other">Other</option>
               </select>
               <textarea
                 className="form-field"

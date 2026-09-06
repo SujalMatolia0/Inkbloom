@@ -36,7 +36,7 @@ export function ShopNav() {
     >
       <Link href="/shop" className="group">
         <h1 className="font-display font-bold text-2xl tracking-tighter text-charcoal group-hover:text-terracotta transition-colors duration-200 uppercase">
-          INKBLOOM
+          VINYAS
         </h1>
       </Link>
 

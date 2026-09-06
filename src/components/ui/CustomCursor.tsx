@@ -5,12 +5,22 @@ import { useEffect, useRef } from 'react';
 export function CustomCursor() {
   const curRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: 0, y: 0 });
-  const ringPos = useRef({ x: 0, y: 0 });
+  const mousePos = useRef({ x: -100, y: -100 });
+  const ringPos = useRef({ x: -100, y: -100 });
+  const initialized = useRef(false);
 
   useEffect(() => {
+    let animId: number;
+
     const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
+
+      if (!initialized.current) {
+        ringPos.current = { x: e.clientX, y: e.clientY };
+        initialized.current = true;
+        document.body.classList.add('cursor-active');
+      }
+
       if (curRef.current) {
         curRef.current.style.left = `${e.clientX}px`;
         curRef.current.style.top = `${e.clientY}px`;
@@ -18,42 +28,51 @@ export function CustomCursor() {
     };
 
     const animateRing = () => {
-      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.12;
-      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.12;
+      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.16;
+      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.16;
       
       if (ringRef.current) {
         ringRef.current.style.left = `${ringPos.current.x}px`;
         ringRef.current.style.top = `${ringPos.current.y}px`;
       }
       
-      requestAnimationFrame(animateRing);
+      animId = requestAnimationFrame(animateRing);
     };
 
-    const handleMouseEnter = () => document.body.classList.add('hov');
-    const handleMouseLeave = () => document.body.classList.remove('hov');
-
-    const updateHoverElements = () => {
-      const elements = document.querySelectorAll('a, button, .product-card, .journal-card, .nb, .s-icon, .upload-zone');
-      elements.forEach(el => {
-        el.addEventListener('mouseenter', handleMouseEnter);
-        el.addEventListener('mouseleave', handleMouseLeave);
-      });
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement)?.closest(
+        'a, button, .product-card, .journal-card, .nb, .s-icon, .upload-zone, [role="button"], input, select, textarea'
+      );
+      if (target) {
+        document.body.classList.add('hov');
+      } else {
+        document.body.classList.remove('hov');
+      }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    const animationFrame = requestAnimationFrame(animateRing);
-    
-    // Initial setup for existing elements
-    updateHoverElements();
+    const handleMouseLeave = () => {
+      document.body.classList.remove('cursor-active');
+    };
 
-    // Re-run setup periodically or on DOM changes if needed
-    const observer = new MutationObserver(updateHoverElements);
-    observer.observe(document.body, { childList: true, subtree: true });
+    const handleMouseEnter = () => {
+      if (initialized.current) {
+        document.body.classList.add('cursor-active');
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    animId = requestAnimationFrame(animateRing);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrame);
-      observer.disconnect();
+      window.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      cancelAnimationFrame(animId);
+      document.body.classList.remove('hov', 'cursor-active');
     };
   }, []);
 

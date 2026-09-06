@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { ProductCard } from '@/components/shop/ProductCard';
 import { Navbar } from '@/components/ui/Navbar';
+import { ShopCatalog } from '@/components/shop/ShopCatalog';
+import { FestiveBanner } from '@/components/shop/FestiveBanner';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Palette, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,163 +12,156 @@ export default async function ShopPage() {
     orderBy: { createdAt: 'desc' },
   });
 
+  const availableCount = products.filter((p) => p.stock > 0 && p.category !== 'Wall Art').length;
+  const bespokeCount = products.filter((p) => p.stock === 0 || p.category === 'Wall Art').length;
+
   return (
-    <div className="min-h-screen bg-linen">
+    <div className="min-h-screen bg-linen selection:bg-terra selection:text-linen">
       <Navbar />
 
-      <header className="page-header" style={{ marginTop: '60px' }}>
-        <div className="page-header-bg">SHOP</div>
-        <div className="dark-grid"></div>
+      {/* Main Page Container starting flush below Navbar (58px) */}
+      <div className="pt-[58px]">
+        <FestiveBanner />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+        {/* Editorial Studio Brown Header */}
+        <header className="relative border-b-1.5 border-charcoal bg-[#18100C] text-linen overflow-hidden">
+          {/* Subtle Background Watermark */}
+          <div
+            className="absolute right-[-10px] top-[-20px] font-sans text-[110px] sm:text-[160px] lg:text-[210px] font-black tracking-tighter text-transparent select-none pointer-events-none z-0"
+            style={{ WebkitTextStroke: '1px rgba(240, 235, 227, 0.05)' }}
+          >
+            VINYAS
+          </div>
+
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 px-6 md:px-16 py-10 lg:py-16">
+            {/* Left Content */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-terra/20 border border-terra/50 text-[#F5EFE6] text-[10px] font-bold tracking-widest uppercase mb-3.5 w-fit">
+                <span className="text-terra-pale">✦</span>
+                <span className="text-linen">Studio Vinyas · Ratangarh, Rajasthan</span>
+              </div>
+
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-linen leading-[1.1] tracking-tight">
+                Handcrafted Artworks &amp;
+                <br />
+                <em className="italic text-terra-pale font-normal">Bespoke Commissions.</em>
+              </h1>
+
+              <p className="text-xs sm:text-[13.5px] text-linen/80 leading-[1.75] mt-3 max-w-xl font-sans">
+                Explore original mixed-media creations — from bridal Varmala resin flower preservations and hand-drawn charcoal portraits to custom cafe murals and textured canvas paintings.
+              </p>
+
+              {/* Trust Micro-Badges */}
+              <div className="flex items-center gap-6 mt-6 pt-5 border-t border-linen/15 text-[11px] text-linen/70 font-sans flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-terra" />
+                  <span>100% Artist Handcrafted</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <HeartHandshake size={14} className="text-terra" />
+                  <span>Bespoke Personalization</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Palette size={14} className="text-terra" />
+                  <span>On-Site Murals &amp; Courier</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Metric Box & Fast Commission CTA */}
+            <div className="lg:col-span-5 flex flex-col justify-center lg:border-l-1.5 lg:border-linen/15 lg:pl-10">
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+                <div className="p-3 bg-linen/[0.04] border border-linen/15">
+                  <div className="font-serif text-2xl sm:text-3xl font-bold text-linen leading-none mb-1">
+                    {availableCount}
+                  </div>
+                  <div className="text-[9px] font-bold tracking-[0.14em] uppercase text-linen/70">
+                    Ready to Ship
+                  </div>
+                </div>
+
+                <div className="p-3 bg-linen/[0.04] border border-linen/15">
+                  <div className="font-serif text-2xl sm:text-3xl font-bold text-terra-pale leading-none mb-1">
+                    {bespokeCount}
+                  </div>
+                  <div className="text-[9px] font-bold tracking-[0.14em] uppercase text-linen/70">
+                    Bespoke / Murals
+                  </div>
+                </div>
+
+                <div className="p-3 bg-linen/[0.04] border border-linen/15">
+                  <div className="font-serif text-2xl sm:text-3xl font-bold text-linen leading-none mb-1">
+                    100%
+                  </div>
+                  <div className="text-[9px] font-bold tracking-[0.14em] uppercase text-linen/70">
+                    Authentic Art
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-terra/10 border border-terra/40 flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="text-xs font-bold text-linen">Have a custom request or Varmala?</div>
+                  <div className="text-[10px] text-linen/70">Get a direct quote with Anki Matolia</div>
+                </div>
+                <Link
+                  href="/commission"
+                  className="inline-flex items-center gap-1.5 bg-terra hover:bg-terra-dark text-linen text-[10px] font-bold tracking-wider uppercase px-3.5 py-2 border border-terra transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)]"
+                >
+                  <span>Commission Brief</span>
+                  <ArrowRight size={11} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Marquee Strip */}
+        <div className="border-b-1.5 border-charcoal bg-[#120B07] text-linen py-2.5 overflow-hidden select-none border-t border-linen/10">
+          <div className="marquee-inner flex whitespace-nowrap">
+            {[...Array(2)].map((_, i) => (
+              <span key={i} className="flex items-center gap-6 text-[9.5px] font-bold tracking-[0.2em] uppercase text-linen/80">
+                <span className="text-terra">✦ Studio Vinyas</span>
+                <span>Wedding Varmala Preservation</span>
+                <span className="text-terra">✦</span>
+                <span>Handmade Charcoal &amp; Graphite Portraits</span>
+                <span className="text-terra">✦</span>
+                <span>Cafe &amp; Restaurant Wall Murals</span>
+                <span className="text-terra">✦</span>
+                <span>Textured Canvas &amp; Pichwai Paintings</span>
+                <span className="text-terra">✦</span>
+                <span>Illuminated Bottle Art</span>
+                <span className="text-terra">✦</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Interactive Shop Catalog & Filters */}
+        <main className="w-full">
+          <ShopCatalog initialProducts={products} />
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-charcoal text-linen border-t-2 border-charcoal py-10 px-6 md:px-16 mt-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <div className="sec-label">The Collection</div>
-            <h1 className="page-header-title">
-              Original
-              <br />
-              <em>artworks.</em>
-            </h1>
-            <p className="text-[12.5px] text-linen/45 leading-[1.7] mt-4 max-w-[300px]">
-              Every piece is one of a kind — painted, inked, and made by hand in
-              a dusty studio in Jaipur.
+            <span className="font-serif text-xl font-bold tracking-tight text-linen block">
+              VINYAS <span className="text-terra text-xs">✦ Studio</span>
+            </span>
+            <p className="text-[11px] text-linen/60 font-sans mt-0.5">
+              By Anki Matolia · Ratangarh, Churu, Rajasthan
             </p>
           </div>
-
-          <div className="flex flex-col justify-center md:border-l md:border-terra/40 md:pl-12">
-            <div className="flex gap-12 mb-8">
-              <div>
-                <div className="font-serif text-[36px] font-bold text-linen leading-none mb-2">
-                  {products.filter((p) => p.stock > 0).length}
-                </div>
-                <div className="text-[9px] font-bold tracking-[0.18em] uppercase text-linen/35">
-                  Available
-                </div>
-              </div>
-              <div>
-                <div className="font-serif text-[36px] font-bold text-linen leading-none mb-2">
-                  {products.filter((p) => p.stock === 0).length}
-                </div>
-                <div className="text-[9px] font-bold tracking-[0.18em] uppercase text-linen/35">
-                  Sold
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-6 border-t border-linen/10">
-              <div className="text-[10px] font-bold tracking-[0.18em] uppercase text-linen/35 mb-4">
-                Browse by medium
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {['Watercolour', 'Oil', 'Ink', 'Acrylic', 'Mixed Media'].map(
-                  (m, idx) => (
-                    <button
-                      key={m}
-                      className={`text-[8px] font-bold tracking-[0.1em] uppercase px-[14px] py-[6px] border transition-colors ${idx === 0 ? 'bg-terra border-terra text-linen' : 'border-linen/20 text-linen/45 hover:bg-terra hover:border-terra hover:text-linen'}`}
-                    >
-                      {m}
-                    </button>
-                  ),
-                )}
-              </div>
-            </div>
+          <div className="flex items-center gap-6 text-[11px] tracking-wider uppercase text-linen/70 font-sans">
+            <Link href="/portfolio" className="hover:text-terra transition-colors">3D Gallery</Link>
+            <Link href="/commission" className="hover:text-terra transition-colors">Commissions</Link>
+            <Link href="/about" className="hover:text-terra transition-colors">About Anki</Link>
+            <Link href="/cart" className="hover:text-terra transition-colors font-bold text-terra">Cart</Link>
           </div>
-        </div>
-      </header>
-
-      {/* Marquee */}
-      <div className="marquee">
-        <div className="marquee-inner">
-          {[...Array(2)].map((_, i) => (
-            <span key={i} className="flex">
-              <span className="marquee-item">Original Paintings</span>
-              <span className="marquee-sep">✦</span>
-              <span className="marquee-item">Custom Commissions</span>
-              <span className="marquee-sep">✦</span>
-              <span className="marquee-item">Handmade Goods</span>
-              <span className="marquee-sep">✦</span>
-              <span className="marquee-item">Watercolour Art</span>
-              <span className="marquee-sep">✦</span>
-              <span className="marquee-item">Ink Illustrations</span>
-              <span className="marquee-sep">✦</span>
-              <span className="marquee-item">Limited Editions</span>
-              <span className="marquee-sep">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="shop-filter-bar !top-[59px]">
-        <div className="filter-pills">
-          <button className="filter-pill active">All</button>
-          <button className="filter-pill">Watercolour</button>
-          <button className="filter-pill">Oil</button>
-          <button className="filter-pill">Ink</button>
-          <button className="filter-pill">Acrylic</button>
-          <button className="filter-pill">Mixed Media</button>
-        </div>
-        <div className="sort-dropdown">
-          Sort:
-          <select className="bg-transparent border-none outline-none font-bold cursor-none appearance-none font-sans text-[10px] tracking-wider uppercase text-charcoal">
-            <option value="newest">Newest First</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Shop Grid Section */}
-      <section className="section !py-[120px]">
-        <div className="section-header">
-          <div>
-            <div className="sec-label">The Collection</div>
-            <h2 className="section-heading">
-              Available <em>Works.</em>
-            </h2>
-          </div>
-          <p className="text-[14px] font-serif italic text-charcoal/45">
-            {products.length} Pieces
-          </p>
-        </div>
-
-        <div className="product-grid">
-          {products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={{
-                ...product,
-                image: product.images[0] || '/placeholder.jpg',
-              }}
-              priority={index === 0}
-            />
-          ))}
-        </div>
-
-        {/* Commission Nudge */}
-        <div className="px-16 mt-12">
-          <div className="cta-banner reveal visible">
-            <div className="cta-text">
-              <h4>Looking for something specific?</h4>
-              <p>
-                Open for custom ink commissions. Limited slots available this
-                month.
-              </p>
-            </div>
-            <Link
-              href="/#commission"
-              className="btn-outline flex items-center gap-2 text-[10px]"
-            >
-              Request Commission <ArrowRight size={12} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Basic Footer */}
-      <footer className="bg-deep border-t border-linen/[0.07] py-[52px] px-16">
-        <div className="footer-bottom">
-          <p className="footer-copy">
-            © {new Date().getFullYear()} Inkbloom Studio. All rights reserved.
+          <p className="text-[10px] text-linen/40 font-mono">
+            © {new Date().getFullYear()} Studio Vinyas. Handcrafted with soul.
           </p>
         </div>
       </footer>

@@ -1,137 +1,437 @@
 "use client";
 
-import { MeshReflectorMaterial } from "@react-three/drei";
+import { useMemo, useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Text } from "@react-three/drei";
 import * as THREE from "three";
+import { getWoodFloorTextures } from "./woodTexture";
+import { getGalleryWallTextures } from "./wallTexture";
 
 export function Corridor() {
+  const { camera } = useThree();
   const HALL_WIDTH = 6;
   const HALL_HEIGHT = 4.0;
-  const LENGTH = 32;
+  const LENGTH = 30.5;
+  const CENTER_Z = -12.75; // Gallery spans from Z = +2.5 (entrance) to Z = -28.0 (studio door)
+
+  const woodTextures = useMemo(() => getWoodFloorTextures(), []);
+  const wallTextures = useMemo(() => getGalleryWallTextures(), []);
+
+  // Panel positions for classical boiserie wainscoting along side walls
+  const panelZPositions = useMemo(() => {
+    const pos = [];
+    for (let z = 1.2; z >= -26.5; z -= 2.6) {
+      pos.push(z);
+    }
+    return pos;
+  }, []);
+
+  // Dynamic Camera-Tracking Incandescent Lights
+  const overheadLightRef = useRef<THREE.PointLight>(null!);
+  const forwardLightRef = useRef<THREE.PointLight>(null!);
+
+  useFrame(() => {
+    const camZ = camera.position.z;
+    if (overheadLightRef.current) {
+      overheadLightRef.current.position.set(0, 3.2, THREE.MathUtils.clamp(camZ - 1.0, -26, 2));
+    }
+    if (forwardLightRef.current) {
+      forwardLightRef.current.position.set(0, 3.2, THREE.MathUtils.clamp(camZ - 7.0, -26, 2));
+    }
+  });
 
   return (
     <group>
-      {/* Warm ambient fill */}
-      <ambientLight intensity={0.55} color="#FFF5E0" />
+      {/* 1. Atmospheric Dim Warm Ambient Fill (Moodier, High-Contrast Fine Art Setting) */}
+      <ambientLight intensity={0.16} color="#FFE8D0" />
 
-      {/* Ceiling track lights — 5 fixtures down the corridor */}
-      {[-4, -10, -16, -22, -28].map((z) => (
-        <group key={`light-${z}`} position={[0, HALL_HEIGHT - 0.15, z]}>
-          <mesh rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.18, 16]} />
-            <meshStandardMaterial emissive="#FFF5E0" emissiveIntensity={3} color="#FFF5E0" />
+      {/* Dimmed Key Light 1: Soft overhead bay illumination following the viewer */}
+      <pointLight 
+        ref={overheadLightRef}
+        position={[0, 3.2, 0.5]} 
+        intensity={1.0} 
+        color="#FFE0B2" 
+        distance={12} 
+        decay={2} 
+      />
+
+      {/* Dimmed Key Light 2: Soft forward corridor wash */}
+      <pointLight 
+        ref={forwardLightRef}
+        position={[0, 3.2, -6]} 
+        intensity={0.75} 
+        color="#FFDEAB" 
+        distance={14} 
+        decay={2} 
+      />
+
+      {/* 2. Vintage 90s Brass & Fluted Milk-Glass Pendants down the Corridor (Soft Dimmed Filament) */}
+      {[-1, -7, -13, -19, -25].map((z) => (
+        <group key={`pendant-${z}`} position={[0, HALL_HEIGHT, z]}>
+          {/* Coffered ceiling cross-beam */}
+          <mesh position={[0, -0.09, 0]}>
+            <boxGeometry args={[HALL_WIDTH + 0.1, 0.18, 0.35]} />
+            <meshStandardMaterial color="#2E1C12" roughness={0.7} />
           </mesh>
-          <mesh position={[0, 0.06, 0]}>
-            <boxGeometry args={[0.22, 0.12, 0.22]} />
-            <meshStandardMaterial color="#D8D0C8" roughness={0.9} />
+
+          {/* Brass ceiling canopy rose */}
+          <mesh position={[0, -0.19, 0]}>
+            <cylinderGeometry args={[0.14, 0.14, 0.04, 16]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
           </mesh>
-          <pointLight intensity={3} color="#FFF5E0" distance={12} castShadow={false} />
+
+          {/* Brass suspension rod */}
+          <mesh position={[0, -0.42, 0]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.45, 12]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+          </mesh>
+
+          {/* Vintage Fluted Milk-Glass Lantern Shade */}
+          <mesh position={[0, -0.72, 0]}>
+            <cylinderGeometry args={[0.16, 0.32, 0.22, 16]} />
+            <meshStandardMaterial 
+              color="#FFF5E8" 
+              roughness={0.3} 
+              transparent 
+              opacity={0.85} 
+            />
+          </mesh>
+
+          {/* Brass Shade Cap & Finial */}
+          <mesh position={[0, -0.6, 0]}>
+            <cylinderGeometry args={[0.08, 0.16, 0.04, 16]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+          </mesh>
+
+          {/* Soft Vintage Tungsten Filament Bulb */}
+          <mesh position={[0, -0.74, 0]}>
+            <sphereGeometry args={[0.065, 14, 14]} />
+            <meshStandardMaterial 
+              color="#FFA228" 
+              emissive="#FFA228" 
+              emissiveIntensity={2.2} 
+            />
+          </mesh>
         </group>
       ))}
 
-      {/* Side accent lights — cover all 8 painting slots (z: -3 to -24) */}
-      {[-3, -6, -9, -12, -15, -18, -21, -24].map((z) => (
-        <group key={`accent-${z}`}>
-          <pointLight position={[-HALL_WIDTH / 2 + 0.6, 2.6, z]} intensity={2.0} color="#FFE8D0" distance={4} />
-          <pointLight position={[ HALL_WIDTH / 2 - 0.6, 2.6, z]} intensity={2.0} color="#FFE8D0" distance={4} />
-        </group>
-      ))}
-
-      {/* Floor — warm reflective wood.
-          Resolution lowered 512→256 for faster FBO render. */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, -LENGTH / 2 + 1]}>
+      {/* 4. Floor — Realistic Polished Hardwood Parquet with Warm Specular Highlights (60fps PBR) */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0, CENTER_Z]}>
         <planeGeometry args={[HALL_WIDTH, LENGTH]} />
-        <MeshReflectorMaterial
-          mirror={0.1}
-          blur={[256, 64]}
-          resolution={256}
-          mixBlur={8}
-          mixStrength={0.2}
-          roughness={0.7}
-          depthScale={1.0}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.4}
-          color="#C4A882"
-          metalness={0.03}
+        <meshStandardMaterial
+          map={woodTextures.colorMap}
+          roughnessMap={woodTextures.roughnessMap}
+          bumpMap={woodTextures.bumpMap}
+          bumpScale={0.035}
+          roughness={0.42}
+          metalness={0.05}
         />
       </mesh>
 
-      {/* Ceiling */}
-      <mesh rotation-x={Math.PI / 2} position={[0, HALL_HEIGHT, -LENGTH / 2 + 1]}>
+      {/* 5. Ceiling — Heritage Parchment with Coffered Beams */}
+      <mesh rotation-x={Math.PI / 2} position={[0, HALL_HEIGHT, CENTER_Z]}>
         <planeGeometry args={[HALL_WIDTH, LENGTH]} />
-        <meshStandardMaterial color="#E8E0D6" roughness={0.92} />
+        <meshStandardMaterial color="#E8E0D2" roughness={0.92} />
       </mesh>
 
+      {/* Longitudinal ceiling cornice beams along left & right edges */}
+      <mesh position={[-HALL_WIDTH / 2 + 0.12, HALL_HEIGHT - 0.08, CENTER_Z]}>
+        <boxGeometry args={[0.24, 0.16, LENGTH]} />
+        <meshStandardMaterial color="#2E1C12" roughness={0.75} />
+      </mesh>
+      <mesh position={[HALL_WIDTH / 2 - 0.12, HALL_HEIGHT - 0.08, CENTER_Z]}>
+        <boxGeometry args={[0.24, 0.16, LENGTH]} />
+        <meshStandardMaterial color="#2E1C12" roughness={0.75} />
+      </mesh>
+
+      {/* 6. Side Walls — Authentic Venetian Plaster / Lime Wash */}
       {/* Left wall */}
-      <mesh position={[-HALL_WIDTH / 2, HALL_HEIGHT / 2, -LENGTH / 2 + 1]} rotation-y={Math.PI / 2}>
+      <mesh position={[-HALL_WIDTH / 2, HALL_HEIGHT / 2, CENTER_Z]} rotation-y={Math.PI / 2}>
         <planeGeometry args={[LENGTH, HALL_HEIGHT]} />
-        <meshStandardMaterial color="#EDE6DC" roughness={0.95} side={THREE.DoubleSide} />
+        <meshStandardMaterial 
+          map={wallTextures.colorMap}
+          bumpMap={wallTextures.bumpMap}
+          bumpScale={0.032}
+          roughnessMap={wallTextures.roughnessMap}
+          roughness={0.9}
+          color="#FFFDF9" 
+          side={THREE.DoubleSide} 
+        />
       </mesh>
 
       {/* Right wall */}
-      <mesh position={[HALL_WIDTH / 2, HALL_HEIGHT / 2, -LENGTH / 2 + 1]} rotation-y={-Math.PI / 2}>
+      <mesh position={[HALL_WIDTH / 2, HALL_HEIGHT / 2, CENTER_Z]} rotation-y={-Math.PI / 2}>
         <planeGeometry args={[LENGTH, HALL_HEIGHT]} />
-        <meshStandardMaterial color="#EDE6DC" roughness={0.95} side={THREE.DoubleSide} />
+        <meshStandardMaterial 
+          map={wallTextures.colorMap}
+          bumpMap={wallTextures.bumpMap}
+          bumpScale={0.032}
+          roughnessMap={wallTextures.roughnessMap}
+          roughness={0.9}
+          color="#FFFDF9" 
+          side={THREE.DoubleSide} 
+        />
       </mesh>
 
-      {/* Back wall (entrance) */}
-      <mesh position={[0, HALL_HEIGHT / 2, 1]}>
-        <planeGeometry args={[HALL_WIDTH, HALL_HEIGHT]} />
-        <meshStandardMaterial color="#EDE6DC" roughness={0.95} />
+      {/* 7. CLASSICAL 90s VINTAGE WAINSCOTING ALONG SIDE WALLS (Bottom 1.1m) */}
+      {/* Left Wainscot Body */}
+      <mesh position={[-HALL_WIDTH / 2 + 0.02, 0.54, CENTER_Z]}>
+        <boxGeometry args={[0.04, 1.08, LENGTH]} />
+        <meshStandardMaterial color="#382216" roughness={0.65} />
+      </mesh>
+      {/* Right Wainscot Body */}
+      <mesh position={[HALL_WIDTH / 2 - 0.02, 0.54, CENTER_Z]}>
+        <boxGeometry args={[0.04, 1.08, LENGTH]} />
+        <meshStandardMaterial color="#382216" roughness={0.65} />
       </mesh>
 
-      {/* End wall */}
-      <mesh position={[0, HALL_HEIGHT / 2, -LENGTH + 2]} rotation-y={Math.PI}>
-        <planeGeometry args={[HALL_WIDTH, HALL_HEIGHT]} />
-        <meshStandardMaterial color="#EDE6DC" roughness={0.95} />
+      {/* Classical Boiserie Wainscoting Panels down the Side Walls */}
+      {panelZPositions.map((z) => (
+        <group key={`boiserie-${z}`}>
+          {/* Left wall recessed boiserie panel */}
+          <group position={[-HALL_WIDTH / 2 + 0.045, 0.55, z]}>
+            <mesh>
+              <boxGeometry args={[0.015, 0.72, 1.85]} />
+              <meshStandardMaterial color="#2B1810" roughness={0.7} />
+            </mesh>
+            <mesh position={[0.006, 0, 0]}>
+              <boxGeometry args={[0.01, 0.62, 1.72]} />
+              <meshStandardMaterial color="#442A1B" roughness={0.6} />
+            </mesh>
+          </group>
+
+          {/* Right wall recessed boiserie panel */}
+          <group position={[HALL_WIDTH / 2 - 0.045, 0.55, z]}>
+            <mesh>
+              <boxGeometry args={[0.015, 0.72, 1.85]} />
+              <meshStandardMaterial color="#2B1810" roughness={0.7} />
+            </mesh>
+            <mesh position={[-0.006, 0, 0]}>
+              <boxGeometry args={[0.01, 0.62, 1.72]} />
+              <meshStandardMaterial color="#442A1B" roughness={0.6} />
+            </mesh>
+          </group>
+        </group>
+      ))}
+
+      {/* Polished Brass Chair Rail (Dado Cap) at y = 1.08m along side walls */}
+      <mesh position={[-HALL_WIDTH / 2 + 0.042, 1.08, CENTER_Z]}>
+        <boxGeometry args={[0.028, 0.045, LENGTH]} />
+        <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+      </mesh>
+      <mesh position={[-HALL_WIDTH / 2 + 0.03, 1.06, CENTER_Z]}>
+        <boxGeometry args={[0.05, 0.06, LENGTH]} />
+        <meshStandardMaterial color="#2B1810" roughness={0.7} />
+      </mesh>
+      <mesh position={[HALL_WIDTH / 2 - 0.042, 1.08, CENTER_Z]}>
+        <boxGeometry args={[0.028, 0.045, LENGTH]} />
+        <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+      </mesh>
+      <mesh position={[HALL_WIDTH / 2 - 0.03, 1.06, CENTER_Z]}>
+        <boxGeometry args={[0.05, 0.06, LENGTH]} />
+        <meshStandardMaterial color="#2B1810" roughness={0.7} />
       </mesh>
 
-      {/* Wainscot rail — left */}
-      <mesh position={[-HALL_WIDTH / 2 + 0.02, 0.95, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.07, LENGTH]} />
-        <meshStandardMaterial color="#2D2D2D" transparent opacity={0.55} roughness={0.7} />
+      {/* Classical Skirting Baseboards along side walls */}
+      <mesh position={[-HALL_WIDTH / 2 + 0.035, 0.07, CENTER_Z]}>
+        <boxGeometry args={[0.06, 0.14, LENGTH]} />
+        <meshStandardMaterial color="#24140C" roughness={0.8} />
+      </mesh>
+      <mesh position={[HALL_WIDTH / 2 - 0.035, 0.07, CENTER_Z]}>
+        <boxGeometry args={[0.06, 0.14, LENGTH]} />
+        <meshStandardMaterial color="#24140C" roughness={0.8} />
       </mesh>
 
-      {/* Wainscot rail — right */}
-      <mesh position={[HALL_WIDTH / 2 - 0.02, 0.95, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.07, LENGTH]} />
-        <meshStandardMaterial color="#2D2D2D" transparent opacity={0.55} roughness={0.7} />
-      </mesh>
+      {/* 8. ENTRANCE WALL ARCHITECTURE (Behind user at start of gallery, Z = +2.5) */}
+      <group position={[0, 0, 2.5]}>
+        {/* Full Venetian plaster wall surface */}
+        <mesh position={[0, HALL_HEIGHT / 2, 0]} rotation-y={Math.PI}>
+          <planeGeometry args={[HALL_WIDTH, HALL_HEIGHT]} />
+          <meshStandardMaterial 
+            map={wallTextures.colorMap}
+            bumpMap={wallTextures.bumpMap}
+            bumpScale={0.032}
+            roughnessMap={wallTextures.roughnessMap}
+            roughness={0.9}
+            color="#FFFDF9" 
+            side={THREE.DoubleSide}
+          />
+        </mesh>
 
-      {/* Wainscot panel — left */}
-      <mesh position={[-HALL_WIDTH / 2 + 0.01, 0.47, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.02, 0.94, LENGTH]} />
-        <meshStandardMaterial color="#E0D8CE" roughness={0.98} />
-      </mesh>
+        {/* Grand Mahogany Double Entrance Doors with Heavy Architrave */}
+        <group position={[0, 1.4, -0.04]}>
+          {/* Heavy timber casing */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[2.3, 2.85, 0.1]} />
+            <meshStandardMaterial color="#2B1810" roughness={0.75} />
+          </mesh>
+          {/* Left door leaf */}
+          <mesh position={[-0.54, 0, 0.04]}>
+            <boxGeometry args={[1.02, 2.68, 0.045]} />
+            <meshStandardMaterial color="#3E2413" roughness={0.65} />
+          </mesh>
+          {/* Right door leaf */}
+          <mesh position={[0.54, 0, 0.04]}>
+            <boxGeometry args={[1.02, 2.68, 0.045]} />
+            <meshStandardMaterial color="#3E2413" roughness={0.65} />
+          </mesh>
+          {/* Left door boiserie panels */}
+          <mesh position={[-0.54, 0.52, 0.065]}>
+            <boxGeometry args={[0.8, 0.96, 0.015]} />
+            <meshStandardMaterial color="#4E2E18" roughness={0.6} />
+          </mesh>
+          <mesh position={[-0.54, -0.54, 0.065]}>
+            <boxGeometry args={[0.8, 0.86, 0.015]} />
+            <meshStandardMaterial color="#4E2E18" roughness={0.6} />
+          </mesh>
+          {/* Right door boiserie panels */}
+          <mesh position={[0.54, 0.52, 0.065]}>
+            <boxGeometry args={[0.8, 0.96, 0.015]} />
+            <meshStandardMaterial color="#4E2E18" roughness={0.6} />
+          </mesh>
+          <mesh position={[0.54, -0.54, 0.065]}>
+            <boxGeometry args={[0.8, 0.86, 0.015]} />
+            <meshStandardMaterial color="#4E2E18" roughness={0.6} />
+          </mesh>
+          {/* Polished brass kickplates */}
+          <mesh position={[-0.54, -1.22, 0.07]}>
+            <boxGeometry args={[0.92, 0.22, 0.01]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.25} />
+          </mesh>
+          <mesh position={[0.54, -1.22, 0.07]}>
+            <boxGeometry args={[0.92, 0.22, 0.01]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.25} />
+          </mesh>
+          {/* Polished brass entrance handles */}
+          <mesh position={[-0.08, 0.02, 0.09]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.26, 12]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.2} />
+          </mesh>
+          <mesh position={[0.08, 0.02, 0.09]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.26, 12]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.2} />
+          </mesh>
+          {/* Engraved brass museum entrance plaque above double doors */}
+          <mesh position={[0, 1.58, 0.06]}>
+            <boxGeometry args={[1.5, 0.22, 0.02]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.24} />
+          </mesh>
+        </group>
 
-      {/* Wainscot panel — right */}
-      <mesh position={[HALL_WIDTH / 2 - 0.01, 0.47, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.02, 0.94, LENGTH]} />
-        <meshStandardMaterial color="#E0D8CE" roughness={0.98} />
-      </mesh>
+        {/* Text on entrance plaque */}
+        <Text
+          position={[0, 3.03, -0.09]}
+          rotation-y={Math.PI}
+          fontSize={0.068}
+          color="#1A1209"
+          fontStyle="italic"
+          letterSpacing={0.08}
+        >
+          VINYAS GALLERY · MAIN FOYER
+        </Text>
+        <Text
+          position={[0, 2.92, -0.09]}
+          rotation-y={Math.PI}
+          fontSize={0.034}
+          color="#3D2617"
+          letterSpacing={0.16}
+        >
+          CURATED COLLECTION · SALON ENTRANCE
+        </Text>
 
-      {/* Skirting board — left */}
-      <mesh position={[-HALL_WIDTH / 2 + 0.02, 0.06, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.12, LENGTH]} />
-        <meshStandardMaterial color="#2D2D2D" transparent opacity={0.4} />
-      </mesh>
+        {/* Boiserie Wainscoting flanking entrance doors on Left & Right */}
+        {/* Left wainscot section */}
+        <mesh position={[-2.05, 0.54, -0.02]}>
+          <boxGeometry args={[1.8, 1.08, 0.04]} />
+          <meshStandardMaterial color="#382216" roughness={0.65} />
+        </mesh>
+        <mesh position={[-2.05, 0.55, -0.045]}>
+          <boxGeometry args={[1.4, 0.72, 0.015]} />
+          <meshStandardMaterial color="#2B1810" roughness={0.7} />
+        </mesh>
+        <mesh position={[-2.05, 1.08, -0.042]}>
+          <boxGeometry args={[1.8, 0.045, 0.028]} />
+          <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+        </mesh>
+        <mesh position={[-2.05, 0.07, -0.035]}>
+          <boxGeometry args={[1.8, 0.14, 0.06]} />
+          <meshStandardMaterial color="#24140C" roughness={0.8} />
+        </mesh>
 
-      {/* Skirting board — right */}
-      <mesh position={[HALL_WIDTH / 2 - 0.02, 0.06, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.12, LENGTH]} />
-        <meshStandardMaterial color="#2D2D2D" transparent opacity={0.4} />
-      </mesh>
+        {/* Right wainscot section */}
+        <mesh position={[2.05, 0.54, -0.02]}>
+          <boxGeometry args={[1.8, 1.08, 0.04]} />
+          <meshStandardMaterial color="#382216" roughness={0.65} />
+        </mesh>
+        <mesh position={[2.05, 0.55, -0.045]}>
+          <boxGeometry args={[1.4, 0.72, 0.015]} />
+          <meshStandardMaterial color="#2B1810" roughness={0.7} />
+        </mesh>
+        <mesh position={[2.05, 1.08, -0.042]}>
+          <boxGeometry args={[1.8, 0.045, 0.028]} />
+          <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+        </mesh>
+        <mesh position={[2.05, 0.07, -0.035]}>
+          <boxGeometry args={[1.8, 0.14, 0.06]} />
+          <meshStandardMaterial color="#24140C" roughness={0.8} />
+        </mesh>
+      </group>
 
-      {/* Crown moulding — left */}
-      <mesh position={[-HALL_WIDTH / 2 + 0.02, HALL_HEIGHT - 0.06, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.12, LENGTH]} />
-        <meshStandardMaterial color="#D8D0C8" roughness={0.9} />
-      </mesh>
+      {/* 9. DOOR WALL ARCHITECTURE (Flanking & Backing the Studio Door at Z = -28.0) */}
+      <group position={[0, 0, -28.0]}>
+        {/* Full Venetian plaster wall surface flush behind door frame */}
+        <mesh position={[0, HALL_HEIGHT / 2, 0]} rotation-y={0}>
+          <planeGeometry args={[HALL_WIDTH, HALL_HEIGHT]} />
+          <meshStandardMaterial 
+            map={wallTextures.colorMap}
+            bumpMap={wallTextures.bumpMap}
+            bumpScale={0.032}
+            roughnessMap={wallTextures.roughnessMap}
+            roughness={0.9}
+            color="#FFFDF9" 
+            side={THREE.DoubleSide}
+          />
+        </mesh>
 
-      {/* Crown moulding — right */}
-      <mesh position={[HALL_WIDTH / 2 - 0.02, HALL_HEIGHT - 0.06, -LENGTH / 2 + 1]}>
-        <boxGeometry args={[0.04, 0.12, LENGTH]} />
-        <meshStandardMaterial color="#D8D0C8" roughness={0.9} />
-      </mesh>
+        {/* Boiserie Wainscoting flanking the Studio Door on Left & Right */}
+        {/* Left section (from x = -3 to -0.85) */}
+        <mesh position={[-1.95, 0.54, 0.02]}>
+          <boxGeometry args={[2.1, 1.08, 0.04]} />
+          <meshStandardMaterial color="#382216" roughness={0.65} />
+        </mesh>
+        <mesh position={[-1.95, 0.55, 0.045]}>
+          <boxGeometry args={[1.65, 0.72, 0.015]} />
+          <meshStandardMaterial color="#2B1810" roughness={0.7} />
+        </mesh>
+        <mesh position={[-1.95, 1.08, 0.042]}>
+          <boxGeometry args={[2.1, 0.045, 0.028]} />
+          <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+        </mesh>
+        <mesh position={[-1.95, 0.07, 0.035]}>
+          <boxGeometry args={[2.1, 0.14, 0.06]} />
+          <meshStandardMaterial color="#24140C" roughness={0.8} />
+        </mesh>
+
+        {/* Right section (from x = +0.85 to +3) */}
+        <mesh position={[1.95, 0.54, 0.02]}>
+          <boxGeometry args={[2.1, 1.08, 0.04]} />
+          <meshStandardMaterial color="#382216" roughness={0.65} />
+        </mesh>
+        <mesh position={[1.95, 0.55, 0.045]}>
+          <boxGeometry args={[1.65, 0.72, 0.015]} />
+          <meshStandardMaterial color="#2B1810" roughness={0.7} />
+        </mesh>
+        <mesh position={[1.95, 1.08, 0.042]}>
+          <boxGeometry args={[2.1, 0.045, 0.028]} />
+          <meshStandardMaterial color="#D4AF37" metalness={0.88} roughness={0.22} />
+        </mesh>
+        <mesh position={[1.95, 0.07, 0.035]}>
+          <boxGeometry args={[2.1, 0.14, 0.06]} />
+          <meshStandardMaterial color="#24140C" roughness={0.8} />
+        </mesh>
+      </group>
     </group>
   );
 }
+
+

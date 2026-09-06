@@ -44,6 +44,9 @@ export async function createProduct(formData: FormData) {
     });
 
     revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    revalidatePath("/portfolio");
+    revalidatePath("/");
     redirect("/admin/products");
   } catch (error) {
     console.error("Failed to create product:", error);
@@ -81,6 +84,9 @@ export async function updateProduct(productId: string, formData: FormData) {
     });
 
     revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    revalidatePath("/portfolio");
+    revalidatePath("/");
     redirect("/admin/products");
   } catch (error) {
     console.error("Failed to update product:", error);
@@ -95,6 +101,9 @@ export async function deleteProduct(productId: string) {
       where: { id: productId },
     });
     revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    revalidatePath("/portfolio");
+    revalidatePath("/");
   } catch (error) {
     console.error("Failed to delete product:", error);
   }

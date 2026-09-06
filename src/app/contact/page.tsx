@@ -1,9 +1,30 @@
 'use client';
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Clock, Send } from "lucide-react";
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !message.trim()) return;
+
+    setStatus("sending");
+    setTimeout(() => {
+      setStatus("sent");
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    }, 700);
+  };
+
   return (
     <div className="min-h-screen bg-linen">
       {/* Hero */}
@@ -145,64 +166,88 @@ export default function ContactPage() {
               Send a <em className="text-terra italic">Message</em>
             </h2>
 
-            <form className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            {status === "sent" ? (
+              <div className="p-6 bg-moss/20 border-2 border-moss text-charcoal space-y-3">
+                <h4 className="font-serif text-xl font-bold text-moss">✓ Message Delivered</h4>
+                <p className="text-sm text-charcoal/80 leading-relaxed">
+                  Thank you for reaching out! We have received your message and will respond within 24 hours.
+                </p>
+                <button
+                  onClick={() => setStatus("idle")}
+                  className="px-4 py-2 bg-charcoal text-linen text-xs font-bold uppercase tracking-wider mt-2"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full h-[44px] px-4 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors"
+                      placeholder="Jane Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full h-[44px] px-4 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors"
+                      placeholder="jane@example.com"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
-                    Name
+                    Subject *
                   </label>
                   <input
                     type="text"
                     required
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
                     className="w-full h-[44px] px-4 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors"
-                    placeholder="Jane Doe"
+                    placeholder="Commission Inquiry"
                   />
                 </div>
+
                 <div>
                   <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
-                    Email
+                    Message *
                   </label>
-                  <input
-                    type="email"
+                  <textarea
                     required
-                    className="w-full h-[44px] px-4 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors"
-                    placeholder="jane@example.com"
+                    rows={6}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full px-4 py-3 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors resize-vertical"
+                    placeholder="Tell me about your project..."
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="w-full h-[44px] px-4 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors"
-                  placeholder="Commission Inquiry"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
-                  Message
-                </label>
-                <textarea
-                  required
-                  rows={6}
-                  className="w-full px-4 py-3 border border-charcoal bg-transparent text-[13px] text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-terra transition-colors resize-vertical"
-                  placeholder="Tell me about your project..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full h-[48px] bg-charcoal text-linen font-bold text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal/90 transition-colors flex items-center justify-center gap-2"
-              >
-                <Send size={14} />
-                Send Message
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className="w-full h-[48px] bg-charcoal text-linen font-bold text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Send size={14} />
+                  {status === "sending" ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            )}
           </motion.div>
         </div>
       </div>

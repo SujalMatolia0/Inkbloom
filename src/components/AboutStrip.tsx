@@ -1,8 +1,8 @@
 export function AboutStrip() {
   const cells = [
-    { label: 'Medium', title: 'Ink & Oil', body: 'Watercolour, ink, acrylic & mixed media — every piece is one of a kind.' },
-    { label: 'Location', title: 'Jaipur', body: 'Crafted in a sun-drenched studio in the Pink City of Rajasthan.' },
-    { label: 'Turnaround', title: '2–4 wks', body: 'Each commission is lovingly made to order with regular progress updates.' },
+    { label: 'Medium', title: 'Mixed Media', body: 'From wall art and portraits to murti painting and handcrafted gifts — every piece is made with intention and heart.' },
+    { label: 'Location', title: 'Ratangarh', body: "Crafted in a warm studio in Ratangarh, Churu — where Rajasthan's earthy spirit finds its way into every stroke." },
+    { label: 'Turnaround', title: 'Made to Order', body: 'Each commission is crafted personally by Anki, with progress shared along the way.' },
   ];
 
   return (

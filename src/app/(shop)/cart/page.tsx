@@ -12,9 +12,15 @@ import {
   ShoppingBag,
   Shield,
   Truck,
-  RotateCcw,
+  Tag,
+  Sparkles,
+  X,
+  Check,
+  AlertCircle,
+  ArrowRight,
 } from 'lucide-react';
 import { Navbar } from '@/components/ui/Navbar';
+import { FestiveBanner } from '@/components/shop/FestiveBanner';
 
 const loadScript = (src: string) => {
   return new Promise((resolve) => {
@@ -29,13 +35,90 @@ const loadScript = (src: string) => {
 export default function CartPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems } =
-    useCartStore();
+  const {
+    items,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    getTotalPrice,
+    getTotalItems,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
+    getDiscountAmount,
+    getFinalTotal,
+  } = useCartStore();
+
   const [isProcessing, setIsProcessing] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponFeedback, setCouponFeedback] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
+
+  const subtotal = getTotalPrice();
+  const discount = getDiscountAmount();
+  const finalTotal = getFinalTotal();
+
+  const handleApplyCoupon = async (codeOverride?: string) => {
+    const targetCode = (codeOverride || couponInput).trim().toUpperCase();
+    if (!targetCode) return;
+
+    setCouponLoading(true);
+    setCouponFeedback(null);
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: targetCode,
+          cartTotal: subtotal,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.valid) {
+        setCouponFeedback({
+          text: data.message || 'Invalid or expired coupon.',
+          isError: true,
+        });
+      } else {
+        applyCoupon({
+          code: data.code,
+          description: data.description,
+          discountType: data.discountType,
+          discountValue: data.discountValue,
+          discountAmount: data.discountAmount,
+          festivalName: data.festivalName,
+          minOrderAmount: data.minOrderAmount,
+        });
+        setCouponFeedback({
+          text: `Applied: Saved ₹${data.discountAmount.toLocaleString('en-IN')}`,
+          isError: false,
+        });
+        setCouponInput('');
+      }
+    } catch (err) {
+      setCouponFeedback({
+        text: 'Network error validating coupon. Please try again.',
+        isError: true,
+      });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   const handleCheckout = async () => {
     if (!session?.user) {
       router.push('/login?callbackUrl=/cart');
+      return;
+    }
+
+    if (items.length === 0) {
+      alert('Your cart is empty.');
       return;
     }
 
@@ -51,12 +134,10 @@ export default function CartPage() {
         return;
       }
 
-      const totalPrice = getTotalPrice();
-
       const orderRes = await fetch('/api/checkout/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: totalPrice, currency: 'INR' }),
+        body: JSON.stringify({ amount: finalTotal, currency: 'INR' }),
       });
       const order = await orderRes.json();
 
@@ -71,20 +152,23 @@ export default function CartPage() {
           body: JSON.stringify({
             razorpay_order_id: order.id,
             razorpay_payment_id: 'pay_demo_' + Math.random().toString(36).substring(7),
-            razorpay_signature: 'demo_signature', // The backend needs to handle this
+            razorpay_signature: 'demo_signature',
             userId: session.user?.id,
             items: items.map((item) => ({
               productId: item.id,
               quantity: item.quantity,
               price: item.price,
             })),
-            total: totalPrice,
-            address: 'Demo Collection Address',
+            total: finalTotal,
+            couponCode: appliedCoupon?.code || null,
+            discount: discount,
+            address: 'Studio Vinyas Collector Address',
           }),
         });
         const verify = await verifyRes.json();
 
         if (verify.verified) {
+          clearCart();
           router.push(`/shop/order-success?orderId=${verify.orderId || order.id}`);
         } else {
           alert('Demo payment verification failed.');
@@ -96,8 +180,8 @@ export default function CartPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
         amount: order.amount,
         currency: order.currency,
-        name: 'Inkbloom Art',
-        description: 'Original Artwork Purchase',
+        name: 'Studio Vinyas',
+        description: 'Original Art & Keepsake Purchase',
         order_id: order.id,
         handler: async function (response: any) {
           const verifyRes = await fetch('/api/checkout/verify', {
@@ -113,18 +197,21 @@ export default function CartPage() {
                 quantity: item.quantity,
                 price: item.price,
               })),
-              total: totalPrice,
-              address: 'To be collected',
+              total: finalTotal,
+              couponCode: appliedCoupon?.code || null,
+              discount: discount,
+              address: 'To be confirmed upon dispatch',
             }),
           });
           const verify = await verifyRes.json();
 
           if (verify.verified) {
+            clearCart();
             router.push(
               `/shop/order-success?orderId=${verify.orderId || response.razorpay_order_id}`,
             );
           } else {
-            alert('Payment verification failed. Please contact support.');
+            alert('Payment verification failed. Please contact studio support.');
           }
         },
         prefill: {
@@ -147,174 +234,376 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linen flex flex-col">
+    <div className="min-h-screen bg-linen flex flex-col selection:bg-terra selection:text-linen">
       <Navbar />
 
-      <header className="page-header" style={{ marginTop: '60px' }}>
-        <div className="page-header-bg">CART</div>
-        <h1 className="page-header-title">
-          Your <span>cart.</span>
-        </h1>
-        <p className="page-header-sub">Your Selection</p>
-      </header>
+      <div className="pt-[58px]">
+        <FestiveBanner />
 
-      <div className="flex-1 border-t-[1.5px] border-charcoal">
-        {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh]">
-            <div className="w-24 h-24 border-[1.5px] border-charcoal/20 flex items-center justify-center mb-8">
-              <ShoppingBag size={40} className="text-charcoal/20" />
-            </div>
-            <h2 className="font-serif text-[32px] font-bold text-charcoal mb-4">
-              Empty <span className="text-terracotta italic">canvas.</span>
-            </h2>
-            <p className="text-[13px] text-charcoal/50 mb-8 max-w-md text-center leading-relaxed">
-              Your cart is waiting for its first artwork. Explore the gallery to
-              find the perfect piece for your collection.
+        <header className="page-header border-b-1.5 border-charcoal bg-[#1C1410] text-linen py-10 px-6 md:px-16 relative overflow-hidden">
+          <div
+            className="absolute right-[-10px] top-[-25px] font-sans text-[120px] sm:text-[160px] font-black tracking-tighter text-transparent select-none pointer-events-none"
+            style={{ WebkitTextStroke: '1.5px rgba(240, 235, 227, 0.06)' }}
+          >
+            SELECTION
+          </div>
+          <div className="max-w-7xl mx-auto relative z-10">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-terra-pale block mb-2">
+              ✦ Studio Vinyas Collector Cart
+            </span>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-linen">
+              Your Selected <em className="italic text-terra-pale font-normal">works.</em>
+            </h1>
+            <p className="text-xs sm:text-sm text-linen/70 font-sans mt-1.5">
+              Every item is packed with archival museum care and insured door-to-door.
             </p>
-            <Link href="/shop" className="btn-primary">
-              Explore Collection
+          </div>
+        </header>
+      </div>
+
+      <div className="flex-1">
+        {items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 py-16">
+            <div className="w-24 h-24 border-[1.5px] border-charcoal/20 bg-linen-dark/20 flex items-center justify-center mb-6">
+              <ShoppingBag size={38} className="text-charcoal/30" />
+            </div>
+            <h2 className="font-serif text-3xl font-bold text-charcoal mb-3">
+              Your cart is <span className="text-terracotta italic">empty.</span>
+            </h2>
+            <p className="text-[13px] text-charcoal/60 mb-8 max-w-md text-center leading-relaxed font-sans">
+              No handcrafted artworks have been added yet. Explore our studio collection to find original charcoal portraits, bridal varmala keepsakes, and resin wall art.
+            </p>
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 bg-terra hover:bg-terra-dark text-linen text-[11px] font-bold tracking-widest uppercase px-6 py-3.5 border border-terra transition-all shadow-[3px_3px_0px_0px_#1C1410]"
+            >
+              <span>Explore Gallery Catalog</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
         ) : (
-          <div className="cart-layout max-w-7xl mx-auto w-full border-x-[1.5px] border-charcoal bg-white/40">
+          <div className="cart-layout max-w-7xl mx-auto w-full border-x-[1.5px] border-charcoal bg-white/40 my-8">
             {/* Left: Items List */}
-            <div className="cart-items-section">
-              <div className="flex items-center justify-between pb-4 border-b-[1.5px] border-charcoal mb-8">
-                <span className="meta-label">Selected Works</span>
+            <div className="cart-items-section p-6 lg:p-8">
+              <div className="flex items-center justify-between pb-4 border-b-[1.5px] border-charcoal mb-6">
+                <div className="flex items-center gap-2">
+                  <span className="meta-label">Selected Works</span>
+                  <span className="px-2 py-0.5 bg-charcoal text-linen text-[10px] font-mono font-bold">
+                    {getTotalItems()}
+                  </span>
+                </div>
                 <Link
                   href="/shop"
-                  className="meta-label-muted hover:text-charcoal transition-colors"
+                  className="meta-label-muted hover:text-charcoal transition-colors flex items-center gap-1 text-[11px]"
                 >
-                  Continue Shopping
+                  <span>Continue Shopping</span>
+                  <ArrowRight size={11} />
                 </Link>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="cart-item-row bg-white/60 p-4 border-[1.5px] border-charcoal shadow-[4px_4px_0_var(--te)]"
+                    className="cart-item-row bg-white/90 p-4 border-[1.5px] border-charcoal shadow-[4px_4px_0_#1C1410] flex flex-col gap-3"
                   >
-                    <Link
-                      href={`/shop/${item.slug}`}
-                      className="block w-20 h-24 border-[1.5px] border-charcoal relative bg-linen group overflow-hidden"
-                    >
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105"
-                      />
-                    </Link>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <Link
+                          href={`/shop/${item.slug}`}
+                          className="block w-20 h-24 border-[1.5px] border-charcoal relative bg-linen group overflow-hidden shrink-0"
+                        >
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            className="object-cover transition-transform group-hover:scale-105"
+                          />
+                        </Link>
 
-                    <div>
-                      <Link href={`/shop/${item.slug}`}>
-                        <h3 className="cart-item-title">{item.title}</h3>
-                      </Link>
-                      <p className="cart-item-price">
-                        ₹{item.price.toLocaleString('en-IN')}
-                      </p>
+                        <div>
+                          <Link href={`/shop/${item.slug}`}>
+                            <h3 className="font-serif text-lg font-bold text-charcoal hover:text-terracotta transition-colors leading-snug">
+                              {item.title}
+                            </h3>
+                          </Link>
+                          <p className="font-sans font-bold text-[14px] text-terracotta mt-0.5">
+                            ₹{item.price.toLocaleString('en-IN')}
+                          </p>
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-charcoal/50 mt-0.5 block">
+                            Handcrafted Rajasthan Piece
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-charcoal/10">
+                        <div className="flex items-center border-[1.5px] border-charcoal bg-white">
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity - 1)
+                            }
+                            className="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-charcoal/10 transition-colors"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus size={13} />
+                          </button>
+                          <span className="w-10 h-8 flex items-center justify-center border-x-[1.5px] border-charcoal text-[13px] font-bold font-mono">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity + 1)
+                            }
+                            className="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-charcoal/10 transition-colors"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus size={13} />
+                          </button>
+                        </div>
+
+                        <div className="text-right min-w-[90px]">
+                          <span className="font-serif font-bold text-lg text-charcoal block">
+                            ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="text-charcoal/40 hover:text-terracotta p-1 transition-colors"
+                          aria-label="Remove item"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center border-[1.5px] border-charcoal bg-white">
-                      <button
-                        onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
-                        }
-                        className="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-charcoal/5"
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <span className="w-10 h-8 flex items-center justify-center border-x-[1.5px] border-charcoal text-[13px] font-bold">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
-                        }
-                        className="w-8 h-8 flex items-center justify-center text-charcoal hover:bg-charcoal/5"
-                      >
-                        <Plus size={14} />
-                      </button>
-                    </div>
+                    {/* Customization Details Strip if available */}
+                    {item.customization && (
+                      <div className="p-3 bg-linen/50 border border-charcoal/20 text-xs text-charcoal/85 space-y-1 mt-1 font-sans">
+                        <div className="flex items-center gap-2 flex-wrap font-bold text-[10.5px] uppercase tracking-wider text-terra">
+                          <span>✦ Custom Specs:</span>
+                          {item.customization.style && <span className="bg-charcoal/10 px-1.5 py-0.5 rounded">{item.customization.style}</span>}
+                          {item.customization.facesCount && <span className="bg-charcoal/10 px-1.5 py-0.5 rounded">{item.customization.facesCount} Face(s)</span>}
+                          {item.customization.size && <span className="bg-charcoal/10 px-1.5 py-0.5 rounded">{item.customization.size}</span>}
+                          {item.customization.frame && <span className="bg-charcoal/10 px-1.5 py-0.5 rounded">{item.customization.frame}</span>}
+                          {item.customization.moldShape && <span className="bg-charcoal/10 px-1.5 py-0.5 rounded">{item.customization.moldShape}</span>}
+                        </div>
 
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="meta-label-muted hover:text-red-900 transition-colors"
-                    >
-                      Remove
-                    </button>
+                        {item.customization.namesDate && (
+                          <div className="text-[11px] text-charcoal/80">
+                            <strong>Engraved Details:</strong> {item.customization.namesDate}
+                          </div>
+                        )}
+
+                        {item.customization.instructions && (
+                          <div className="text-[11px] text-charcoal/70 italic">
+                            &ldquo;{item.customization.instructions}&rdquo;
+                          </div>
+                        )}
+
+                        {item.customization.isPhysicalCourierRequired && (
+                          <div className="text-[10.5px] text-amber-900 bg-amber-100/70 p-1.5 border border-amber-300 font-medium mt-1">
+                            📦 <strong>Courier Notice:</strong> Please courier your dried marriage garland / physical keepsake to Studio Vinyas (Ratangarh, Rajasthan). Packing instructions provided on checkout.
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right: Summary */}
-            <div className="cart-summary-section border-b-[1.5px] border-charcoal lg:border-b-0">
-              <h3 className="font-serif text-[28px] font-bold text-charcoal mb-8 pb-6 border-b-[1.5px] border-charcoal/20">
-                Summary
+            {/* Right: Summary & Festival Offers */}
+            <div className="cart-summary-section border-t-[1.5px] lg:border-t-0 lg:border-l-[1.5px] border-charcoal p-6 lg:p-8 bg-linen/50">
+              <h3 className="font-serif text-2xl font-bold text-charcoal mb-6 pb-4 border-b-[1.5px] border-charcoal/20">
+                Order Summary
               </h3>
 
-              <div className="space-y-5 mb-8">
-                <div className="flex justify-between items-center">
-                  <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-charcoal/50">
-                    Subtotal ({getTotalItems()} items)
-                  </span>
-                  <span className="text-[15px] font-bold text-charcoal">
-                    ₹{getTotalPrice().toLocaleString('en-IN')}
+              {/* Coupon / Festival Discount Section */}
+              <div className="mb-6 p-4 bg-white border-[1.5px] border-charcoal shadow-[3px_3px_0_#1C1410]">
+                <div className="flex items-center gap-1.5 mb-3 text-charcoal">
+                  <Sparkles size={14} className="text-terracotta" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                    Festival Offer &amp; Coupon
                   </span>
                 </div>
-                <div className="flex justify-between items-center pb-5 border-b border-charcoal/10">
-                  <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-charcoal/50">
-                    Shipping
+
+                {appliedCoupon ? (
+                  <div className="bg-[#1C1410] text-linen p-3 border border-terra flex items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-terra-pale font-mono font-bold text-[12px] tracking-wider">
+                          ✦ {appliedCoupon.code}
+                        </span>
+                        <span className="text-[9.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 bg-terra/30 text-[#F5EFE6] border border-terra/50">
+                          {appliedCoupon.festivalName || 'Active'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-linen/75 mt-1 font-sans">
+                        {appliedCoupon.description} · Saved ₹{discount.toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                    <button
+                      onClick={removeCoupon}
+                      title="Remove applied coupon"
+                      className="text-linen/50 hover:text-linen p-1 hover:bg-white/10 transition-colors"
+                      aria-label="Remove coupon"
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-stretch gap-2">
+                      <input
+                        type="text"
+                        placeholder="ENTER CODE (E.G. DIWALI20)"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                        className="flex-1 px-3 py-2 border-[1.5px] border-charcoal text-[11.5px] font-mono uppercase bg-linen/30 focus:outline-none focus:bg-white placeholder:text-charcoal/40"
+                      />
+                      <button
+                        onClick={() => handleApplyCoupon()}
+                        disabled={couponLoading || !couponInput.trim()}
+                        className="px-4 py-2 bg-charcoal hover:bg-terracotta text-linen text-[11px] font-bold uppercase tracking-wider transition-colors disabled:opacity-50 shrink-0"
+                      >
+                        {couponLoading ? '...' : 'Apply'}
+                      </button>
+                    </div>
+
+                    {couponFeedback && (
+                      <div
+                        className={`mt-2 text-[11px] font-sans flex items-center gap-1.5 ${
+                          couponFeedback.isError ? 'text-red-700' : 'text-emerald-800'
+                        }`}
+                      >
+                        {couponFeedback.isError ? (
+                          <AlertCircle size={13} className="shrink-0" />
+                        ) : (
+                          <Check size={13} className="shrink-0" />
+                        )}
+                        <span>{couponFeedback.text}</span>
+                      </div>
+                    )}
+
+                    {/* Quick Suggestion Chips */}
+                    <div className="mt-3 pt-3 border-t border-charcoal/10">
+                      <span className="text-[9.5px] uppercase font-bold tracking-widest text-charcoal/50 block mb-2">
+                        Active Festival Offers:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon('DIWALI20')}
+                          className="px-2 py-1 text-[10px] font-mono bg-linen border border-charcoal/30 hover:border-terracotta hover:text-terracotta transition-colors flex items-center gap-1"
+                        >
+                          <Tag size={10} />
+                          <span>DIWALI20 (20% Off)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon('BANDHAN15')}
+                          className="px-2 py-1 text-[10px] font-mono bg-linen border border-charcoal/30 hover:border-terracotta hover:text-terracotta transition-colors flex items-center gap-1"
+                        >
+                          <Tag size={10} />
+                          <span>BANDHAN15 (15% Off)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon('VINYASFIRST')}
+                          className="px-2 py-1 text-[10px] font-mono bg-linen border border-charcoal/30 hover:border-terracotta hover:text-terracotta transition-colors flex items-center gap-1"
+                        >
+                          <Tag size={10} />
+                          <span>VINYASFIRST (₹500 Off)</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between items-center text-[13px]">
+                  <span className="font-bold uppercase tracking-[0.1em] text-charcoal/60">
+                    Subtotal ({getTotalItems()} items)
                   </span>
-                  <span className="text-[13px] font-bold text-terracotta">
-                    Complimentary
+                  <span className="font-bold text-charcoal">
+                    ₹{subtotal.toLocaleString('en-IN')}
+                  </span>
+                </div>
+
+                {appliedCoupon && discount > 0 && (
+                  <div className="flex justify-between items-center text-[13px] text-[#A25736] font-bold">
+                    <span className="uppercase tracking-[0.1em] flex items-center gap-1">
+                      <Sparkles size={12} />
+                      <span>Festival Discount ({appliedCoupon.code})</span>
+                    </span>
+                    <span>- ₹{discount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center text-[13px] pb-4 border-b border-charcoal/15">
+                  <span className="font-bold uppercase tracking-[0.1em] text-charcoal/60">
+                    Insured Shipping
+                  </span>
+                  <span className="font-bold text-terracotta uppercase text-[11.5px] tracking-wider">
+                    Complimentary across India
                   </span>
                 </div>
               </div>
 
-              <div className="flex justify-between items-end mb-10 pt-6 border-t-[1.5px] border-charcoal">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-charcoal/60">
-                  Total
-                </span>
-                <span className="font-serif text-[42px] font-bold text-terracotta leading-none">
-                  ₹{getTotalPrice().toLocaleString('en-IN')}
-                </span>
+              {/* Grand Total */}
+              <div className="flex justify-between items-end mb-8 pt-4 border-t-[1.5px] border-charcoal">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-charcoal/60 block">
+                    Payable Total
+                  </span>
+                  <span className="text-[10px] text-charcoal/50 font-sans">
+                    Includes all GST &amp; taxes
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="font-serif text-4xl font-bold text-terracotta leading-none">
+                    ₹{finalTotal.toLocaleString('en-IN')}
+                  </span>
+                </div>
               </div>
 
               <button
                 onClick={handleCheckout}
                 disabled={isProcessing}
-                className="btn-primary w-full text-center py-4 text-[11px] tracking-[0.14em] shadow-[6px_6px_0_var(--ch)] hover:shadow-[3px_3px_0_var(--ch)] hover:translate-x-[3px] hover:translate-y-[3px]"
+                className="btn-primary w-full text-center py-4 text-[11.5px] tracking-[0.16em] shadow-[5px_5px_0_#1C1410] hover:shadow-[2px_2px_0_#1C1410] hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
               >
-                {isProcessing ? 'Processing...' : 'Proceed to Checkout'}
+                {isProcessing ? 'Connecting Secure Gateway...' : 'Proceed to Checkout ✦'}
               </button>
 
-              <div className="mt-10 space-y-5 pt-8 border-t border-charcoal/10">
-                <div className="flex items-start gap-4">
-                  <div className="w-11 h-11 border-[1.5px] border-charcoal/15 flex items-center justify-center shrink-0">
-                    <Shield size={18} className="text-charcoal/50" />
+              <div className="mt-8 space-y-4 pt-6 border-t border-charcoal/15">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 border-[1.5px] border-charcoal/20 flex items-center justify-center shrink-0 bg-white">
+                    <Shield size={16} className="text-terracotta" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.12em] text-charcoal mb-1">
-                      Secure Checkout
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.14em] text-charcoal mb-0.5">
+                      Encrypted Razorpay Checkout
                     </h4>
-                    <p className="text-[11px] text-charcoal/55 leading-relaxed">
-                      Protected by industry-standard encryption via Razorpay.
+                    <p className="text-[11px] text-charcoal/60 leading-relaxed font-sans">
+                      UPI (GPay/PhonePe), Credit Cards, Net Banking, and EMI supported.
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-11 h-11 border-[1.5px] border-charcoal/15 flex items-center justify-center shrink-0">
-                    <Truck size={18} className="text-charcoal/50" />
+
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 border-[1.5px] border-charcoal/20 flex items-center justify-center shrink-0 bg-white">
+                    <Truck size={16} className="text-terracotta" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.12em] text-charcoal mb-1">
-                      Global Shipping
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.14em] text-charcoal mb-0.5">
+                      Archival Wooden Crate Dispatch
                     </h4>
-                    <p className="text-[11px] text-charcoal/55 leading-relaxed">
-                      Fully insured delivery to your studio or home.
+                    <p className="text-[11px] text-charcoal/60 leading-relaxed font-sans">
+                      Double-bubble cushioned with tamper-evident seal and tracking.
                     </p>
                   </div>
                 </div>

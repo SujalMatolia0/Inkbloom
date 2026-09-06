@@ -12,12 +12,12 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-// Test Users
+// Admin and Default Users
 const USERS = [
   {
-    name: 'Admin User',
-    email: 'admin@inkbloom.com',
-    password: 'admin123', // Will be hashed
+    name: 'artistankimatolia',
+    email: 'artistankimatolia@inkbloom.com',
+    password: '2wsx@WSX', // Will be hashed
     role: 'ADMIN',
   },
   {

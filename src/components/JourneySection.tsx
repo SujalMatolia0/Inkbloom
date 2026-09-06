@@ -2,12 +2,12 @@
 
 export function JourneySection() {
   const milestones = [
-    { num: 1, year: '2021', title: 'First Sketch', desc: 'Picked up a brush and ink for the first time. What started as casual doodles became a passion that would define my artistic journey.' },
-    { num: 2, year: '2023', title: 'First Commission', desc: 'Completed my first paid commission — a custom pet portrait. The joy of creating something personal for someone was addictive.' },
-    { num: 3, year: '2024', title: 'Studio Setup', desc: 'Established my permanent studio in Jaipur. Filled it with plants, good light, and endless inspiration from the Pink City.' },
-    { num: 4, year: '2024', title: 'First Collection', desc: "Launched 'Dusty Studio' — my first curated collection that defined the warm, dusty aesthetic I'm known for today." },
-    { num: 5, year: '2025', title: 'Going Digital', desc: 'Expanded into digital illustrations and editorial work. Started collaborating with brands while maintaining my hand-drawn aesthetic.' },
-    { num: 6, year: '2025', title: 'Inkbloom Launch', desc: 'Opened my online studio to the world. A platform where every piece tells a story and every stroke has meaning.' },
+    { num: 1, year: '2021', title: 'First Stroke', desc: "It started quietly — a brush, some colour, and a wall in Ratangarh. What began as curiosity slowly became something she couldn't stop." },
+    { num: 2, year: '2022', title: 'First Commission', desc: 'Someone trusted her with their vision, and she delivered it by hand. That first paid piece confirmed everything — this was her path.' },
+    { num: 3, year: '2023', title: 'Studio Takes Shape', desc: 'A dedicated space, her own rules, her own hours. The Vinyas studio became the place where ideas stopped being dreams.' },
+    { num: 4, year: '2024', title: '50 Commissions', desc: 'Portraits, murals, gifts, murti paintings — fifty pieces later, each one still made with the same care as the first.' },
+    { num: 5, year: '2025', title: 'Going Online', desc: "Vinyas went digital, bringing Anki's handcrafted world to collectors and art lovers beyond Rajasthan." },
+    { num: 6, year: '2025', title: 'Vinyas Launch', desc: 'An online home for every piece, every commission, every story. Vinyas is now open to the world.' },
   ];
 
   return (

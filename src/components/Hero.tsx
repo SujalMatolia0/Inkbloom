@@ -1,32 +1,35 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
   return (
     <section className="hero" id="hero">
       {/* LEFT */}
       <div className="hero-left">
-        <div className="bg-type-hero">WHERE</div>
+        <div className="bg-type-hero">VINYAS</div>
         <div className="hero-left-inner reveal">
-          <div className="eyebrow">Original Art · Handmade · Jaipur</div>
+          <div className="eyebrow">Mixed Media · Handmade · Ratangarh</div>
           <h1 className="hero-headline">
             Where<br />
-            <em>ink</em><br />
-            <span className="outline">blooms.</span>
+            <em>colour</em><br />
+            <span className="outline">speaks.</span>
           </h1>
-          <p className="hero-body">Original paintings, custom commissions & handmade goods — from a dusty little studio in the Pink City.</p>
+          <p className="hero-body">
+            Original mixed media art, custom commissions &amp; handmade gifts — from a soulful little studio in the heartland of Rajasthan.
+          </p>
           <div className="btn-row">
             <Link href="/portfolio" className="btn-primary">Enter Gallery</Link>
-            <Link href="/shop" className="btn-outline">Shop Now</Link>
+            <Link href="/#commission" className="btn-outline">Commission Now</Link>
           </div>
         </div>
         <div className="hero-stats reveal">
           <div>
-            <div className="stat-num">120+</div>
-            <div className="stat-label">Works</div>
+            <div className="stat-num">50+</div>
+            <div className="stat-label">Commissions</div>
           </div>
           <div>
-            <div className="stat-num">48</div>
-            <div className="stat-label">Commissions</div>
+            <div className="stat-num">786</div>
+            <div className="stat-label">Works</div>
           </div>
           <div>
             <div className="stat-num">5★</div>
@@ -38,58 +41,65 @@ export function Hero() {
       {/* RIGHT */}
       <div className="hero-right">
         <div className="dark-grid"></div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
-          <div className="gallery-label">In-Studio Gallery</div>
-          <Link href="/portfolio" className="btn-visit">Visit Now →</Link>
+
+        {/* Top Header */}
+        <div className="hero-right-header">
+          <div className="gallery-label">Studio Original</div>
+          <Link href="/portfolio" className="btn-visit">
+            View Gallery →
+          </Link>
         </div>
 
-        <div className="artwork-stack">
-          <div className="art-card">
-            <div className="art-thumb">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <circle cx="20" cy="15" r="9" stroke="#C17B5C" strokeWidth="1" />
-                <path d="M8 36 Q20 24 32 36" stroke="#C17B5C" strokeWidth="1" fill="none" />
-              </svg>
+        {/* Single Featured Artwork */}
+        <div className="hero-featured-art reveal">
+          <Link
+            href="/portfolio"
+            className="featured-art-card group"
+            aria-label="Explore Desert Soul in 3D Gallery"
+          >
+            <div className="featured-art-frame">
+              <div className="featured-art-mat">
+                <div className="featured-art-img-wrap">
+                  <Image
+                    src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=85"
+                    alt="Desert Soul - Mixed Media on Canvas"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 45vw"
+                    className="featured-art-img"
+                  />
+                  <div className="featured-art-badge">Original · No. 01</div>
+
+                  <div className="featured-art-overlay">
+                    <span className="featured-art-pill">Enter 3D Gallery ✦</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="art-name">Monsoon Portrait</div>
-              <div className="art-type">Watercolour · Original</div>
+
+            <div className="featured-art-info">
+              <div className="featured-art-meta-top">
+                <div>
+                  <h2 className="featured-art-title">Desert Soul</h2>
+                  <p className="featured-art-medium">
+                    Mixed Media on Canvas · Ratangarh Studio
+                  </p>
+                </div>
+                <div className="featured-art-price">₹3,500</div>
+              </div>
+              <div className="featured-art-meta-bottom">
+                <span className="featured-art-tag">30 × 40 cm</span>
+                <span className="featured-art-tag">Handcrafted Frame</span>
+                <span className="featured-art-action">Experience in 3D Space →</span>
+              </div>
             </div>
-            <div className="art-price">₹4,400</div>
-            <span className="art-badge">New</span>
-          </div>
-          <div className="art-card">
-            <div className="art-thumb">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <rect x="8" y="8" width="24" height="24" stroke="#7B9E87" strokeWidth="1" fill="none" />
-                <line x1="8" y1="20" x2="32" y2="20" stroke="#7B9E87" strokeWidth="0.8" />
-                <line x1="20" y1="8" x2="20" y2="32" stroke="#7B9E87" strokeWidth="0.8" />
-              </svg>
-            </div>
-            <div>
-              <div className="art-name">Ink Study No. 7</div>
-              <div className="art-type">Ink · Limited Edition</div>
-            </div>
-            <div className="art-price">₹2,800</div>
-          </div>
-          <div className="art-card">
-            <div className="art-thumb">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <ellipse cx="20" cy="20" rx="14" ry="10" stroke="#D4A5A5" strokeWidth="1" fill="none" />
-                <ellipse cx="20" cy="20" rx="8" ry="5" stroke="#D4A5A5" strokeWidth="0.8" fill="none" strokeDasharray="2 3" />
-              </svg>
-            </div>
-            <div>
-              <div className="art-name">Jaipur Dusk</div>
-              <div className="art-type">Oil · Original</div>
-            </div>
-            <div className="art-price">₹6,200</div>
-          </div>
+          </Link>
         </div>
 
+        {/* Bottom CTA */}
         <div className="gallery-cta">
-          <span className="gallery-cta-text">↑ Scroll to gallery</span>
-          <Link href="/portfolio">View all artworks →</Link>
+          <span className="gallery-cta-text">✦ 8 Unique Artworks in 3D Salon</span>
+          <Link href="/portfolio">Explore Full Gallery →</Link>
         </div>
       </div>
     </section>
