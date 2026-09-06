@@ -1,8 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Upload, Loader2, Check, Sparkles, X, Image as ImageIcon } from "lucide-react";
-import { uploadFile } from "@/lib/storage";
+import { useState } from 'react';
+import {
+  Upload,
+  Loader2,
+  Check,
+  Sparkles,
+  X,
+  Image as ImageIcon,
+} from 'lucide-react';
+import { uploadFile } from '@/lib/storage';
 
 interface CloudinaryImageUploaderProps {
   folder?: string;
@@ -12,9 +19,9 @@ interface CloudinaryImageUploaderProps {
 }
 
 export function CloudinaryImageUploader({
-  folder = "inkbloom/artworks",
+  folder = 'Vinyas/artworks',
   onUploadSuccess,
-  label = "Upload Image to Cloudinary",
+  label = 'Upload Image to Cloudinary',
   multiple = false,
 }: CloudinaryImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
@@ -31,7 +38,9 @@ export function CloudinaryImageUploader({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.size > 15 * 1024 * 1024) {
-          throw new Error(`File ${file.name} is too large. Max allowed size is 15MB.`);
+          throw new Error(
+            `File ${file.name} is too large. Max allowed size is 15MB.`,
+          );
         }
 
         const url = await uploadFile(file, folder);
@@ -39,8 +48,8 @@ export function CloudinaryImageUploader({
         onUploadSuccess(url);
       }
     } catch (error: any) {
-      console.error("Cloudinary upload failed:", error);
-      setErrorMessage(error.message || "Failed to upload image to Cloudinary.");
+      console.error('Cloudinary upload failed:', error);
+      setErrorMessage(error.message || 'Failed to upload image to Cloudinary.');
     } finally {
       setIsUploading(false);
     }
@@ -74,7 +83,8 @@ export function CloudinaryImageUploader({
               {label}
             </span>
             <span className="text-[10px] font-mono text-linen/50 mt-1">
-              Drag & drop or click to upload PNG, JPG, WebP directly to Cloudinary
+              Drag & drop or click to upload PNG, JPG, WebP directly to
+              Cloudinary
             </span>
           </div>
         )}
@@ -102,7 +112,9 @@ export function CloudinaryImageUploader({
                 className="flex items-center gap-2 px-2.5 py-1.5 bg-deep2 border border-terra/30 text-[11px] font-mono text-linen/90 max-w-full"
               >
                 <ImageIcon size={12} className="text-terra shrink-0" />
-                <span className="truncate max-w-[200px] text-[10px]">{url}</span>
+                <span className="truncate max-w-[200px] text-[10px]">
+                  {url}
+                </span>
                 <Check size={12} className="text-emerald-400 shrink-0" />
               </div>
             ))}

@@ -1,5 +1,5 @@
 /**
- * Inkbloom Design System
+ * Vinyas Design System
  * Centralized theme configuration for consistent styling across the application
  */
 
@@ -111,12 +111,12 @@ export type Theme = typeof theme;
 export const getThemeValue = (path: string): string => {
   const keys = path.split('.');
   let value: any = theme;
-  
+
   for (const key of keys) {
     value = value[key];
     if (value === undefined) return '';
   }
-  
+
   return typeof value === 'string' ? value : '';
 };
 

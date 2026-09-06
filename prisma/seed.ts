@@ -38,7 +38,8 @@ const PRODUCTS = [
   {
     title: 'Midnight Doodle',
     slug: 'midnight-doodle',
-    description: 'A captivating piece that explores the intersection of darkness and whimsy. Each stroke captures the spontaneous energy of late-night creativity, where inhibitions fade and pure expression emerges.',
+    description:
+      'A captivating piece that explores the intersection of darkness and whimsy. Each stroke captures the spontaneous energy of late-night creativity, where inhibitions fade and pure expression emerges.',
     price: 250,
     images: ['https://picsum.photos/seed/1/800/1100'],
     stock: 1,
@@ -47,7 +48,8 @@ const PRODUCTS = [
   {
     title: 'Terracotta Dream',
     slug: 'terracotta-dream',
-    description: 'Warm earth tones meet playful linework in this archival print. The terracotta palette evokes sun-baked clay and Mediterranean afternoons, grounding the piece in tactile reality.',
+    description:
+      'Warm earth tones meet playful linework in this archival print. The terracotta palette evokes sun-baked clay and Mediterranean afternoons, grounding the piece in tactile reality.',
     price: 180,
     images: ['https://picsum.photos/seed/2/800/1100'],
     stock: 5,
@@ -56,7 +58,8 @@ const PRODUCTS = [
   {
     title: 'Linen Lines',
     slug: 'linen-lines',
-    description: 'Delicate ink work on a neutral ground. This illustration celebrates the beauty of restraint, where every line serves a purpose and negative space breathes life into the composition.',
+    description:
+      'Delicate ink work on a neutral ground. This illustration celebrates the beauty of restraint, where every line serves a purpose and negative space breathes life into the composition.',
     price: 320,
     images: ['https://picsum.photos/seed/3/800/1100'],
     stock: 1,
@@ -65,7 +68,8 @@ const PRODUCTS = [
   {
     title: 'Mossy Whispers',
     slug: 'mossy-whispers',
-    description: 'An original work that channels the quiet energy of forest floors and hidden gardens. Organic forms intertwine with geometric precision, creating a dialogue between nature and structure.',
+    description:
+      'An original work that channels the quiet energy of forest floors and hidden gardens. Organic forms intertwine with geometric precision, creating a dialogue between nature and structure.',
     price: 210,
     images: ['https://picsum.photos/seed/4/800/1100'],
     stock: 0, // SOLD
@@ -74,7 +78,8 @@ const PRODUCTS = [
   {
     title: 'Blush Artifact',
     slug: 'blush-artifact',
-    description: 'Soft pink hues anchor this limited edition print. The piece feels like a relic from a gentler time, where craftsmanship and patience were the only currencies that mattered.',
+    description:
+      'Soft pink hues anchor this limited edition print. The piece feels like a relic from a gentler time, where craftsmanship and patience were the only currencies that mattered.',
     price: 290,
     images: ['https://picsum.photos/seed/5/800/1100'],
     stock: 3,
@@ -83,7 +88,8 @@ const PRODUCTS = [
   {
     title: 'Deep Horizon',
     slug: 'deep-horizon',
-    description: 'A bold illustration that pushes the boundaries of editorial doodle work. The horizon line serves as both anchor and invitation, drawing the eye into layers of intricate detail.',
+    description:
+      'A bold illustration that pushes the boundaries of editorial doodle work. The horizon line serves as both anchor and invitation, drawing the eye into layers of intricate detail.',
     price: 350,
     images: ['https://picsum.photos/seed/6/800/1100'],
     stock: 1,
@@ -92,7 +98,8 @@ const PRODUCTS = [
   {
     title: 'Urban Sketch 01',
     slug: 'urban-sketch-01',
-    description: 'Raw energy captured in ink. This original piece documents the rhythm of city life through quick, confident marks that refuse to be precious or overthought.',
+    description:
+      'Raw energy captured in ink. This original piece documents the rhythm of city life through quick, confident marks that refuse to be precious or overthought.',
     price: 150,
     images: ['https://picsum.photos/seed/7/800/1100'],
     stock: 1,
@@ -101,7 +108,8 @@ const PRODUCTS = [
   {
     title: 'Studio Fragment',
     slug: 'studio-fragment',
-    description: 'A print that feels like a stolen moment from the artist\'s workspace. Unfinished edges and visible process marks remind us that perfection is overrated.',
+    description:
+      "A print that feels like a stolen moment from the artist's workspace. Unfinished edges and visible process marks remind us that perfection is overrated.",
     price: 220,
     images: ['https://picsum.photos/seed/8/800/1100'],
     stock: 0, // SOLD
@@ -129,7 +137,7 @@ const POSTS = [
     published: true,
   },
   {
-    title: 'Summer 2025 collection drop — what\'s coming next',
+    title: "Summer 2025 collection drop — what's coming next",
     slug: 'summer-2025-collection',
     coverImage: 'https://picsum.photos/seed/p3/800/400',
     body: 'The studio is currently a mess of half-finished canvases and experimental doodles. I am excited to share a sneak peek of the upcoming collection, which focuses on urban textures and local botanical life.',
@@ -168,7 +176,9 @@ async function main() {
       },
     });
     createdUsers.push(user);
-    console.log(`✓ Created ${userData.role}: ${userData.email} (password: ${userData.password})`);
+    console.log(
+      `✓ Created ${userData.role}: ${userData.email} (password: ${userData.password})`,
+    );
   }
 
   // Create products
@@ -193,8 +203,8 @@ async function main() {
 
   // Create sample orders for customer users
   console.log('Creating sample orders...');
-  const customerUsers = createdUsers.filter(u => u.role === 'CUSTOMER');
-  
+  const customerUsers = createdUsers.filter((u) => u.role === 'CUSTOMER');
+
   if (customerUsers.length > 0 && createdProducts.length > 0) {
     // Order 1: Completed order
     const order1 = await prisma.order.create({
@@ -273,7 +283,8 @@ async function main() {
       data: {
         userId: customerUsers[0].id,
         referenceImg: 'https://picsum.photos/seed/cat/600/600',
-        instructions: 'I would like a custom watercolor portrait of my pet cat. Size: 12x16 inches. Soft, warm colors preferred.',
+        instructions:
+          'I would like a custom watercolor portrait of my pet cat. Size: 12x16 inches. Soft, warm colors preferred.',
         status: 'PENDING',
         price: 500,
       },
@@ -285,12 +296,15 @@ async function main() {
         data: {
           userId: customerUsers[1].id,
           referenceImg: 'https://picsum.photos/seed/book/600/600',
-          instructions: 'Custom illustration for my book cover. Theme: Urban landscape with botanical elements. Need by end of month.',
+          instructions:
+            'Custom illustration for my book cover. Theme: Urban landscape with botanical elements. Need by end of month.',
           status: 'REVIEWING',
           price: 800,
         },
       });
-      console.log(`✓ Created reviewing commission for ${customerUsers[1].email}`);
+      console.log(
+        `✓ Created reviewing commission for ${customerUsers[1].email}`,
+      );
     }
   }
 
@@ -298,7 +312,7 @@ async function main() {
   console.log('📝 Test Accounts Created:');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('👤 ADMIN ACCOUNT:');
-  console.log('   Email:    admin@inkbloom.com');
+  console.log('   Email:    admin@Vinyas.com');
   console.log('   Password: admin123');
   console.log('   Access:   http://localhost:3000/admin');
   console.log('');

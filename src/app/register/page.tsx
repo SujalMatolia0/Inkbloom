@@ -98,7 +98,7 @@ export default function RegisterPage() {
       
       <nav>
         <Link href="/" className="nav-logo">
-          Ink<span>bloom</span>
+          Vin<span>yas</span>
         </Link>
         <ul className="nav-links">
           <li><Link href="/">Gallery</Link></li>

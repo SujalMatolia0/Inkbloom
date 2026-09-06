@@ -1,6 +1,6 @@
-# 🎨 Inkbloom Studio
+# 🎨 Vinyas Studio
 
-Inkbloom is a premium, immersive Art & Craft Marketplace built for digital artists. It features a unique 3D corridor gallery, editorial design aesthetic, and a full-featured e-commerce system.
+Vinyas is a premium, immersive Art & Craft Marketplace built for digital artists. It features a unique 3D corridor gallery, editorial design aesthetic, and a full-featured e-commerce system.
 
 ---
 
@@ -17,6 +17,7 @@ Inkbloom is a premium, immersive Art & Craft Marketplace built for digital artis
 ## 🚀 Quick Start
 
 ### 1. Setup
+
 ```bash
 npm install
 cp .env.example .env
@@ -24,6 +25,7 @@ cp .env.example .env
 ```
 
 ### 2. Database
+
 ```bash
 npx prisma generate
 npx prisma db push
@@ -31,9 +33,11 @@ npm run seed
 ```
 
 ### 3. Run
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) to view the studio.
 
 ---
@@ -43,7 +47,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the studio.
 To access the admin panel at `/admin`, you **must** login first at `/login`.
 
 **Default Admin Credentials:**
-- **Email**: `admin@inkbloom.com`
+
+- **Email**: `admin@Vinyas.com`
 - **Password**: `admin123`
 
 For more details, see the [Admin Guide](./docs/ADMIN_GUIDE.md).

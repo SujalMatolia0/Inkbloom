@@ -1,19 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-import { uploadImageToCloudinary } from "@/lib/cloudinary";
+import { NextRequest, NextResponse } from 'next/server';
+import { uploadImageToCloudinary } from '@/lib/cloudinary';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const contentType = req.headers.get("content-type") || "";
+    const contentType = req.headers.get('content-type') || '';
 
-    if (contentType.includes("multipart/form-data")) {
+    if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();
-      const file = formData.get("file") as File | null;
-      const folder = (formData.get("folder") as string) || "inkbloom/uploads";
+      const file = formData.get('file') as File | null;
+      const folder = (formData.get('folder') as string) || 'Vinyas/uploads';
 
       if (!file) {
-        return NextResponse.json({ error: "No file provided" }, { status: 400 });
+        return NextResponse.json(
+          { error: 'No file provided' },
+          { status: 400 },
+        );
       }
 
       const bytes = await file.arrayBuffer();
@@ -29,12 +32,15 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (contentType.includes("application/json")) {
+    if (contentType.includes('application/json')) {
       const body = await req.json();
-      const { image, folder = "inkbloom/uploads" } = body;
+      const { image, folder = 'Vinyas/uploads' } = body;
 
       if (!image) {
-        return NextResponse.json({ error: "No image payload provided" }, { status: 400 });
+        return NextResponse.json(
+          { error: 'No image payload provided' },
+          { status: 400 },
+        );
       }
 
       const result = await uploadImageToCloudinary(image, folder);
@@ -48,14 +54,17 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: "Unsupported Content-Type. Expected multipart/form-data or application/json" },
-      { status: 400 }
+      {
+        error:
+          'Unsupported Content-Type. Expected multipart/form-data or application/json',
+      },
+      { status: 400 },
     );
   } catch (error: any) {
-    console.error("Upload API Error:", error);
+    console.error('Upload API Error:', error);
     return NextResponse.json(
-      { error: error.message || "Cloudinary upload failed" },
-      { status: 500 }
+      { error: error.message || 'Cloudinary upload failed' },
+      { status: 500 },
     );
   }
 }

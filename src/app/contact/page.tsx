@@ -1,27 +1,27 @@
 'use client';
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Clock, Send } from "lucide-react";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, MapPin, Phone, Clock, Send } from 'lucide-react';
 
 export default function ContactPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !message.trim()) return;
 
-    setStatus("sending");
+    setStatus('sending');
     setTimeout(() => {
-      setStatus("sent");
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
+      setStatus('sent');
+      setName('');
+      setEmail('');
+      setSubject('');
+      setMessage('');
     }, 700);
   };
 
@@ -67,8 +67,10 @@ export default function ContactPage() {
                     Studio Location
                   </p>
                   <p className="text-[14px] text-charcoal/70 leading-relaxed">
-                    123 Artist Colony<br />
-                    Jaipur, Rajasthan 302001<br />
+                    123 Artist Colony
+                    <br />
+                    Jaipur, Rajasthan 302001
+                    <br />
                     India
                   </p>
                 </div>
@@ -83,7 +85,7 @@ export default function ContactPage() {
                     Email
                   </p>
                   <p className="text-[14px] text-charcoal/70">
-                    hello@inkbloom.art
+                    hello@Vinyas.art
                   </p>
                 </div>
               </div>
@@ -111,8 +113,10 @@ export default function ContactPage() {
                     Studio Hours
                   </p>
                   <p className="text-[14px] text-charcoal/70 leading-relaxed">
-                    Monday - Friday: 10:00 AM - 6:00 PM<br />
-                    Saturday: 11:00 AM - 4:00 PM<br />
+                    Monday - Friday: 10:00 AM - 6:00 PM
+                    <br />
+                    Saturday: 11:00 AM - 4:00 PM
+                    <br />
                     Sunday: Closed
                   </p>
                 </div>
@@ -128,15 +132,15 @@ export default function ContactPage() {
                 {[
                   {
                     q: "What's the turnaround time for commissions?",
-                    a: "Typically 2-3 weeks depending on complexity and current queue.",
+                    a: 'Typically 2-3 weeks depending on complexity and current queue.',
                   },
                   {
-                    q: "Do you ship internationally?",
-                    a: "Yes! We ship worldwide. Shipping costs are calculated at checkout.",
+                    q: 'Do you ship internationally?',
+                    a: 'Yes! We ship worldwide. Shipping costs are calculated at checkout.',
                   },
                   {
-                    q: "Can I request revisions?",
-                    a: "Absolutely. Each commission includes up to 2 rounds of revisions.",
+                    q: 'Can I request revisions?',
+                    a: 'Absolutely. Each commission includes up to 2 rounds of revisions.',
                   },
                 ].map((faq, i) => (
                   <details
@@ -166,14 +170,17 @@ export default function ContactPage() {
               Send a <em className="text-terra italic">Message</em>
             </h2>
 
-            {status === "sent" ? (
+            {status === 'sent' ? (
               <div className="p-6 bg-moss/20 border-2 border-moss text-charcoal space-y-3">
-                <h4 className="font-serif text-xl font-bold text-moss">✓ Message Delivered</h4>
+                <h4 className="font-serif text-xl font-bold text-moss">
+                  ✓ Message Delivered
+                </h4>
                 <p className="text-sm text-charcoal/80 leading-relaxed">
-                  Thank you for reaching out! We have received your message and will respond within 24 hours.
+                  Thank you for reaching out! We have received your message and
+                  will respond within 24 hours.
                 </p>
                 <button
-                  onClick={() => setStatus("idle")}
+                  onClick={() => setStatus('idle')}
                   className="px-4 py-2 bg-charcoal text-linen text-xs font-bold uppercase tracking-wider mt-2"
                 >
                   Send Another Message
@@ -240,11 +247,11 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  disabled={status === "sending"}
+                  disabled={status === 'sending'}
                   className="w-full h-[48px] bg-charcoal text-linen font-bold text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                 >
                   <Send size={14} />
-                  {status === "sending" ? "Sending..." : "Send Message"}
+                  {status === 'sending' ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             )}

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { CloudinaryImageUploader } from "@/components/ui/CloudinaryImageUploader";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Sparkles, Trash2, Image as ImageIcon, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from 'react';
+import { CloudinaryImageUploader } from '@/components/ui/CloudinaryImageUploader';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Sparkles, Trash2, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductFormData {
   id?: string;
@@ -26,10 +26,10 @@ interface AdminProductFormProps {
 }
 
 const CATEGORIES = [
-  { value: "Sketch", label: "Sketch — Charcoal & Pencil Portraits" },
-  { value: "Canvas", label: "Canvas — Acrylic & Heritage Paintings" },
-  { value: "Wall Art", label: "Wall Art — Cafe, Temple & Living Murals" },
-  { value: "Craft", label: "Craft — Resin, Bottle Art & Keepsakes" },
+  { value: 'Sketch', label: 'Sketch — Charcoal & Pencil Portraits' },
+  { value: 'Canvas', label: 'Canvas — Acrylic & Heritage Paintings' },
+  { value: 'Wall Art', label: 'Wall Art — Cafe, Temple & Living Murals' },
+  { value: 'Craft', label: 'Craft — Resin, Bottle Art & Keepsakes' },
 ];
 
 export function AdminProductForm({
@@ -39,13 +39,13 @@ export function AdminProductForm({
 }: AdminProductFormProps) {
   const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [imagesText, setImagesText] = useState<string>(
-    initialData?.images ? initialData.images.join("\n") : ""
+    initialData?.images ? initialData.images.join('\n') : '',
   );
 
   const handleCloudinaryUpload = (url: string) => {
     setImages((prev) => {
       const updated = [...prev, url];
-      setImagesText(updated.join("\n"));
+      setImagesText(updated.join('\n'));
       return updated;
     });
   };
@@ -53,7 +53,7 @@ export function AdminProductForm({
   const handleTextareaChange = (val: string) => {
     setImagesText(val);
     const parsed = val
-      .split("\n")
+      .split('\n')
       .map((u) => u.trim())
       .filter((u) => u.length > 0);
     setImages(parsed);
@@ -62,7 +62,7 @@ export function AdminProductForm({
   const removeImage = (index: number) => {
     const updated = images.filter((_, i) => i !== index);
     setImages(updated);
-    setImagesText(updated.join("\n"));
+    setImagesText(updated.join('\n'));
   };
 
   return (
@@ -74,7 +74,7 @@ export function AdminProductForm({
         <Input
           name="title"
           required
-          defaultValue={initialData?.title || ""}
+          defaultValue={initialData?.title || ''}
           className="w-full h-[48px] px-4 bg-deep2 border border-linen/10 text-linen placeholder:text-linen/30 focus:border-terra"
           placeholder="e.g. Royal Bridal Varmala Floral Preservation"
         />
@@ -88,7 +88,7 @@ export function AdminProductForm({
           <Input
             name="slug"
             required
-            defaultValue={initialData?.slug || ""}
+            defaultValue={initialData?.slug || ''}
             className="w-full h-[48px] px-4 bg-deep2 border border-linen/10 text-linen placeholder:text-linen/30 focus:border-terra font-mono text-xs"
             placeholder="royal-bridal-varmala"
           />
@@ -100,12 +100,16 @@ export function AdminProductForm({
           <select
             name="category"
             required
-            defaultValue={initialData?.category || ""}
+            defaultValue={initialData?.category || ''}
             className="w-full h-[48px] px-4 bg-deep2 border border-linen/10 text-linen focus:border-terra text-[13px] cursor-pointer"
           >
             <option value="">Select Studio Medium</option>
             {CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value} className="bg-deep2 text-linen">
+              <option
+                key={cat.value}
+                value={cat.value}
+                className="bg-deep2 text-linen"
+              >
                 {cat.label}
               </option>
             ))}
@@ -123,7 +127,7 @@ export function AdminProductForm({
             type="number"
             step="0.01"
             required
-            defaultValue={initialData?.price ?? ""}
+            defaultValue={initialData?.price ?? ''}
             className="w-full h-[48px] px-4 bg-deep2 border border-linen/10 text-linen placeholder:text-linen/30 focus:border-terra"
             placeholder="250"
           />
@@ -150,7 +154,7 @@ export function AdminProductForm({
           name="description"
           required
           rows={4}
-          defaultValue={initialData?.description || ""}
+          defaultValue={initialData?.description || ''}
           className="w-full px-4 py-3 bg-deep2 border border-linen/10 text-linen placeholder:text-linen/30 focus:border-terra text-[13px]"
           placeholder="Describe the medium, craftsmanship, archival materials, and story behind this artwork..."
         />
@@ -163,11 +167,13 @@ export function AdminProductForm({
             <Sparkles size={14} className="text-terra" />
             <span>Cloudinary Image Assets</span>
           </label>
-          <span className="text-[10px] font-mono text-linen/50">Auto-hosted on Cloudinary CDN</span>
+          <span className="text-[10px] font-mono text-linen/50">
+            Auto-hosted on Cloudinary CDN
+          </span>
         </div>
 
         <CloudinaryImageUploader
-          folder="inkbloom/products"
+          folder="Vinyas/products"
           multiple={true}
           label="Upload Artwork Photos to Cloudinary"
           onUploadSuccess={handleCloudinaryUpload}
@@ -177,7 +183,10 @@ export function AdminProductForm({
         {images.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
             {images.map((imgUrl, i) => (
-              <div key={i} className="relative group border border-linen/20 bg-black/40 overflow-hidden aspect-square">
+              <div
+                key={i}
+                className="relative group border border-linen/20 bg-black/40 overflow-hidden aspect-square"
+              >
                 <img
                   src={imgUrl}
                   alt={`Artwork preview ${i + 1}`}
@@ -198,7 +207,8 @@ export function AdminProductForm({
 
         <div>
           <label className="block text-[10px] font-mono uppercase tracking-[0.15em] text-linen/50 mb-1.5">
-            Direct Image URLs (Auto-populated by Cloudinary uploader, or paste custom URLs):
+            Direct Image URLs (Auto-populated by Cloudinary uploader, or paste
+            custom URLs):
           </label>
           <Textarea
             name="images"
@@ -216,7 +226,7 @@ export function AdminProductForm({
           type="submit"
           className="h-[48px] px-8 bg-terra text-linen font-bold text-[11px] uppercase tracking-[0.12em] hover:bg-terra-dark transition-colors cursor-pointer shadow-neo"
         >
-          {isEditing ? "Save Changes" : "Create Artwork"}
+          {isEditing ? 'Save Changes' : 'Create Artwork'}
         </button>
         <Link
           href="/admin/products"

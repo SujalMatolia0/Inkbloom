@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useId } from "react";
-import Image from "next/image";
-import { useCartStore, ItemCustomization } from "@/lib/store/cart";
-import { submitCommission } from "@/app/actions/commissions";
-import { uploadFile } from "@/lib/storage";
+import { useState, useId } from 'react';
+import Image from 'next/image';
+import { useCartStore, ItemCustomization } from '@/lib/store/cart';
+import { submitCommission } from '@/app/actions/commissions';
+import { uploadFile } from '@/lib/storage';
 import {
   X,
   Upload,
@@ -19,8 +19,8 @@ import {
   Maximize2,
   AlertCircle,
   HelpCircle,
-  Loader2
-} from "lucide-react";
+  Loader2,
+} from 'lucide-react';
 
 export interface CustomizerProduct {
   id: string;
@@ -48,46 +48,63 @@ export function ArtworkCustomizerModal({
   const addItem = useCartStore((state) => state.addItem);
   const uniqueId = useId();
 
-  const isMural = product.category === "Wall Art";
-  const isSketch = product.category === "Sketch" || product.title.toLowerCase().includes("portrait") || product.title.toLowerCase().includes("sketch");
-  const isResinOrCraft = product.category === "Craft" || (product.subcategory && product.subcategory.includes("Resin")) || product.title.toLowerCase().includes("resin") || product.title.toLowerCase().includes("varmala") || product.title.toLowerCase().includes("keepsake");
-  const isCanvas = product.category === "Canvas" || product.title.toLowerCase().includes("canvas") || product.title.toLowerCase().includes("pichwai");
+  const isMural = product.category === 'Wall Art';
+  const isSketch =
+    product.category === 'Sketch' ||
+    product.title.toLowerCase().includes('portrait') ||
+    product.title.toLowerCase().includes('sketch');
+  const isResinOrCraft =
+    product.category === 'Craft' ||
+    (product.subcategory && product.subcategory.includes('Resin')) ||
+    product.title.toLowerCase().includes('resin') ||
+    product.title.toLowerCase().includes('varmala') ||
+    product.title.toLowerCase().includes('keepsake');
+  const isCanvas =
+    product.category === 'Canvas' ||
+    product.title.toLowerCase().includes('canvas') ||
+    product.title.toLowerCase().includes('pichwai');
 
   // Common fields
-  const [clientName, setClientName] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
-  const [clientPhone, setClientPhone] = useState("");
-  const [instructions, setInstructions] = useState("");
-  const [referenceImgUrl, setReferenceImgUrl] = useState<string>("");
-  const [fileName, setFileName] = useState("");
+  const [clientName, setClientName] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [referenceImgUrl, setReferenceImgUrl] = useState<string>('');
+  const [fileName, setFileName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Mode: Mural Fields
-  const [wallWidth, setWallWidth] = useState("10");
-  const [wallHeight, setWallHeight] = useState("8");
-  const [surfaceType, setSurfaceType] = useState("Interior Drywall / Smooth Plaster");
-  const [muralLocation, setMuralLocation] = useState("Jaipur / Rajasthan");
-  const [targetDate, setTargetDate] = useState("");
+  const [wallWidth, setWallWidth] = useState('10');
+  const [wallHeight, setWallHeight] = useState('8');
+  const [surfaceType, setSurfaceType] = useState(
+    'Interior Drywall / Smooth Plaster',
+  );
+  const [muralLocation, setMuralLocation] = useState('Jaipur / Rajasthan');
+  const [targetDate, setTargetDate] = useState('');
 
   // Mode: Sketch Fields
-  const [sketchStyle, setSketchStyle] = useState("Realistic Charcoal & Graphite");
+  const [sketchStyle, setSketchStyle] = useState(
+    'Realistic Charcoal & Graphite',
+  );
   const [facesCount, setFacesCount] = useState<number>(1);
-  const [sketchSize, setSketchSize] = useState("A3 (12×17 in)");
-  const [sketchFrame, setSketchFrame] = useState("Premium Black Gallery Frame");
+  const [sketchSize, setSketchSize] = useState('A3 (12×17 in)');
+  const [sketchFrame, setSketchFrame] = useState('Premium Black Gallery Frame');
   const [combinePhotos, setCombinePhotos] = useState(false);
 
   // Mode: Craft & Resin Fields
-  const [moldShape, setMoldShape] = useState("9\" Hexagon Deep Block");
-  const [namesAndDate, setNamesAndDate] = useState("");
+  const [moldShape, setMoldShape] = useState('9" Hexagon Deep Block');
+  const [namesAndDate, setNamesAndDate] = useState('');
   const [includeGoldFlakes, setIncludeGoldFlakes] = useState(true);
   const [includeLedBase, setIncludeLedBase] = useState(false);
   const [includeClockMechanism, setIncludeClockMechanism] = useState(false);
 
   // Mode: Canvas Fields
-  const [canvasSize, setCanvasSize] = useState("24×36 in (Medium Canvas)");
-  const [canvasStyle, setCanvasStyle] = useState("Textured Acrylic Impasto & Mixed Media");
+  const [canvasSize, setCanvasSize] = useState('24×36 in (Medium Canvas)');
+  const [canvasStyle, setCanvasStyle] = useState(
+    'Textured Acrylic Impasto & Mixed Media',
+  );
 
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
@@ -96,18 +113,20 @@ export function ArtworkCustomizerModal({
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
-        setErrorMessage("Image file too large. Please upload an image under 10MB.");
+        setErrorMessage(
+          'Image file too large. Please upload an image under 10MB.',
+        );
         return;
       }
       setFileName(file.name);
       setIsUploadingPhoto(true);
-      setErrorMessage("");
+      setErrorMessage('');
 
       try {
-        const cloudUrl = await uploadFile(file, "inkbloom/custom-orders");
+        const cloudUrl = await uploadFile(file, 'Vinyas/custom-orders');
         setReferenceImgUrl(cloudUrl);
       } catch (err) {
-        console.warn("Cloudinary upload fallback:", err);
+        console.warn('Cloudinary upload fallback:', err);
         const reader = new FileReader();
         reader.onload = () => {
           setReferenceImgUrl(reader.result as string);
@@ -125,8 +144,16 @@ export function ArtworkCustomizerModal({
 
     if (isSketch) {
       let extraFaces = Math.max(0, facesCount - 1) * 800;
-      let frameAdd = sketchFrame.includes("Black") ? 550 : sketchFrame.includes("Wood") ? 850 : 0;
-      let sizeAdd = sketchSize.includes("A2") ? 1200 : sketchSize.includes("A3") ? 500 : 0;
+      let frameAdd = sketchFrame.includes('Black')
+        ? 550
+        : sketchFrame.includes('Wood')
+          ? 850
+          : 0;
+      let sizeAdd = sketchSize.includes('A2')
+        ? 1200
+        : sketchSize.includes('A3')
+          ? 500
+          : 0;
       return base + extraFaces + frameAdd + sizeAdd;
     }
 
@@ -135,12 +162,17 @@ export function ArtworkCustomizerModal({
       if (includeGoldFlakes) addOns += 250;
       if (includeLedBase) addOns += 600;
       if (includeClockMechanism) addOns += 450;
-      if (moldShape.includes("Clock") || moldShape.includes("12\"")) addOns += 800;
+      if (moldShape.includes('Clock') || moldShape.includes('12"'))
+        addOns += 800;
       return base + addOns;
     }
 
     if (isCanvas) {
-      let sizeAdd = canvasSize.includes("36×48") ? 3500 : canvasSize.includes("24×36") ? 1500 : 0;
+      let sizeAdd = canvasSize.includes('36×48')
+        ? 3500
+        : canvasSize.includes('24×36')
+          ? 1500
+          : 0;
       return base + sizeAdd;
     }
 
@@ -153,12 +185,12 @@ export function ArtworkCustomizerModal({
   const handleMuralCommissionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim() || !clientEmail.trim()) {
-      setErrorMessage("Please enter your name and email.");
+      setErrorMessage('Please enter your name and email.');
       return;
     }
 
     setIsSubmitting(true);
-    setErrorMessage("");
+    setErrorMessage('');
 
     const brief = `
 [WALL ART & BESPOKE MURAL INQUIRY]
@@ -166,27 +198,29 @@ Mural Theme: ${product.title}
 Estimated Size: ${wallWidth} ft (W) × ${wallHeight} ft (H) = ${Number(wallWidth || 0) * Number(wallHeight || 0)} sq.ft
 Surface Type: ${surfaceType}
 Location/City: ${muralLocation}
-Target Completion: ${targetDate || "Flexible"}
-Client Phone: ${clientPhone || "Not provided"}
+Target Completion: ${targetDate || 'Flexible'}
+Client Phone: ${clientPhone || 'Not provided'}
 Concept & Vision:
-${instructions || "Follow studio piece aesthetic"}
-Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
+${instructions || 'Follow studio piece aesthetic'}
+Reference Attached: ${fileName ? `Yes (${fileName})` : 'None'}
     `.trim();
 
     const formData = new FormData();
-    formData.append("name", clientName.trim());
-    formData.append("email", clientEmail.trim());
-    formData.append("instructions", brief);
+    formData.append('name', clientName.trim());
+    formData.append('email', clientEmail.trim());
+    formData.append('instructions', brief);
 
     try {
       const res = await submitCommission(formData);
       if (res.success) {
         setIsSuccess(true);
       } else {
-        setErrorMessage(res.error || "Failed to submit mural commission inquiry.");
+        setErrorMessage(
+          res.error || 'Failed to submit mural commission inquiry.',
+        );
       }
     } catch {
-      setErrorMessage("Network error. Please try again.");
+      setErrorMessage('Network error. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -247,19 +281,18 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
         data-lenis-prevent="true"
         className="relative w-full max-w-3xl bg-linen border-2 border-charcoal shadow-[8px_8px_0px_0px_rgba(45,45,45,1)] my-auto max-h-[88vh] flex flex-col overflow-hidden"
       >
-        
         {/* Header Bar */}
         <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b-1.5 border-charcoal bg-[#EAE3D8] shrink-0">
           <div className="flex items-center gap-2">
             <span className="text-terra text-sm">✦</span>
             <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-charcoal">
               {isMural
-                ? "Bespoke Mural Commission Brief"
+                ? 'Bespoke Mural Commission Brief'
                 : isSketch
-                ? "Custom Sketch & Portrait Studio Configurator"
-                : isResinOrCraft
-                ? "Resin Keepsake & Floral Preservation Configurator"
-                : "Custom Artwork Configurator"}
+                  ? 'Custom Sketch & Portrait Studio Configurator'
+                  : isResinOrCraft
+                    ? 'Resin Keepsake & Floral Preservation Configurator'
+                    : 'Custom Artwork Configurator'}
             </span>
           </div>
           <button
@@ -276,7 +309,6 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
           data-lenis-prevent="true"
           className="p-5 sm:p-6 overflow-y-auto overscroll-contain space-y-6 flex-1 text-charcoal select-text"
         >
-          
           {/* Top Product Summary */}
           <div className="flex items-center gap-4 p-3 bg-white/70 border-1.5 border-charcoal/20">
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 border border-charcoal/30 overflow-hidden bg-charcoal/5">
@@ -289,21 +321,23 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-[10px] font-mono uppercase tracking-widest text-charcoal/60">
-                {product.category} {product.subcategory ? `· ${product.subcategory}` : ""}
+                {product.category}{' '}
+                {product.subcategory ? `· ${product.subcategory}` : ''}
               </div>
               <h3 className="font-serif text-lg font-bold text-charcoal truncate">
                 {product.title}
               </h3>
               <p className="text-xs text-charcoal/70 line-clamp-1 mt-0.5">
-                {product.medium || "Handcrafted by Anki Matolia at Studio Vinyas"}
+                {product.medium ||
+                  'Handcrafted by Anki Matolia at Studio Vinyas'}
               </p>
             </div>
             <div className="text-right flex-shrink-0">
               <span className="text-[10px] uppercase font-bold tracking-widest text-charcoal/50 block">
-                {isMural ? "Starting Quote" : "Base Price"}
+                {isMural ? 'Starting Quote' : 'Base Price'}
               </span>
               <span className="font-serif text-xl font-bold text-terra">
-                ₹{product.price.toLocaleString("en-IN")}
+                ₹{product.price.toLocaleString('en-IN')}
               </span>
             </div>
           </div>
@@ -315,12 +349,14 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                 <CheckCircle2 size={36} />
               </div>
               <h4 className="font-serif text-2xl font-bold text-charcoal">
-                {isMural ? "Mural Brief Received!" : "Customized Item Added to Cart!"}
+                {isMural
+                  ? 'Mural Brief Received!'
+                  : 'Customized Item Added to Cart!'}
               </h4>
               <p className="text-xs text-charcoal/75 max-w-md mx-auto leading-relaxed">
                 {isMural
-                  ? "Anki Matolia will review your wall specifications and get back to you with a custom composition sketch and quote within 24–48 hours."
-                  : "Your custom choices and photo reference have been saved with your order item. You can continue shopping or proceed to checkout."}
+                  ? 'Anki Matolia will review your wall specifications and get back to you with a custom composition sketch and quote within 24–48 hours.'
+                  : 'Your custom choices and photo reference have been saved with your order item. You can continue shopping or proceed to checkout.'}
               </p>
               {isMural && (
                 <button
@@ -335,12 +371,24 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
             <>
               {/* CATEGORY A: WALL ART / MURAL COMMISSION FORM */}
               {isMural && (
-                <form onSubmit={handleMuralCommissionSubmit} className="space-y-5">
+                <form
+                  onSubmit={handleMuralCommissionSubmit}
+                  className="space-y-5"
+                >
                   <div className="p-3.5 bg-terra/10 border border-terra/40 text-xs text-charcoal flex items-start gap-2.5">
-                    <Sparkles size={16} className="text-terra flex-shrink-0 mt-0.5" />
+                    <Sparkles
+                      size={16}
+                      className="text-terra flex-shrink-0 mt-0.5"
+                    />
                     <div>
-                      <span className="font-bold text-terra-dark block mb-0.5">Direct On-Site &amp; Panel Wall Murals</span>
-                      <span>Murals are painted on-site across India or pre-fabricated on modular moisture-treated wood panels for seamless studio shipping.</span>
+                      <span className="font-bold text-terra-dark block mb-0.5">
+                        Direct On-Site &amp; Panel Wall Murals
+                      </span>
+                      <span>
+                        Murals are painted on-site across India or
+                        pre-fabricated on modular moisture-treated wood panels
+                        for seamless studio shipping.
+                      </span>
                     </div>
                   </div>
 
@@ -385,11 +433,21 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setSurfaceType(e.target.value)}
                         className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none cursor-pointer"
                       >
-                        <option value="Interior Drywall / Smooth Plaster">Interior Drywall / Smooth Plaster</option>
-                        <option value="Exterior Weather-Resistant Masonry">Exterior Weather-Resistant Masonry</option>
-                        <option value="Cafe / Restaurant Commercial Feature Wall">Cafe / Restaurant Commercial Feature Wall</option>
-                        <option value="Heritage Lime Plaster / Textured Finish">Heritage Lime Plaster / Textured Finish</option>
-                        <option value="Modular Wooden Canvas Panels">Modular Wooden Canvas Panels (Shippable)</option>
+                        <option value="Interior Drywall / Smooth Plaster">
+                          Interior Drywall / Smooth Plaster
+                        </option>
+                        <option value="Exterior Weather-Resistant Masonry">
+                          Exterior Weather-Resistant Masonry
+                        </option>
+                        <option value="Cafe / Restaurant Commercial Feature Wall">
+                          Cafe / Restaurant Commercial Feature Wall
+                        </option>
+                        <option value="Heritage Lime Plaster / Textured Finish">
+                          Heritage Lime Plaster / Textured Finish
+                        </option>
+                        <option value="Modular Wooden Canvas Panels">
+                          Modular Wooden Canvas Panels (Shippable)
+                        </option>
                       </select>
                     </div>
 
@@ -419,11 +477,18 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={handlePhotoUpload}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <Upload size={20} className="mx-auto text-charcoal/50 mb-1" />
+                      <Upload
+                        size={20}
+                        className="mx-auto text-charcoal/50 mb-1"
+                      />
                       <span className="text-xs font-bold text-charcoal block">
-                        {fileName ? `Attached: ${fileName}` : "Click to upload wall photo or reference"}
+                        {fileName
+                          ? `Attached: ${fileName}`
+                          : 'Click to upload wall photo or reference'}
                       </span>
-                      <span className="text-[10px] text-charcoal/50 block mt-0.5">PNG, JPG, WebP up to 8MB</span>
+                      <span className="text-[10px] text-charcoal/50 block mt-0.5">
+                        PNG, JPG, WebP up to 8MB
+                      </span>
                     </div>
                   </div>
 
@@ -491,13 +556,17 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                   )}
 
                   <div className="flex items-center justify-between pt-4 border-t-1.5 border-charcoal">
-                    <span className="text-xs text-charcoal/60">No payment collected today · Free artist quote</span>
+                    <span className="text-xs text-charcoal/60">
+                      No payment collected today · Free artist quote
+                    </span>
                     <button
                       type="submit"
                       disabled={isSubmitting}
                       className="btn-primary py-3 px-8 text-xs font-bold tracking-wider uppercase shadow-[3px_3px_0px_0px_rgba(45,45,45,1)]"
                     >
-                      {isSubmitting ? "Submitting Inquiry..." : "Submit Mural Brief →"}
+                      {isSubmitting
+                        ? 'Submitting Inquiry...'
+                        : 'Submit Mural Brief →'}
                     </button>
                   </div>
                 </form>
@@ -512,10 +581,10 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                     </span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {[
-                        "Realistic Charcoal & Graphite",
-                        "Expressive Linework / Doodle",
-                        "Stylized Couple Caricature",
-                        "Colored Pencil & Ink Highlight",
+                        'Realistic Charcoal & Graphite',
+                        'Expressive Linework / Doodle',
+                        'Stylized Couple Caricature',
+                        'Colored Pencil & Ink Highlight',
                       ].map((style) => (
                         <button
                           key={style}
@@ -523,8 +592,8 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                           onClick={() => setSketchStyle(style)}
                           className={`p-2.5 text-left border-1.5 text-[10.5px] font-bold transition-all ${
                             sketchStyle === style
-                              ? "bg-charcoal text-linen border-charcoal shadow-sm"
-                              : "bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal"
+                              ? 'bg-charcoal text-linen border-charcoal shadow-sm'
+                              : 'bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal'
                           }`}
                         >
                           {style}
@@ -541,10 +610,10 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                       </label>
                       <div className="grid grid-cols-4 gap-2">
                         {[
-                          { count: 1, label: "1 Face" },
-                          { count: 2, label: "2 Faces (Couple +₹800)" },
-                          { count: 3, label: "3 Faces (+₹1600)" },
-                          { count: 4, label: "4+ Faces (+₹2400)" },
+                          { count: 1, label: '1 Face' },
+                          { count: 2, label: '2 Faces (Couple +₹800)' },
+                          { count: 3, label: '3 Faces (+₹1600)' },
+                          { count: 4, label: '4+ Faces (+₹2400)' },
                         ].map((item) => (
                           <button
                             key={item.count}
@@ -552,8 +621,8 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                             onClick={() => setFacesCount(item.count)}
                             className={`p-2 text-center border-1.5 text-[10px] font-bold uppercase transition-all ${
                               facesCount === item.count
-                                ? "bg-terra text-linen border-charcoal shadow-sm"
-                                : "bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal"
+                                ? 'bg-terra text-linen border-charcoal shadow-sm'
+                                : 'bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal'
                             }`}
                           >
                             {item.label}
@@ -571,9 +640,15 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setSketchSize(e.target.value)}
                         className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none cursor-pointer"
                       >
-                        <option value="A4 (8.3×11.7 in)">A4 (8.3×11.7 in) — Standard Desk</option>
-                        <option value="A3 (11.7×16.5 in)">A3 (11.7×16.5 in) — Gallery Wall (+₹500)</option>
-                        <option value="A2 (16.5×23.4 in)">A2 (16.5×23.4 in) — Statement Size (+₹1200)</option>
+                        <option value="A4 (8.3×11.7 in)">
+                          A4 (8.3×11.7 in) — Standard Desk
+                        </option>
+                        <option value="A3 (11.7×16.5 in)">
+                          A3 (11.7×16.5 in) — Gallery Wall (+₹500)
+                        </option>
+                        <option value="A2 (16.5×23.4 in)">
+                          A2 (16.5×23.4 in) — Statement Size (+₹1200)
+                        </option>
                       </select>
                     </div>
                   </div>
@@ -585,9 +660,12 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {[
-                        { name: "No Frame (Shipped in Archival Tube)", sub: "₹0" },
-                        { name: "Premium Black Gallery Frame", sub: "+₹550" },
-                        { name: "Solid Natural Teak Wood Frame", sub: "+₹850" },
+                        {
+                          name: 'No Frame (Shipped in Archival Tube)',
+                          sub: '₹0',
+                        },
+                        { name: 'Premium Black Gallery Frame', sub: '+₹550' },
+                        { name: 'Solid Natural Teak Wood Frame', sub: '+₹850' },
                       ].map((f) => (
                         <button
                           key={f.name}
@@ -595,12 +673,14 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                           onClick={() => setSketchFrame(f.name)}
                           className={`p-2.5 text-left border-1.5 text-[11px] font-bold transition-all flex items-center justify-between ${
                             sketchFrame === f.name
-                              ? "bg-charcoal text-linen border-charcoal shadow-sm"
-                              : "bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal"
+                              ? 'bg-charcoal text-linen border-charcoal shadow-sm'
+                              : 'bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal'
                           }`}
                         >
                           <span className="truncate pr-2">{f.name}</span>
-                          <span className="text-[10px] opacity-75 font-mono">{f.sub}</span>
+                          <span className="text-[10px] opacity-75 font-mono">
+                            {f.sub}
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -618,11 +698,18 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={handlePhotoUpload}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <Upload size={20} className="mx-auto text-charcoal/50 mb-1" />
+                      <Upload
+                        size={20}
+                        className="mx-auto text-charcoal/50 mb-1"
+                      />
                       <span className="text-xs font-bold text-charcoal block">
-                        {fileName ? `Uploaded: ${fileName}` : "Click to select clear reference portrait"}
+                        {fileName
+                          ? `Uploaded: ${fileName}`
+                          : 'Click to select clear reference portrait'}
                       </span>
-                      <span className="text-[10px] text-charcoal/50 block mt-0.5">High resolution, good lighting recommended</span>
+                      <span className="text-[10px] text-charcoal/50 block mt-0.5">
+                        High resolution, good lighting recommended
+                      </span>
                     </div>
                   </div>
 
@@ -648,7 +735,7 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                       </span>
                       <div className="flex items-baseline gap-2">
                         <span className="font-serif text-2xl font-bold text-terra">
-                          ₹{calculatedTotal.toLocaleString("en-IN")}
+                          ₹{calculatedTotal.toLocaleString('en-IN')}
                         </span>
                         <span className="text-[10.5px] text-charcoal/60 font-sans">
                           (Includes {sketchSize}, {sketchFrame})
@@ -677,7 +764,14 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                       <span>Physical Keepsake &amp; Varmala Notice</span>
                     </div>
                     <p className="text-xs text-amber-950 leading-relaxed font-sans">
-                      For marriage garland (Varmala), bridal flowers, or baby milestones, <strong>you will courier your dried flowers and physical items to Studio Vinyas in Ratangarh, Rajasthan</strong>. Our exact studio address and packing guide will be provided upon booking.
+                      For marriage garland (Varmala), bridal flowers, or baby
+                      milestones,{' '}
+                      <strong>
+                        you will courier your dried flowers and physical items
+                        to Studio Vinyas in Ratangarh, Rajasthan
+                      </strong>
+                      . Our exact studio address and packing guide will be
+                      provided upon booking.
                     </p>
                   </div>
 
@@ -688,12 +782,12 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
-                        "9\" Hexagon Deep Block",
-                        "10×8\" Rectangular Shadow Block",
-                        "12\" Circular Varmala Platter Clock",
-                        "Arch Romantic Silhouette",
-                        "Heart Block Keepsake",
-                        "Set of 4 Floral Coasters",
+                        '9" Hexagon Deep Block',
+                        '10×8" Rectangular Shadow Block',
+                        '12" Circular Varmala Platter Clock',
+                        'Arch Romantic Silhouette',
+                        'Heart Block Keepsake',
+                        'Set of 4 Floral Coasters',
                       ].map((shape) => (
                         <button
                           key={shape}
@@ -701,8 +795,8 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                           onClick={() => setMoldShape(shape)}
                           className={`p-2.5 text-left border-1.5 text-[10.5px] font-bold transition-all ${
                             moldShape === shape
-                              ? "bg-charcoal text-linen border-charcoal shadow-sm"
-                              : "bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal"
+                              ? 'bg-charcoal text-linen border-charcoal shadow-sm'
+                              : 'bg-white/80 border-charcoal/25 text-charcoal/80 hover:border-charcoal'
                           }`}
                         >
                           {shape}
@@ -714,7 +808,8 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                   {/* Couple Names / Dedication */}
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
-                      Names &amp; Wedding / Event Date (Engraved / Cast In Gold Foil)
+                      Names &amp; Wedding / Event Date (Engraved / Cast In Gold
+                      Foil)
                     </label>
                     <input
                       type="text"
@@ -737,7 +832,9 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setIncludeGoldFlakes(e.target.checked)}
                         className="accent-terra w-4 h-4 cursor-pointer"
                       />
-                      <span className="font-semibold">24K Gold Foil Flakes floating in resin (+₹250)</span>
+                      <span className="font-semibold">
+                        24K Gold Foil Flakes floating in resin (+₹250)
+                      </span>
                     </label>
 
                     <label className="flex items-center gap-2.5 text-xs text-charcoal cursor-pointer">
@@ -747,17 +844,25 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setIncludeLedBase(e.target.checked)}
                         className="accent-terra w-4 h-4 cursor-pointer"
                       />
-                      <span className="font-semibold">Warm-Glow Wooden LED Display Stand with USB cable (+₹600)</span>
+                      <span className="font-semibold">
+                        Warm-Glow Wooden LED Display Stand with USB cable
+                        (+₹600)
+                      </span>
                     </label>
 
                     <label className="flex items-center gap-2.5 text-xs text-charcoal cursor-pointer">
                       <input
                         type="checkbox"
                         checked={includeClockMechanism}
-                        onChange={(e) => setIncludeClockMechanism(e.target.checked)}
+                        onChange={(e) =>
+                          setIncludeClockMechanism(e.target.checked)
+                        }
                         className="accent-terra w-4 h-4 cursor-pointer"
                       />
-                      <span className="font-semibold">Silent Quartz Clock Movement &amp; Roman Numerals (+₹450)</span>
+                      <span className="font-semibold">
+                        Silent Quartz Clock Movement &amp; Roman Numerals
+                        (+₹450)
+                      </span>
                     </label>
                   </div>
 
@@ -773,9 +878,14 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={handlePhotoUpload}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <Upload size={20} className="mx-auto text-charcoal/50 mb-1" />
+                      <Upload
+                        size={20}
+                        className="mx-auto text-charcoal/50 mb-1"
+                      />
                       <span className="text-xs font-bold text-charcoal block">
-                        {fileName ? `Attached: ${fileName}` : "Click to upload wedding/couple photo to cast"}
+                        {fileName
+                          ? `Attached: ${fileName}`
+                          : 'Click to upload wedding/couple photo to cast'}
                       </span>
                     </div>
                   </div>
@@ -802,7 +912,7 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                       </span>
                       <div className="flex items-baseline gap-2">
                         <span className="font-serif text-2xl font-bold text-terra">
-                          ₹{calculatedTotal.toLocaleString("en-IN")}
+                          ₹{calculatedTotal.toLocaleString('en-IN')}
                         </span>
                         <span className="text-[10.5px] text-charcoal/60 font-sans">
                           (Includes {moldShape})
@@ -834,10 +944,18 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setCanvasSize(e.target.value)}
                         className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none cursor-pointer"
                       >
-                        <option value="12×12 in (Square Accent)">12×12 in (Square Accent)</option>
-                        <option value="18×24 in (Standard Room)">18×24 in (Standard Room)</option>
-                        <option value="24×36 in (Medium Canvas)">24×36 in (Medium Statement +₹1500)</option>
-                        <option value="36×48 in (Grand Heritage Canvas)">36×48 in (Grand Heritage +₹3500)</option>
+                        <option value="12×12 in (Square Accent)">
+                          12×12 in (Square Accent)
+                        </option>
+                        <option value="18×24 in (Standard Room)">
+                          18×24 in (Standard Room)
+                        </option>
+                        <option value="24×36 in (Medium Canvas)">
+                          24×36 in (Medium Statement +₹1500)
+                        </option>
+                        <option value="36×48 in (Grand Heritage Canvas)">
+                          36×48 in (Grand Heritage +₹3500)
+                        </option>
                       </select>
                     </div>
 
@@ -850,10 +968,18 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={(e) => setCanvasStyle(e.target.value)}
                         className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none cursor-pointer"
                       >
-                        <option value="Textured Acrylic Impasto & Mixed Media">Textured Acrylic Impasto &amp; Mixed Media</option>
-                        <option value="Traditional Rajasthani Pichwai Gold Embellished">Traditional Rajasthani Pichwai Gold Embellished</option>
-                        <option value="Contemporary Minimalist Earth Tones">Contemporary Minimalist Earth Tones</option>
-                        <option value="Classical Oil on Stretched Linen">Classical Oil on Stretched Linen</option>
+                        <option value="Textured Acrylic Impasto & Mixed Media">
+                          Textured Acrylic Impasto &amp; Mixed Media
+                        </option>
+                        <option value="Traditional Rajasthani Pichwai Gold Embellished">
+                          Traditional Rajasthani Pichwai Gold Embellished
+                        </option>
+                        <option value="Contemporary Minimalist Earth Tones">
+                          Contemporary Minimalist Earth Tones
+                        </option>
+                        <option value="Classical Oil on Stretched Linen">
+                          Classical Oil on Stretched Linen
+                        </option>
                       </select>
                     </div>
                   </div>
@@ -870,9 +996,14 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                         onChange={handlePhotoUpload}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                       />
-                      <Upload size={20} className="mx-auto text-charcoal/50 mb-1" />
+                      <Upload
+                        size={20}
+                        className="mx-auto text-charcoal/50 mb-1"
+                      />
                       <span className="text-xs font-bold text-charcoal block">
-                        {fileName ? `Attached: ${fileName}` : "Click to upload reference image"}
+                        {fileName
+                          ? `Attached: ${fileName}`
+                          : 'Click to upload reference image'}
                       </span>
                     </div>
                   </div>
@@ -899,7 +1030,7 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : "None"}
                       </span>
                       <div className="flex items-baseline gap-2">
                         <span className="font-serif text-2xl font-bold text-terra">
-                          ₹{calculatedTotal.toLocaleString("en-IN")}
+                          ₹{calculatedTotal.toLocaleString('en-IN')}
                         </span>
                         <span className="text-[10.5px] text-charcoal/60 font-sans">
                           (Stretched Wood Canvas)

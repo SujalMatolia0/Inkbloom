@@ -23,22 +23,38 @@ export async function submitCommission(formData: FormData) {
     return { success: false, error: 'Please provide a valid email address.' };
   }
 
-  let referenceImg = referenceUrl || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119';
+  let referenceImg =
+    referenceUrl ||
+    'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119';
 
   // If a file or base64 was sent, upload to Cloudinary
   try {
-    if (referenceFile && typeof referenceFile === 'object' && 'arrayBuffer' in referenceFile && referenceFile.size > 0) {
+    if (
+      referenceFile &&
+      typeof referenceFile === 'object' &&
+      'arrayBuffer' in referenceFile &&
+      referenceFile.size > 0
+    ) {
       const bytes = await referenceFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const cloudRes = await uploadImageToCloudinary(buffer, 'inkbloom/commissions');
+      const cloudRes = await uploadImageToCloudinary(
+        buffer,
+        'Vinyas/commissions',
+      );
       referenceImg = cloudRes.url;
     } else if (referenceUrl && referenceUrl.startsWith('data:image')) {
-      const cloudRes = await uploadImageToCloudinary(referenceUrl, 'inkbloom/commissions');
+      const cloudRes = await uploadImageToCloudinary(
+        referenceUrl,
+        'Vinyas/commissions',
+      );
       referenceImg = cloudRes.url;
     }
   } catch (uploadErr) {
-    console.warn('Cloudinary upload warning during commission submission:', uploadErr);
-  } 
+    console.warn(
+      'Cloudinary upload warning during commission submission:',
+      uploadErr,
+    );
+  }
 
   try {
     // Try to get the authenticated user first

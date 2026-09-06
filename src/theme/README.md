@@ -1,6 +1,6 @@
-# Inkbloom Design System
+# Vinyas Design System
 
-Centralized theme configuration for the Inkbloom project. This folder contains all design tokens, component styles, and utility functions for consistent styling across the application.
+Centralized theme configuration for the Vinyas project. This folder contains all design tokens, component styles, and utility functions for consistent styling across the application.
 
 ## 📁 Structure
 
@@ -109,45 +109,45 @@ import { cn, neoHover, artBg, typography } from '@/theme/utils';
 
 ### Colors
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `linen` | `#F0EBE3` | Primary background |
-| `charcoal` | `#2D2D2D` | Primary text, borders |
-| `terracotta` | `#C17B5C` | Primary accent |
-| `terracotta-pale` | `#E8C4B0` | Soft backgrounds |
-| `terracotta-dark` | `#9A5C40` | Hover states |
-| `moss` | `#7B9E87` | Secondary accent |
-| `blush` | `#D4A5A5` | Decorative |
-| `deep` | `#1C1410` | Dark sections |
+| Token             | Value     | Usage                 |
+| ----------------- | --------- | --------------------- |
+| `linen`           | `#F0EBE3` | Primary background    |
+| `charcoal`        | `#2D2D2D` | Primary text, borders |
+| `terracotta`      | `#C17B5C` | Primary accent        |
+| `terracotta-pale` | `#E8C4B0` | Soft backgrounds      |
+| `terracotta-dark` | `#9A5C40` | Hover states          |
+| `moss`            | `#7B9E87` | Secondary accent      |
+| `blush`           | `#D4A5A5` | Decorative            |
+| `deep`            | `#1C1410` | Dark sections         |
 
 ### Spacing
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `section` | `64px` | Section padding |
+| Token        | Value  | Usage                 |
+| ------------ | ------ | --------------------- |
+| `section`    | `64px` | Section padding       |
 | `section-sm` | `48px` | Small section padding |
-| `card-gap` | `16px` | Gap between cards |
+| `card-gap`   | `16px` | Gap between cards     |
 | `nav-height` | `56px` | Navigation bar height |
 
 ### Typography
 
-| Token | Size | Usage |
-|-------|------|-------|
-| `text-hero` | `clamp(52px, 7vw, 84px)` | Hero headlines |
-| `text-section-heading` | `40px` | Section headings |
-| `text-page-header` | `48px` | Page headers |
-| `text-body` | `12.5px` | Body text |
-| `text-label` | `9.5px` | Labels, tags |
-| `text-nav-link` | `10px` | Navigation links |
+| Token                  | Size                     | Usage            |
+| ---------------------- | ------------------------ | ---------------- |
+| `text-hero`            | `clamp(52px, 7vw, 84px)` | Hero headlines   |
+| `text-section-heading` | `40px`                   | Section headings |
+| `text-page-header`     | `48px`                   | Page headers     |
+| `text-body`            | `12.5px`                 | Body text        |
+| `text-label`           | `9.5px`                  | Labels, tags     |
+| `text-nav-link`        | `10px`                   | Navigation links |
 
 ### Shadows (Neo-Brutalist)
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `shadow-neo-te` | `4px 4px 0 #C17B5C` | Default terracotta shadow |
-| `shadow-neo-te-hover` | `2px 2px 0 #C17B5C` | Hover state |
-| `shadow-neo-ch` | `4px 4px 0 #2D2D2D` | Charcoal shadow |
-| `shadow-neo-dp` | `4px 4px 0 #1C1410` | Deep brown shadow |
+| Token                 | Value               | Usage                     |
+| --------------------- | ------------------- | ------------------------- |
+| `shadow-neo-te`       | `4px 4px 0 #C17B5C` | Default terracotta shadow |
+| `shadow-neo-te-hover` | `2px 2px 0 #C17B5C` | Hover state               |
+| `shadow-neo-ch`       | `4px 4px 0 #2D2D2D` | Charcoal shadow           |
+| `shadow-neo-dp`       | `4px 4px 0 #1C1410` | Deep brown shadow         |
 
 ## 🧩 Component Styles
 
@@ -253,7 +253,7 @@ import { animationStyles } from '@/theme/components';
 
 <div className={animationStyles.reveal}>
   {/* Content fades in and slides up when visible */}
-</div>
+</div>;
 ```
 
 ### Pulsing Pip
@@ -283,7 +283,7 @@ const className = cn(
   'base-class',
   isActive && 'active-class',
   isPrimary ? 'primary' : 'secondary',
-  'final-class'
+  'final-class',
 );
 ```
 
@@ -294,7 +294,7 @@ import { neoHover } from '@/theme/utils';
 
 <button className={cn('btn-base', neoHover('te'))}>
   {/* Adds translate and shadow transition on hover */}
-</button>
+</button>;
 ```
 
 ### Typography Presets
@@ -304,7 +304,7 @@ import { typography } from '@/theme/utils';
 
 <h1 className={typography.heading}>
   Heading with <em>italic</em> support
-</h1>
+</h1>;
 ```
 
 ## 📱 Responsive Design
@@ -396,4 +396,4 @@ colors: {
 
 ---
 
-**Need help?** Check the design system documentation in `Desgins/inkbloom-design-system.md`
+**Need help?** Check the design system documentation in `Desgins/Vinyas-design-system.md`

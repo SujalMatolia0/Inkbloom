@@ -1,13 +1,14 @@
-# Inkbloom — Design System Documentation
+# Vinyas — Design System Documentation
+
 > Version 1.0 · Dusty Studio Aesthetic · Ready for Development
 
 ---
 
 ## 1. Brand Identity
 
-**Name:** Inkbloom  
-**Tagline:** *Where ink meets blooming creativity.*  
-**Domain:** inkbloom.in / inkbloom.art  
+**Name:** Vinyas  
+**Tagline:** _Where ink meets blooming creativity._  
+**Domain:** Vinyas.in / Vinyas.art  
 **Location:** Jaipur, Rajasthan, India  
 **Concept:** A luxury art magazine that came out of a painter's studio sketchbook. Editorial smoothness + warm kawaii doodle energy.
 
@@ -15,19 +16,20 @@
 
 ## 2. Color Palette
 
-| Token | Name | Hex | Usage |
-|-------|------|-----|-------|
-| `--li` | Linen | `#F0EBE3` | Primary background, light sections |
-| `--ch` | Charcoal | `#2D2D2D` | Primary text, borders, outlines |
-| `--te` | Terracotta | `#C17B5C` | Primary accent — buttons, tags, highlights, nav bar |
-| `--te-pale` | Terracotta Pale | `#E8C4B0` | Soft artwork backgrounds, hover tints |
-| `--te-dark` | Terracotta Dark | `#9A5C40` | Button hover states, deep accents |
-| `--mo` | Moss Green | `#7B9E87` | Secondary accent — hover states, tags, price labels |
-| `--bl` | Blush Pink | `#D4A5A5` | Decorative SVG fills, soft sold states |
-| `--dp` | Deep Brown | `#1C1410` | Dark sections (hero right, journal, footer) |
-| `--dp2` | Deep Brown 2 | `#241810` | Card backgrounds on dark sections |
+| Token       | Name            | Hex       | Usage                                               |
+| ----------- | --------------- | --------- | --------------------------------------------------- |
+| `--li`      | Linen           | `#F0EBE3` | Primary background, light sections                  |
+| `--ch`      | Charcoal        | `#2D2D2D` | Primary text, borders, outlines                     |
+| `--te`      | Terracotta      | `#C17B5C` | Primary accent — buttons, tags, highlights, nav bar |
+| `--te-pale` | Terracotta Pale | `#E8C4B0` | Soft artwork backgrounds, hover tints               |
+| `--te-dark` | Terracotta Dark | `#9A5C40` | Button hover states, deep accents                   |
+| `--mo`      | Moss Green      | `#7B9E87` | Secondary accent — hover states, tags, price labels |
+| `--bl`      | Blush Pink      | `#D4A5A5` | Decorative SVG fills, soft sold states              |
+| `--dp`      | Deep Brown      | `#1C1410` | Dark sections (hero right, journal, footer)         |
+| `--dp2`     | Deep Brown 2    | `#241810` | Card backgrounds on dark sections                   |
 
 ### Color Rules
+
 - **Light sections:** `--li` background, `--ch` text, `--te` accents
 - **Dark sections:** `--dp` background, `--li` text, `--te` accents
 - **Never** use pure black (`#000`) or pure white (`#fff`) — always use `--ch` and `--li`
@@ -38,17 +40,18 @@
 
 ## 3. Typography
 
-| Role | Font | Weight | Size Range | Notes |
-|------|------|--------|------------|-------|
-| Display / Hero | Playfair Display | 700 | 52px–88px | Italic variant for accent words |
-| Subheadings | Playfair Display | 700 | 28px–42px | Use italic `em` tags for warmth |
-| Ghost BG Text | Syne | 800 | 140px–220px | Transparent, `-webkit-text-stroke`, opacity ~5.5% |
-| Body | Nunito | 400 | 12px–13.5px | Line-height 1.7–1.8 |
-| Labels / Tags | Nunito | 700 | 8px–10px | `letter-spacing: 0.14–0.22em`, ALL CAPS |
-| Prices | Nunito | 700 | 11px–13px | Color: `--te` |
-| Nav Links | Nunito | 700 | 10px | `letter-spacing: 0.14em`, ALL CAPS, opacity 0.4 → 1 on active |
+| Role           | Font             | Weight | Size Range  | Notes                                                         |
+| -------------- | ---------------- | ------ | ----------- | ------------------------------------------------------------- |
+| Display / Hero | Playfair Display | 700    | 52px–88px   | Italic variant for accent words                               |
+| Subheadings    | Playfair Display | 700    | 28px–42px   | Use italic `em` tags for warmth                               |
+| Ghost BG Text  | Syne             | 800    | 140px–220px | Transparent, `-webkit-text-stroke`, opacity ~5.5%             |
+| Body           | Nunito           | 400    | 12px–13.5px | Line-height 1.7–1.8                                           |
+| Labels / Tags  | Nunito           | 700    | 8px–10px    | `letter-spacing: 0.14–0.22em`, ALL CAPS                       |
+| Prices         | Nunito           | 700    | 11px–13px   | Color: `--te`                                                 |
+| Nav Links      | Nunito           | 700    | 10px        | `letter-spacing: 0.14em`, ALL CAPS, opacity 0.4 → 1 on active |
 
 ### Typography Patterns
+
 ```css
 /* Display headline pattern */
 .headline {
@@ -82,8 +85,12 @@
 ```
 
 ### Google Fonts Import
+
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Syne:wght@800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Syne:wght@800&family=Nunito:wght@400;600;700&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ---
@@ -91,6 +98,7 @@
 ## 4. Layout System
 
 ### Page Structure
+
 ```
 ┌─────────────────────────────────┐
 │ 3px Terracotta Accent Bar       │  ← always pinned top
@@ -107,6 +115,7 @@
 ```
 
 ### Grid Rules
+
 - **Hero:** `grid-template-columns: 58% 42%` — hard split with 4px terracotta seam
 - **About strip:** `grid-template-columns: 1fr 1fr 1fr`
 - **Product grid:** `grid-template-columns: 1.45fr 1fr 1fr` — featured card spans 2 rows
@@ -116,6 +125,7 @@
 - **Card gap:** `16px–18px`
 
 ### The Hard Split Rule
+
 Every major page section uses a **hard split** — two columns divided by `1px solid var(--ch)`, never a gap. One side is always darker or uses terracotta as background.
 
 ---
@@ -123,20 +133,23 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ## 5. Component Library
 
 ### 5A. Navigation (Floating — Centered)
+
 ```
 ┌─────────────────────────────────────────────────┐
 │ 3px ████████████████ TERRACOTTA BAR ████████████│
 ├──────────────────────────────────────────────────┤
-│ Inkbloom    GALLERY  SHOP  COMMISSION  JOURNAL  👤│
+│ Vinyas    GALLERY  SHOP  COMMISSION  JOURNAL  👤│
 │ (logo left) ←──── centered ────→      (icons right)
 └──────────────────────────────────────────────────┘
 ```
+
 - Background: `rgba(240,235,227,0.72)` with `backdrop-filter: blur(18px)`
 - On scroll: opacity increases to `0.95`
 - Active link: full opacity + `1.5px solid var(--te)` underline
 - Max-width: `1100px`, centered with `left: 50%; transform: translateX(-50%)`
 
 ### Classic Nav (Alternative)
+
 - Full-width sticky
 - Background: `var(--li)`, `border-bottom: 1px solid var(--ch)`
 - Same link and icon treatment
@@ -150,14 +163,18 @@ Every major page section uses a **hard split** — two columns divided by `1px s
   color: var(--li);
   border: 1.5px solid var(--ch);
   padding: 11px 26px;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  box-shadow: 4px 4px 0 var(--te);   /* ← signature offset shadow */
-  transition: box-shadow 0.18s, transform 0.18s;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--te); /* ← signature offset shadow */
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
 }
 .btn-primary:hover {
   box-shadow: 2px 2px 0 var(--te);
-  transform: translate(2px, 2px);    /* ← moves INTO the shadow */
+  transform: translate(2px, 2px); /* ← moves INTO the shadow */
 }
 
 /* Outline */
@@ -167,7 +184,10 @@ Every major page section uses a **hard split** — two columns divided by `1px s
   border: 1.5px solid var(--ch);
   padding: 11px 26px;
 }
-.btn-outline:hover { background: var(--ch); color: var(--li); }
+.btn-outline:hover {
+  background: var(--ch);
+  color: var(--li);
+}
 
 /* Linen (on terracotta/dark bg) */
 .btn-linen {
@@ -181,6 +201,7 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ### 5C. Cards
 
 #### Product Card
+
 - Border: `1.5px solid var(--ch)`
 - Hover: `transform: translate(-3px, -3px)` + `box-shadow: 5px 5px 0 var(--te)`
 - Badge: terracotta fill, top-left absolute
@@ -188,57 +209,68 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 - Add-to-cart button: appears on hover (opacity 0 → 1), bottom-right, charcoal fill with terracotta offset shadow
 
 #### Journal Card
+
 - Border: `1px solid rgba(240,235,227,0.1)` on dark bg
 - Hover: border-color transitions to `var(--te)`
 - Cover image area fixed height (165px featured, 88px sidebar)
 - Tags: terracotta outline, 8px uppercase
 
 #### Commission Step
+
 - Step number in a `26px × 26px` square with `1.5px solid var(--ch)` border
 - Playfair Display numeral
 
 ### 5D. Tags / Badges
+
 ```css
 .tag {
-  font-size: 8px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   padding: 3px 9px;
   border: 1px solid var(--te);
   color: var(--te);
 }
 
-.badge {          /* filled — for "New", "Sale" etc */
+.badge {
+  /* filled — for "New", "Sale" etc */
   background: var(--te);
   color: var(--li);
-  font-size: 8px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   padding: 4px 9px;
 }
 ```
 
 ### 5E. Form Fields (on terracotta bg)
+
 ```css
 .form-field {
-  background: rgba(240,235,227,0.15);
-  border: 1px solid rgba(240,235,227,0.4);
+  background: rgba(240, 235, 227, 0.15);
+  border: 1px solid rgba(240, 235, 227, 0.4);
   color: var(--li);
   padding: 11px 14px;
   font-family: 'Nunito', sans-serif;
 }
 .form-field:focus {
-  background: rgba(240,235,227,0.22);
-  border-color: rgba(240,235,227,0.65);
+  background: rgba(240, 235, 227, 0.22);
+  border-color: rgba(240, 235, 227, 0.65);
 }
 ```
 
 ### 5F. Marquee Strip
+
 ```css
 .marquee {
   background: var(--te);
   border-top: 1px solid var(--ch);
   border-bottom: 1px solid var(--ch);
   padding: 10px 0;
-  overflow: hidden; white-space: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
 }
 /* Items: 10px Nunito 700, letter-spacing 0.18em, ALL CAPS, linen color */
 /* Separator: ✦ in rgba(28,20,16,0.5) */
@@ -246,16 +278,21 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ```
 
 ### 5G. Sold Stamp
+
 ```css
 .sold-stamp {
-  border: 2.5px solid #B03030;
-  color: #B03030;
+  border: 2.5px solid #b03030;
+  color: #b03030;
   font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 700;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   padding: 5px 12px;
   transform: translate(-50%, -50%) rotate(-12deg);
-  position: absolute; top: 50%; left: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   opacity: 0.85;
 }
 ```
@@ -265,13 +302,14 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ## 6. Background & Texture Patterns
 
 ### Ghost Typography (Hero)
+
 ```css
 .bg-type {
   font-family: 'Syne', sans-serif;
   font-size: clamp(100px, 16vw, 210px);
   font-weight: 800;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(45,45,45,0.055);
+  -webkit-text-stroke: 1px rgba(45, 45, 45, 0.055);
   letter-spacing: -0.04em;
   line-height: 0.88;
   /* Position: absolute, top-left, z-index 0 */
@@ -279,6 +317,7 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ```
 
 ### Sketchbook Ruled Lines (Light sections)
+
 ```html
 <svg class="ruled" viewBox="0 0 800 700" preserveAspectRatio="none">
   <!-- horizontal lines every 80px, stroke #2D2D2D, stroke-width 1, opacity 0.04 -->
@@ -286,18 +325,22 @@ Every major page section uses a **hard split** — two columns divided by `1px s
 ```
 
 ### Dark Grid (Dark sections)
+
 ```css
 background-image:
-  linear-gradient(rgba(240,235,227,.03) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(240,235,227,.03) 1px, transparent 1px);
+  linear-gradient(rgba(240, 235, 227, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(240, 235, 227, 0.03) 1px, transparent 1px);
 background-size: 40px 40px;
 ```
 
 ### Terracotta Vertical Seam (Hero split)
+
 ```css
 .terra-line {
   position: absolute;
-  right: 42%; top: 0; bottom: 0;
+  right: 42%;
+  top: 0;
+  bottom: 0;
   width: 4px;
   background: var(--te);
   z-index: 3;
@@ -305,6 +348,7 @@ background-size: 40px 40px;
 ```
 
 ### Doodle Floaters
+
 - Small SVG geometric shapes (circles, leaf forms, diamond lattices)
 - Opacity: `0.08–0.15`
 - Colors: `var(--te)`, `var(--mo)`, `var(--ch)`
@@ -316,31 +360,52 @@ background-size: 40px 40px;
 ## 7. Animation Patterns
 
 ### Scroll Reveal
+
 ```css
 .reveal {
   opacity: 0;
   transform: translateY(22px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
 }
-.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 ```
+
 ```js
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+const obs = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  },
+  { threshold: 0.1 },
+);
+document.querySelectorAll('.reveal').forEach((el) => obs.observe(el));
 ```
 
 ### Pulsing Pip (Active / Live indicators)
+
 ```css
 @keyframes pip {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(1.7); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.7);
+  }
 }
 /* Usage: 6–7px circle, background: var(--te), animation: pip 2.2s ease-in-out infinite */
 ```
 
 ### Button Press (Neo-brutalist)
+
 ```css
 /* On hover: move 2px down-right, reduce shadow by 2px */
 transform: translate(2px, 2px);
@@ -348,6 +413,7 @@ box-shadow: 2px 2px 0 var(--te); /* was 4px 4px */
 ```
 
 ### Custom Cursor
+
 ```js
 // Two elements: 9px dot (fast) + 34px ring (lagged)
 // Dot: follows mouse instantly
@@ -356,6 +422,7 @@ box-shadow: 2px 2px 0 var(--te); /* was 4px 4px */
 ```
 
 ### Card Hover
+
 ```css
 .card:hover {
   transform: translate(-3px, -3px);
@@ -369,7 +436,9 @@ box-shadow: 2px 2px 0 var(--te); /* was 4px 4px */
 ## 8. Page Templates
 
 ### 8A. Hero Section (100vh)
+
 **Structure:**
+
 ```
 hero-wrap (100vh, flex column)
   ├── nav-accent (3px terracotta)
@@ -381,6 +450,7 @@ hero-wrap (100vh, flex column)
 ```
 
 **Headline Pattern:**
+
 ```
 Line 1: Normal weight, linen/charcoal     → "Where"
 Line 2: Italic, terracotta                → "ink"
@@ -388,7 +458,9 @@ Line 3: Outline text, transparent stroke  → "blooms."
 ```
 
 ### 8B. Section Pattern
+
 Every section follows:
+
 ```
 <section>
   <div class="section-header">
@@ -403,6 +475,7 @@ Every section follows:
 ```
 
 ### 8C. Dark Section Pattern
+
 - Background: `var(--dp)`
 - Border-top: `1px solid var(--ch)`
 - All text uses `var(--li)` with reduced opacity for hierarchy
@@ -410,6 +483,7 @@ Every section follows:
 - Cards use `rgba(240,235,227,0.03)` background with `rgba(240,235,227,0.1)` border
 
 ### 8D. Split Section Pattern (Commission style)
+
 ```
 ┌─────────────────┬─────────────────┐
 │  Left (linen)   │  Right (terra)  │
@@ -417,6 +491,7 @@ Every section follows:
 │  1px solid ch   │                 │
 └─────────────────┴─────────────────┘
 ```
+
 - Left: content, steps, description (padding 64px)
 - Right: form, CTA, interactive (same padding)
 
@@ -425,6 +500,7 @@ Every section follows:
 ## 9. Page-Specific Notes
 
 ### Shop Page
+
 - Filter bar: sticky below nav, linen bg, thin bottom border
 - Filter pills: outline style matching tag component
 - Grid: `1.45fr 1fr 1fr` (same as homepage featured grid)
@@ -432,6 +508,7 @@ Every section follows:
 - Sorting dropdown: outline style
 
 ### Cart Page
+
 - Slide-in drawer from right (Framer Motion)
 - Dark overlay on page (`rgba(28,20,16,0.5)`)
 - Cart header: `var(--ch)` background, `var(--li)` text
@@ -441,6 +518,7 @@ Every section follows:
 - Checkout button: full-width `btn-primary` with terracotta shadow
 
 ### Product Detail Page
+
 - Full-bleed image left (60%)
 - Info panel right (40%): sticky scroll
 - Image gallery: thumbnail strip below main image
@@ -449,17 +527,20 @@ Every section follows:
 - "Commission Similar" link below if sold
 
 ### Commission Page
+
 - Same split layout as homepage commission section
 - Extended form: medium selector (watercolour/oil/ink/acrylic), size selector, budget range
 - Status tracker: step indicator using the step-num component
 
 ### Journal / Blog
+
 - Editorial layout: large cover, full-width title
 - Reading progress bar in terracotta (fixed top)
 - Post body: `max-width: 720px`, centered, Nunito 400 at 15px/1.85
 - Pull quotes: Playfair Display italic, large, terracotta left border
 
 ### Admin Panel
+
 - Dark sidebar nav (`var(--dp)`)
 - Content area: `var(--li)` background
 - Data tables: thin borders, terracotta row hover
@@ -472,42 +553,42 @@ Every section follows:
 ```css
 :root {
   /* Colors */
-  --li:      #F0EBE3;
-  --ch:      #2D2D2D;
-  --te:      #C17B5C;
-  --te-pale: #E8C4B0;
-  --te-dark: #9A5C40;
-  --mo:      #7B9E87;
-  --bl:      #D4A5A5;
-  --dp:      #1C1410;
-  --dp2:     #241810;
+  --li: #f0ebe3;
+  --ch: #2d2d2d;
+  --te: #c17b5c;
+  --te-pale: #e8c4b0;
+  --te-dark: #9a5c40;
+  --mo: #7b9e87;
+  --bl: #d4a5a5;
+  --dp: #1c1410;
+  --dp2: #241810;
 
   /* Typography */
   --font-display: 'Playfair Display', serif;
-  --font-ghost:   'Syne', sans-serif;
-  --font-body:    'Nunito', sans-serif;
+  --font-ghost: 'Syne', sans-serif;
+  --font-body: 'Nunito', sans-serif;
 
   /* Spacing */
-  --section-pad:  64px;
-  --card-gap:     16px;
-  --nav-h:        56px;
-  --accent-h:     3px;
+  --section-pad: 64px;
+  --card-gap: 16px;
+  --nav-h: 56px;
+  --accent-h: 3px;
 
   /* Borders */
-  --border:       1px solid var(--ch);
-  --border-dark:  1px solid rgba(240,235,227,0.1);
-  --border-card:  1.5px solid var(--ch);
+  --border: 1px solid var(--ch);
+  --border-dark: 1px solid rgba(240, 235, 227, 0.1);
+  --border-card: 1.5px solid var(--ch);
 
   /* Shadows (neo-brutalist offset) */
-  --shadow-te:    4px 4px 0 var(--te);
-  --shadow-ch:    4px 4px 0 var(--ch);
-  --shadow-dp:    4px 4px 0 var(--dp);
+  --shadow-te: 4px 4px 0 var(--te);
+  --shadow-ch: 4px 4px 0 var(--ch);
+  --shadow-dp: 4px 4px 0 var(--dp);
   --shadow-sm-te: 3px 3px 0 var(--te);
 
   /* Transitions */
-  --trans-fast:   0.18s ease;
-  --trans-med:    0.28s ease;
-  --trans-slow:   0.55s ease;
+  --trans-fast: 0.18s ease;
+  --trans-med: 0.28s ease;
+  --trans-slow: 0.55s ease;
 }
 ```
 
@@ -516,6 +597,7 @@ Every section follows:
 ## 11. Do's and Don'ts
 
 ### ✅ Do
+
 - Use `em` italic tags inside headings for terracotta accent words
 - Add the 3px terracotta accent bar at the very top of every page
 - Apply `reveal` class + IntersectionObserver to all cards and steps
@@ -526,6 +608,7 @@ Every section follows:
 - Place doodle SVG floaters at low opacity in hero and empty state sections
 
 ### ❌ Don't
+
 - Don't use pure black/white — use `--ch` and `--li`
 - Don't use Inter, Roboto, or system fonts — always Nunito for body
 - Don't use rounded corners on cards (0 border-radius)
@@ -540,6 +623,7 @@ Every section follows:
 ## 12. Illustration / SVG Art Style
 
 All placeholder artwork SVGs follow these rules:
+
 - Stroke-only, no solid fills except low-opacity background washes
 - Colors: `var(--te)`, `var(--mo)`, `var(--bl)`, `rgba(240,235,227,...)` on dark
 - Stroke-width: 0.8–2.2px depending on importance
@@ -550,5 +634,5 @@ All placeholder artwork SVGs follow these rules:
 
 ---
 
-*Inkbloom Design System v1.0 · Dusty Studio Aesthetic*  
-*Built for Next.js + Tailwind — token names map directly to CSS custom properties*
+_Vinyas Design System v1.0 · Dusty Studio Aesthetic_  
+_Built for Next.js + Tailwind — token names map directly to CSS custom properties_

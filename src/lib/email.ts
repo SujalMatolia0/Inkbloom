@@ -1,9 +1,9 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 // Create reusable transporter
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || "587"),
+  port: parseInt(process.env.SMTP_PORT || '587'),
   secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.SMTP_USER,
@@ -21,16 +21,16 @@ interface EmailOptions {
 export async function sendEmail({ to, subject, html, text }: EmailOptions) {
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || '"Inkbloom" <noreply@inkbloom.art>',
+      from: process.env.EMAIL_FROM || '"Vinyas" <noreply@Vinyas.art>',
       to,
       subject,
       text,
       html,
     });
-    console.log("Email sent:", info.messageId);
+    console.log('Email sent:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error("Email send error:", error);
+    console.error('Email send error:', error);
     return { success: false, error };
   }
 }
@@ -54,7 +54,7 @@ export function getPasswordResetTemplate(resetUrl: string) {
       </head>
       <body>
         <div class="container">
-          <div class="logo">Inkb<span>loom</span></div>
+          <div class="logo">Vin<span>yas</span></div>
           <h1>Reset Your Password</h1>
           <p>We received a request to reset your password. Click the button below to set a new password. This link will expire in 1 hour.</p>
           <p style="text-align: center;">
@@ -62,7 +62,7 @@ export function getPasswordResetTemplate(resetUrl: string) {
           </p>
           <p>If you didn't request this, you can safely ignore this email. Your password won't change.</p>
           <div class="footer">
-            <p>&copy; 2026 Inkbloom. All rights reserved.</p>
+            <p>&copy; 2026 Vinyas. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -83,9 +83,9 @@ export function getOrderConfirmationTemplate(order: {
           <td style="padding: 10px 0; border-bottom: 1px solid #eee;">${item.title}</td>
           <td style="padding: 10px 0; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
           <td style="padding: 10px 0; border-bottom: 1px solid #eee; text-align: right;">₹${item.price * item.quantity}</td>
-        </tr>`
+        </tr>`,
     )
-    .join("");
+    .join('');
 
   return `
     <!DOCTYPE html>
@@ -107,7 +107,7 @@ export function getOrderConfirmationTemplate(order: {
       </head>
       <body>
         <div class="container">
-          <div class="logo">Inkb<span>loom</span></div>
+          <div class="logo">Vin<span>yas</span></div>
           <h1>Order Confirmed ✓</h1>
           <p class="order-id">Order #${order.id}</p>
           <p>Thank you for your order! We're preparing your artwork with care.</p>
@@ -135,7 +135,7 @@ export function getOrderConfirmationTemplate(order: {
             ${order.address}
           </div>
           <div class="footer">
-            <p>&copy; 2026 Inkbloom. All rights reserved.</p>
+            <p>&copy; 2026 Vinyas. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -150,10 +150,14 @@ export function getOrderStatusUpdateTemplate(order: {
   total: number;
 }) {
   const statusMessages: Record<string, string> = {
-    IN_PROGRESS: "Your order is now being prepared with care. We'll notify you when it ships!",
-    SHIPPED: "Great news! Your order has been shipped and is on its way to you.",
-    DELIVERED: "Your order has been delivered. We hope you love your new artwork!",
-    CANCELLED: "Your order has been cancelled. Please contact us if you have any questions.",
+    IN_PROGRESS:
+      "Your order is now being prepared with care. We'll notify you when it ships!",
+    SHIPPED:
+      'Great news! Your order has been shipped and is on its way to you.',
+    DELIVERED:
+      'Your order has been delivered. We hope you love your new artwork!',
+    CANCELLED:
+      'Your order has been cancelled. Please contact us if you have any questions.',
   };
 
   return `
@@ -173,12 +177,12 @@ export function getOrderStatusUpdateTemplate(order: {
       </head>
       <body>
         <div class="container">
-          <div class="logo">Inkb<span>loom</span></div>
+          <div class="logo">Vin<span>yas</span></div>
           <h1>Order Status Update</h1>
           <p class="order-id">Order #${order.orderId}</p>
-          <p>${statusMessages[order.status] || "Your order status has been updated."}</p>
+          <p>${statusMessages[order.status] || 'Your order status has been updated.'}</p>
           <div class="footer">
-            <p>&copy; 2026 Inkbloom. All rights reserved.</p>
+            <p>&copy; 2026 Vinyas. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -190,7 +194,7 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   const html = getPasswordResetTemplate(resetUrl);
   return sendEmail({
     to: email,
-    subject: "Reset Your Inkbloom Password",
+    subject: 'Reset Your Vinyas Password',
     html,
     text: `Reset your password: ${resetUrl}`,
   });
@@ -198,7 +202,7 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
 
 export async function sendOrderConfirmationEmail(
   email: string,
-  order: Parameters<typeof getOrderConfirmationTemplate>[0]
+  order: Parameters<typeof getOrderConfirmationTemplate>[0],
 ) {
   const html = getOrderConfirmationTemplate(order);
   return sendEmail({
@@ -211,7 +215,7 @@ export async function sendOrderConfirmationEmail(
 
 export async function sendOrderStatusEmail(
   email: string,
-  order: Parameters<typeof getOrderStatusUpdateTemplate>[0]
+  order: Parameters<typeof getOrderStatusUpdateTemplate>[0],
 ) {
   const html = getOrderStatusUpdateTemplate(order);
   return sendEmail({

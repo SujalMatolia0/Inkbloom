@@ -1,9 +1,24 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Plus, Trash2, Edit2, Check, X, Star, Quote, Eye, EyeOff, Image as ImageIcon } from "lucide-react";
-import { createTestimonial, updateTestimonial, deleteTestimonial } from "@/app/actions/testimonials";
-import { CloudinaryImageUploader } from "@/components/ui/CloudinaryImageUploader";
+import { useState } from 'react';
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  Check,
+  X,
+  Star,
+  Quote,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
+} from 'lucide-react';
+import {
+  createTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+} from '@/app/actions/testimonials';
+import { CloudinaryImageUploader } from '@/components/ui/CloudinaryImageUploader';
 
 export interface TestimonialItem {
   id: string;
@@ -23,29 +38,33 @@ export function AdminTestimonialsManager({
 }: {
   initialTestimonials: TestimonialItem[];
 }) {
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(initialTestimonials);
+  const [testimonials, setTestimonials] =
+    useState<TestimonialItem[]>(initialTestimonials);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState<{ text: string; error?: boolean } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    text: string;
+    error?: boolean;
+  } | null>(null);
 
   // Form fields
-  const [clientName, setClientName] = useState("");
-  const [clientRole, setClientRole] = useState("");
-  const [content, setContent] = useState("");
-  const [artworkTitle, setArtworkTitle] = useState("");
+  const [clientName, setClientName] = useState('');
+  const [clientRole, setClientRole] = useState('');
+  const [content, setContent] = useState('');
+  const [artworkTitle, setArtworkTitle] = useState('');
   const [rating, setRating] = useState(5);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState('');
   const [isFeatured, setIsFeatured] = useState(true);
   const [order, setOrder] = useState(0);
 
   const resetForm = () => {
-    setClientName("");
-    setClientRole("");
-    setContent("");
-    setArtworkTitle("");
+    setClientName('');
+    setClientRole('');
+    setContent('');
+    setArtworkTitle('');
     setRating(5);
-    setImage("");
+    setImage('');
     setIsFeatured(true);
     setOrder(0);
     setEditingId(null);
@@ -55,11 +74,11 @@ export function AdminTestimonialsManager({
   const startEdit = (item: TestimonialItem) => {
     setEditingId(item.id);
     setClientName(item.clientName);
-    setClientRole(item.clientRole || "");
+    setClientRole(item.clientRole || '');
     setContent(item.content);
-    setArtworkTitle(item.artworkTitle || "");
+    setArtworkTitle(item.artworkTitle || '');
     setRating(item.rating);
-    setImage(item.image || "");
+    setImage(item.image || '');
     setIsFeatured(item.isFeatured);
     setOrder(item.order);
     setIsCreating(true);
@@ -68,7 +87,10 @@ export function AdminTestimonialsManager({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim() || !content.trim()) {
-      setFeedback({ text: "Client Name and Testimonial Content are required.", error: true });
+      setFeedback({
+        text: 'Client Name and Testimonial Content are required.',
+        error: true,
+      });
       return;
     }
 
@@ -90,12 +112,17 @@ export function AdminTestimonialsManager({
 
       if (res.success && res.data) {
         setTestimonials((prev) =>
-          prev.map((t) => (t.id === editingId ? (res.data as unknown as TestimonialItem) : t))
+          prev.map((t) =>
+            t.id === editingId ? (res.data as unknown as TestimonialItem) : t,
+          ),
         );
-        setFeedback({ text: "Testimonial updated successfully!" });
+        setFeedback({ text: 'Testimonial updated successfully!' });
         resetForm();
       } else {
-        setFeedback({ text: res.error || "Failed to update testimonial", error: true });
+        setFeedback({
+          text: res.error || 'Failed to update testimonial',
+          error: true,
+        });
       }
     } else {
       // Create
@@ -111,11 +138,17 @@ export function AdminTestimonialsManager({
       });
 
       if (res.success && res.data) {
-        setTestimonials((prev) => [res.data as unknown as TestimonialItem, ...prev]);
-        setFeedback({ text: "New Testimonial added successfully!" });
+        setTestimonials((prev) => [
+          res.data as unknown as TestimonialItem,
+          ...prev,
+        ]);
+        setFeedback({ text: 'New Testimonial added successfully!' });
         resetForm();
       } else {
-        setFeedback({ text: res.error || "Failed to create testimonial", error: true });
+        setFeedback({
+          text: res.error || 'Failed to create testimonial',
+          error: true,
+        });
       }
     }
 
@@ -123,14 +156,17 @@ export function AdminTestimonialsManager({
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this testimonial?")) return;
+    if (!confirm('Are you sure you want to delete this testimonial?')) return;
     setLoading(true);
     const res = await deleteTestimonial(id);
     if (res.success) {
       setTestimonials((prev) => prev.filter((t) => t.id !== id));
-      setFeedback({ text: "Testimonial removed." });
+      setFeedback({ text: 'Testimonial removed.' });
     } else {
-      setFeedback({ text: res.error || "Failed to delete testimonial", error: true });
+      setFeedback({
+        text: res.error || 'Failed to delete testimonial',
+        error: true,
+      });
     }
     setLoading(false);
   };
@@ -140,7 +176,9 @@ export function AdminTestimonialsManager({
     const res = await updateTestimonial(item.id, { isFeatured: newStatus });
     if (res.success) {
       setTestimonials((prev) =>
-        prev.map((t) => (t.id === item.id ? { ...t, isFeatured: newStatus } : t))
+        prev.map((t) =>
+          t.id === item.id ? { ...t, isFeatured: newStatus } : t,
+        ),
       );
     }
   };
@@ -154,10 +192,12 @@ export function AdminTestimonialsManager({
             ✦ Client Praise &amp; Collector Stories
           </span>
           <h1 className="font-serif text-3xl font-bold text-linen">
-            Manage <em className="italic text-terra-pale font-normal">Testimonials</em>
+            Manage{' '}
+            <em className="italic text-terra-pale font-normal">Testimonials</em>
           </h1>
           <p className="text-xs text-linen/60 mt-1 font-sans">
-            Add and feature heartfelt client reviews, bride feedback, and collector testimonials.
+            Add and feature heartfelt client reviews, bride feedback, and
+            collector testimonials.
           </p>
         </div>
 
@@ -172,7 +212,7 @@ export function AdminTestimonialsManager({
           className="btn-primary py-2.5 px-5 text-xs font-bold tracking-wider uppercase flex items-center gap-2 w-fit cursor-pointer"
         >
           {isCreating ? <X size={14} /> : <Plus size={14} />}
-          <span>{isCreating ? "Close Form" : "Add Testimonial"}</span>
+          <span>{isCreating ? 'Close Form' : 'Add Testimonial'}</span>
         </button>
       </div>
 
@@ -181,12 +221,15 @@ export function AdminTestimonialsManager({
         <div
           className={`p-3.5 border text-xs flex items-center justify-between ${
             feedback.error
-              ? "bg-red-950/40 border-red-500/50 text-red-200"
-              : "bg-emerald-950/40 border-emerald-500/50 text-emerald-200"
+              ? 'bg-red-950/40 border-red-500/50 text-red-200'
+              : 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200'
           }`}
         >
           <span>{feedback.text}</span>
-          <button onClick={() => setFeedback(null)} className="opacity-70 hover:opacity-100">
+          <button
+            onClick={() => setFeedback(null)}
+            className="opacity-70 hover:opacity-100"
+          >
             <X size={14} />
           </button>
         </div>
@@ -200,7 +243,9 @@ export function AdminTestimonialsManager({
         >
           <div className="flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-terra-pale pb-2 border-b border-linen/10">
             <Quote size={15} />
-            <span>{editingId ? "Edit Client Testimonial" : "Add New Testimonial"}</span>
+            <span>
+              {editingId ? 'Edit Client Testimonial' : 'Add New Testimonial'}
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -240,7 +285,7 @@ export function AdminTestimonialsManager({
               type="text"
               value={artworkTitle}
               onChange={(e) => setArtworkTitle(e.target.value)}
-              placeholder="e.g. 9&quot; Hexagon Varmala Preservation / Charcoal Couple Portrait"
+              placeholder='e.g. 9" Hexagon Varmala Preservation / Charcoal Couple Portrait'
               className="w-full px-3.5 py-2.5 bg-[#18100C] border border-linen/20 text-xs text-linen focus:border-terra outline-none font-sans"
             />
           </div>
@@ -265,17 +310,23 @@ export function AdminTestimonialsManager({
               Client Photo or Preserved Artwork Image (Cloudinary)
             </label>
             <CloudinaryImageUploader
-              folder="inkbloom/testimonials"
+              folder="Vinyas/testimonials"
               label="Upload Client Photo to Cloudinary"
               onUploadSuccess={(url) => setImage(url)}
             />
             {image && (
               <div className="mt-2 flex items-center gap-2 p-2 bg-[#18100C] border border-terra/30 text-xs text-linen/80">
-                <img src={image} alt="Preview" className="w-8 h-8 rounded object-cover border border-linen/20" />
-                <span className="truncate text-[10px] font-mono flex-1">{image}</span>
+                <img
+                  src={image}
+                  alt="Preview"
+                  className="w-8 h-8 rounded object-cover border border-linen/20"
+                />
+                <span className="truncate text-[10px] font-mono flex-1">
+                  {image}
+                </span>
                 <button
                   type="button"
-                  onClick={() => setImage("")}
+                  onClick={() => setImage('')}
                   className="text-red-400 hover:text-red-300 text-xs px-1"
                 >
                   <X size={13} />
@@ -299,7 +350,11 @@ export function AdminTestimonialsManager({
                   >
                     <Star
                       size={18}
-                      className={star <= rating ? "text-amber-400 fill-amber-400" : "text-linen/30"}
+                      className={
+                        star <= rating
+                          ? 'text-amber-400 fill-amber-400'
+                          : 'text-linen/30'
+                      }
                     />
                   </button>
                 ))}
@@ -344,7 +399,11 @@ export function AdminTestimonialsManager({
               disabled={loading}
               className="btn-primary py-2.5 px-6 text-xs font-bold tracking-wider uppercase"
             >
-              {loading ? "Saving..." : editingId ? "Update Testimonial" : "Save Testimonial"}
+              {loading
+                ? 'Saving...'
+                : editingId
+                  ? 'Update Testimonial'
+                  : 'Save Testimonial'}
             </button>
           </div>
         </form>
@@ -363,7 +422,8 @@ export function AdminTestimonialsManager({
 
         {testimonials.length === 0 ? (
           <div className="p-12 text-center text-linen/40 text-xs">
-            No testimonials recorded yet. Click &ldquo;Add Testimonial&rdquo; above to create one.
+            No testimonials recorded yet. Click &ldquo;Add Testimonial&rdquo;
+            above to create one.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-linen/10">
@@ -376,7 +436,11 @@ export function AdminTestimonialsManager({
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-1">
                       {[...Array(item.rating)].map((_, i) => (
-                        <Star key={i} size={13} className="text-amber-400 fill-amber-400" />
+                        <Star
+                          key={i}
+                          size={13}
+                          className="text-amber-400 fill-amber-400"
+                        />
                       ))}
                     </div>
                     {item.isFeatured ? (
@@ -399,7 +463,7 @@ export function AdminTestimonialsManager({
                       {item.clientName}
                     </div>
                     <div className="text-[10.5px] text-linen/60 font-sans">
-                      {item.clientRole || "Art Lover"}
+                      {item.clientRole || 'Art Lover'}
                     </div>
                     {item.artworkTitle && (
                       <div className="text-[10px] font-mono text-terra-pale mt-0.5">
@@ -412,11 +476,13 @@ export function AdminTestimonialsManager({
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-linen/10">
                   <button
                     onClick={() => toggleFeatured(item)}
-                    title={item.isFeatured ? "Unfeature" : "Feature on storefront"}
+                    title={
+                      item.isFeatured ? 'Unfeature' : 'Feature on storefront'
+                    }
                     className={`p-1.5 border text-xs transition-colors cursor-pointer ${
                       item.isFeatured
-                        ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
-                        : "border-linen/20 text-linen/40 hover:text-linen"
+                        ? 'border-emerald-500/40 bg-emerald-950/40 text-emerald-300'
+                        : 'border-linen/20 text-linen/40 hover:text-linen'
                     }`}
                   >
                     {item.isFeatured ? <Eye size={13} /> : <EyeOff size={13} />}

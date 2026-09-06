@@ -1,63 +1,63 @@
-# Inkbloom Theme - Quick Reference
+# Vinyas Theme - Quick Reference
 
 ## 🎨 Colors
 
 ```tsx
 // Backgrounds
-bg-linen          // #F0EBE3 - Primary background
-bg-deep           // #1C1410 - Dark sections
-bg-terracotta     // #C17B5C - Accent sections
+bg - linen; // #F0EBE3 - Primary background
+bg - deep; // #1C1410 - Dark sections
+bg - terracotta; // #C17B5C - Accent sections
 
 // Text
-text-charcoal     // #2D2D2D - Primary text
-text-linen        // #F0EBE3 - Text on dark backgrounds
-text-terracotta   // #C17B5C - Accent text
+text - charcoal; // #2D2D2D - Primary text
+text - linen; // #F0EBE3 - Text on dark backgrounds
+text - terracotta; // #C17B5C - Accent text
 
 // Borders
-border-charcoal   // #2D2D2D
-border-terracotta // #C17B5C
+border - charcoal; // #2D2D2D
+border - terracotta; // #C17B5C
 
 // Art Backgrounds
-bg-art-warm       // #E2B8A0
-bg-art-cool       // #C8DAD0
-bg-art-blush      // #E8D0D0
-bg-art-sand       // #E4DDD4
+bg - art - warm; // #E2B8A0
+bg - art - cool; // #C8DAD0
+bg - art - blush; // #E8D0D0
+bg - art - sand; // #E4DDD4
 ```
 
 ## 📏 Spacing
 
 ```tsx
-p-section         // 64px padding
-p-section-sm      // 48px padding
-gap-card-gap      // 16px gap
-h-nav-height      // 56px height
+p - section; // 64px padding
+p - section - sm; // 48px padding
+gap - card - gap; // 16px gap
+h - nav - height; // 56px height
 ```
 
 ## 🔤 Typography
 
 ```tsx
 // Fonts
-font-display      // Playfair Display (headings)
-font-body         // Nunito (body text)
-font-ghost        // Syne (background text)
+font - display; // Playfair Display (headings)
+font - body; // Nunito (body text)
+font - ghost; // Syne (background text)
 
 // Sizes
-text-hero                // Hero headlines
-text-section-heading     // Section headings
-text-page-header         // Page headers
-text-body                // Body text
-text-label               // Labels/tags
-text-nav-link            // Navigation
-text-btn                 // Buttons
+text - hero; // Hero headlines
+text - section - heading; // Section headings
+text - page - header; // Page headers
+text - body; // Body text
+text - label; // Labels/tags
+text - nav - link; // Navigation
+text - btn; // Buttons
 ```
 
 ## 🎭 Shadows (Neo-Brutalist)
 
 ```tsx
-shadow-neo-te            // 4px 4px 0 terracotta
-shadow-neo-te-hover      // 2px 2px 0 terracotta (hover)
-shadow-neo-ch            // 4px 4px 0 charcoal
-shadow-neo-dp            // 4px 4px 0 deep
+shadow - neo - te; // 4px 4px 0 terracotta
+shadow - neo - te - hover; // 2px 2px 0 terracotta (hover)
+shadow - neo - ch; // 4px 4px 0 charcoal
+shadow - neo - dp; // 4px 4px 0 deep
 ```
 
 ## 🔘 Buttons
@@ -154,6 +154,7 @@ const className = cn(
 ## 🎯 Common Patterns
 
 ### Hero Section
+
 ```tsx
 <div className="h-[calc(100vh-59px)] flex flex-col overflow-hidden">
   <div className="relative flex-1 grid grid-cols-hero overflow-hidden">
@@ -164,6 +165,7 @@ const className = cn(
 ```
 
 ### Section Header
+
 ```tsx
 <div className="flex justify-between items-end mb-component-gap">
   <div>
@@ -181,6 +183,7 @@ const className = cn(
 ```
 
 ### Product Card
+
 ```tsx
 <div className="border-1.5 border-charcoal bg-linen cursor-none relative overflow-hidden transition-all duration-[220ms] hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-neo-te-lg">
   <div className="w-full aspect-product flex items-center justify-center relative">
@@ -197,6 +200,7 @@ const className = cn(
 ```
 
 ### Dark Section
+
 ```tsx
 <section className="bg-deep text-linen p-section border-t border-charcoal">
   {/* Content */}
@@ -204,8 +208,9 @@ const className = cn(
 ```
 
 ### Form Field (on terracotta bg)
+
 ```tsx
-<input 
+<input
   className="w-full bg-linen/15 border border-linen/40 px-[14px] py-[11px] text-[12px] text-linen outline-none transition-all duration-fast focus:bg-linen/[0.22] focus:border-linen/65 placeholder:text-linen/50"
   placeholder="Your name"
 />

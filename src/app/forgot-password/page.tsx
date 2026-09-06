@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
         
         <nav>
           <Link href="/" className="nav-logo">
-            Ink<span>bloom</span>
+            Vin<span>yas</span>
           </Link>
           <ul className="nav-links">
             <li><Link href="/">Gallery</Link></li>
@@ -182,7 +182,7 @@ export default function ForgotPasswordPage() {
       
       <nav>
         <Link href="/" className="nav-logo">
-          Ink<span>bloom</span>
+          Vin<span>yas</span>
         </Link>
         <ul className="nav-links">
           <li><Link href="/">Gallery</Link></li>
@@ -220,7 +220,7 @@ export default function ForgotPasswordPage() {
                   color: 'var(--ch)',
                   letterSpacing: '-0.02em'
                 }}>
-                  Ink<span style={{ color: 'var(--te)' }}>bloom</span>
+                  Vin<span style={{ color: 'var(--te)' }}>yas</span>
                 </h1>
                 <p style={{
                   fontSize: '11px',
