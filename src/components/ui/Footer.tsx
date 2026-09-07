@@ -30,20 +30,22 @@ export function Footer() {
             Original mixed media art &amp; custom commissions from a soulful studio in Ratangarh, Rajasthan.
           </p>
           
-          <form onSubmit={handleNewsletterSubmit} className="newsletter-row">
+          <form onSubmit={handleNewsletterSubmit} className="newsletter-row w-full max-w-sm">
             <input 
               type="email" 
-              className="newsletter-input" 
+              className="newsletter-input min-w-0" 
               placeholder="Your email..." 
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === "loading" || status === "subscribed"}
+              aria-label="Email address for newsletter"
             />
             <button 
               type="submit" 
-              className="newsletter-btn flex items-center justify-center gap-1.5"
+              className="newsletter-btn flex items-center justify-center gap-1.5 shrink-0"
               disabled={status === "loading"}
+              aria-label="Subscribe to newsletter"
             >
               {status === "loading" ? "..." : status === "subscribed" ? <Check size={14} /> : "Join"}
             </button>

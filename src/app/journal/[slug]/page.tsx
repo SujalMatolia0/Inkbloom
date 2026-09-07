@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
+import { Navbar } from "@/components/ui/Navbar";
+import { Footer } from "@/components/ui/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -32,9 +34,11 @@ export default async function JournalPostPage({
   });
 
   return (
-    <div className="min-h-screen bg-linen">
+    <div className="min-h-screen bg-linen flex flex-col selection:bg-terra selection:text-linen">
+      <Navbar />
+
       {/* Hero Section */}
-      <div className="w-full h-[50vh] bg-charcoal/5 relative overflow-hidden">
+      <div className="w-full h-[32vh] sm:h-[45vh] bg-charcoal/5 relative overflow-hidden mt-[58px]">
         {post.coverImage && (
           <Image
             src={post.coverImage}
@@ -47,7 +51,7 @@ export default async function JournalPostPage({
         <div className="absolute inset-0 bg-gradient-to-t from-linen via-linen/50 to-transparent" />
       </div>
 
-      <div className="max-w-[800px] mx-auto px-6 py-12">
+      <div className="max-w-[800px] mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1 w-full">
         {/* Back Link */}
         <Link
           href="/journal"
@@ -69,10 +73,10 @@ export default async function JournalPostPage({
               </span>
             ))}
           </div>
-          <h1 className="font-serif text-[40px] md:text-[56px] font-bold text-charcoal leading-[1.05] tracking-[-0.02em] mb-4">
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-[52px] font-bold text-charcoal leading-[1.08] tracking-tight mb-4">
             {post.title}
           </h1>
-          <div className="flex items-center gap-6 text-[11px] text-charcoal/40 font-semibold uppercase tracking-[0.1em]">
+          <div className="flex items-center gap-4 sm:gap-6 text-[11px] text-charcoal/40 font-semibold uppercase tracking-[0.1em] flex-wrap">
             <div className="flex items-center gap-2">
               <Calendar size={14} />
               {new Date(post.createdAt).toLocaleDateString()}
@@ -103,17 +107,17 @@ export default async function JournalPostPage({
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <div className="mt-16 pt-12 border-t border-charcoal/10">
-            <h2 className="font-serif text-[28px] font-bold text-charcoal mb-8">
+            <h2 className="font-serif text-[24px] sm:text-[28px] font-bold text-charcoal mb-6">
               Related Posts
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {relatedPosts.map((related) => (
                 <Link
                   key={related.id}
                   href={`/journal/${related.slug}`}
                   className="group"
                 >
-                  <article className="border border-charcoal bg-linen overflow-hidden">
+                  <article className="border border-charcoal bg-linen overflow-hidden hover:border-terra transition-colors">
                     <div className="aspect-[16/9] bg-charcoal/5 flex items-center justify-center overflow-hidden">
                       {related.coverImage ? (
                         <img
@@ -126,7 +130,7 @@ export default async function JournalPostPage({
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-serif text-[16px] font-bold text-charcoal group-hover:text-terra transition-colors mb-2">
+                      <h3 className="font-serif text-[16px] font-bold text-charcoal group-hover:text-terra transition-colors mb-2 line-clamp-2">
                         {related.title}
                       </h3>
                       <p className="text-[10px] text-charcoal/40 uppercase tracking-[0.1em] font-semibold">
@@ -140,6 +144,7 @@ export default async function JournalPostPage({
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

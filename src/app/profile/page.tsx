@@ -9,6 +9,7 @@ import { CommissionHistory } from "@/components/profile/CommissionHistory";
 import { User, Package, Image as ImageIcon } from "lucide-react";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 import { Navbar } from "@/components/ui/Navbar";
+import { Footer } from "@/components/ui/Footer";
 import Link from "next/link";
 
 export default async function ProfilePage() {
@@ -39,21 +40,21 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-screen bg-linen">
       <Navbar />
-      <div className="max-w-[1100px] mx-auto px-6 pt-28 pb-12">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-28 pb-12">
         {/* Header */}
-        <div className="flex items-start justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 sm:mb-12">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-terra flex items-center justify-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-terra flex items-center justify-center shrink-0">
               <User size={28} className="text-linen" />
             </div>
-            <div>
-              <h1 className="font-serif text-[28px] font-bold text-charcoal">
+            <div className="min-w-0">
+              <h1 className="font-serif text-[24px] sm:text-[28px] font-bold text-charcoal truncate">
                 {user.name || "User"}
               </h1>
-              <p className="text-[12px] text-charcoal/40">{user.email}</p>
+              <p className="text-[12px] text-charcoal/40 truncate">{user.email}</p>
             </div>
           </div>
-          <LogoutButton className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-charcoal/40 hover:text-terra transition-colors" />
+          <LogoutButton className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-charcoal/40 hover:text-terra transition-colors self-start sm:self-auto" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -126,6 +127,7 @@ export default async function ProfilePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

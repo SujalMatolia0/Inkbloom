@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Clock, Send } from 'lucide-react';
+import { Navbar } from '@/components/ui/Navbar';
+import { Footer } from '@/components/ui/Footer';
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -26,26 +28,28 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linen">
+    <div className="min-h-screen bg-linen flex flex-col selection:bg-terra selection:text-linen">
+      <Navbar />
+
       {/* Hero */}
-      <section className="h-[40vh] bg-charcoal flex items-center justify-center">
+      <section className="pt-24 pb-14 md:py-20 bg-charcoal flex items-center justify-center px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <h1 className="font-serif text-[48px] md:text-[64px] font-bold text-linen mb-4">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-[64px] font-bold text-linen mb-3">
             Get in <em className="text-terra italic">Touch</em>
           </h1>
-          <p className="text-[14px] text-linen/40">
+          <p className="text-xs sm:text-[14px] text-linen/60">
             Have a project in mind? Let's collaborate
           </p>
         </motion.div>
       </section>
 
-      <div className="max-w-[1100px] mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-12 md:py-20 flex-1 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -188,7 +192,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-charcoal/60 mb-2">
                       Name *
@@ -248,7 +252,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="w-full h-[48px] bg-charcoal text-linen font-bold text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                  className="w-full h-[48px] bg-charcoal text-linen font-bold text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal/90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Send size={14} />
                   {status === 'sending' ? 'Sending...' : 'Send Message'}
@@ -258,6 +262,7 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

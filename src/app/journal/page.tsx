@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Calendar, Clock } from "lucide-react";
+import { Navbar } from "@/components/ui/Navbar";
+import { Footer } from "@/components/ui/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,11 +26,17 @@ export default async function JournalPage({
   const allTags = ["Process", "Behind the Scenes", "Tutorial", "New Collection", "Personal"];
 
   return (
-    <div className="min-h-screen bg-linen">
-      <div className="max-w-[1200px] mx-auto px-6 py-16">
+    <div className="min-h-screen bg-linen flex flex-col selection:bg-terra selection:text-linen">
+      <Navbar />
+
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-24 pb-16 flex-1 w-full">
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="font-serif text-[56px] font-bold text-charcoal tracking-[-0.02em] mb-2">
+        <div className="mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-terra/10 border border-terra/30 text-terra text-[9.5px] font-bold tracking-widest uppercase mb-3">
+            <span>✦</span>
+            <span>Studio Journal &amp; Stories</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-[56px] font-bold text-charcoal tracking-tight mb-2">
             Journal
           </h1>
           <div className="w-16 h-1 bg-terra" />
@@ -117,6 +125,7 @@ export default async function JournalPage({
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

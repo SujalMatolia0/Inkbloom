@@ -57,162 +57,210 @@ export function Navbar() {
     signOut({ callbackUrl: "/" });
   };
 
-  return (
-    <nav
-      style={{ top: 0, position: 'fixed' }}
-      className="fixed top-0 left-0 right-0 w-full h-[58px] z-50 bg-[#F0EBE3] border-b-[1.5px] border-charcoal border-t-[3px] border-terra px-6 md:px-12 flex items-center justify-between shadow-sm"
-    >
-      <Link href="/" className="nav-logo">
-        Vin<span>yas</span>
-      </Link>
-      
-      <ul className="nav-links">
-        {navLinks.map((link) => (
-          <li key={link.label}>
-            <Link
-              href={link.href}
-              className={pathname === link.href ? "active" : ""}
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
-      <div className="nav-icons">
-        <Link href="/cart" className="nav-icon">
-          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          {mounted && getTotalItems() > 0 && (
-            <span className="badge-dot">{getTotalItems()}</span>
-          )}
+  return (
+    <>
+      <nav
+        style={{ top: 0, position: 'fixed' }}
+        className="fixed top-0 left-0 right-0 w-full h-[58px] z-50 bg-[#F0EBE3] border-b-[1.5px] border-charcoal border-t-[3px] border-terra px-4 sm:px-6 md:px-12 flex items-center justify-between shadow-sm"
+      >
+        <Link href="/" className="nav-logo" onClick={() => setMobileMenuOpen(false)}>
+          Vin<span>yas</span>
         </Link>
         
-        {/* Profile Icon with Dropdown */}
-        <div className="relative" ref={profileMenuRef}>
-          <button
-            onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-            className="nav-icon"
-            aria-label="Profile menu"
-          >
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </button>
+        <ul className="nav-links">
+          {navLinks.map((link) => (
+            <li key={link.label}>
+              <Link
+                href={link.href}
+                className={pathname === link.href ? "active" : ""}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
 
-          {/* Dropdown Menu */}
-          {profileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-linen border-1.5 border-charcoal shadow-lg z-50">
-              {session ? (
-                <>
-                  <div className="px-4 py-3 border-b border-charcoal/10">
-                    <p className="text-[11px] font-semibold text-charcoal">
-                      {session.user?.name || "User"}
-                    </p>
-                    <p className="text-[9px] text-charcoal/60 mt-1">
-                      {session.user?.email}
-                    </p>
-                  </div>
-                  
-                  <div className="py-1">
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
-                      onClick={() => setProfileMenuOpen(false)}
-                    >
-                      <User size={14} />
-                      Profile
-                    </Link>
+        <div className="nav-icons">
+          <Link href="/cart" className="nav-icon" aria-label="View Shopping Cart">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            {mounted && getTotalItems() > 0 && (
+              <span className="badge-dot">{getTotalItems()}</span>
+            )}
+          </Link>
+          
+          {/* Profile Icon with Dropdown */}
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+              className="nav-icon"
+              aria-label="Profile menu"
+            >
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {profileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-linen border-1.5 border-charcoal shadow-lg z-50">
+                {session ? (
+                  <>
+                    <div className="px-4 py-3 border-b border-charcoal/10">
+                      <p className="text-[11px] font-semibold text-charcoal">
+                        {session.user?.name || "User"}
+                      </p>
+                      <p className="text-[9px] text-charcoal/60 mt-1">
+                        {session.user?.email}
+                      </p>
+                    </div>
                     
-                    {session.user?.role === "ADMIN" && (
+                    <div className="py-1">
                       <Link
-                        href="/admin"
+                        href="/profile"
                         className="flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
                         onClick={() => setProfileMenuOpen(false)}
                       >
-                        <LayoutDashboard size={14} />
-                        Admin Panel
+                        <User size={14} />
+                        Profile
                       </Link>
-                    )}
-                    
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors text-left"
+                      
+                      {session.user?.role === "ADMIN" && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
+                          onClick={() => setProfileMenuOpen(false)}
+                        >
+                          <LayoutDashboard size={14} />
+                          Admin Panel
+                        </Link>
+                      )}
+                      
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors text-left"
+                      >
+                        <LogOut size={14} />
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-1">
+                    <Link
+                      href="/login"
+                      className="block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
+                      onClick={() => setProfileMenuOpen(false)}
                     >
-                      <LogOut size={14} />
-                      Logout
-                    </button>
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
+                      onClick={() => setProfileMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
                   </div>
-                </>
-              ) : (
-                <div className="py-1">
-                  <Link
-                    href="/login"
-                    className="block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
-                    onClick={() => setProfileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal hover:bg-charcoal/5 transition-colors"
-                    onClick={() => setProfileMenuOpen(false)}
-                  >
-                    Register
-                  </Link>
-                </div>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {/* Mobile Menu Toggle */}
+          <button
+            className="md:hidden w-8 h-8 flex items-center justify-center border border-charcoal/30 hover:border-charcoal bg-transparent text-charcoal transition-colors ml-1"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
+
+        {/* Mobile Nav Drawer */}
+        <div className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={pathname === link.href ? "active" : ""}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>{link.label}</span>
+              <span className="text-terra text-[10px]">→</span>
+            </Link>
+          ))}
+          
+          {/* Mobile Menu - Auth Links */}
+          {session ? (
+            <>
+              <Link
+                href="/profile"
+                className="border-t border-charcoal/10 pt-3 mt-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Profile ({session.user?.name || "User"})</span>
+                <span className="text-terra text-[10px]">→</span>
+              </Link>
+              {session.user?.role === "ADMIN" && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Admin Panel</span>
+                  <span className="text-terra text-[10px]">✦</span>
+                </Link>
               )}
-            </div>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="text-left w-full flex items-center justify-between text-terra"
+              >
+                <span>Logout</span>
+                <LogOut size={13} />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="border-t border-charcoal/10 pt-3 mt-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Login</span>
+                <span className="text-terra text-[10px]">→</span>
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Register</span>
+                <span className="text-terra text-[10px]">→</span>
+              </Link>
+            </>
           )}
         </div>
-        
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden ml-2 flex items-center justify-center"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
+      </nav>
 
-      {/* Mobile Nav */}
-      <div className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
-        {navLinks.map((link) => (
-          <Link
-            key={link.label}
-            href={link.href}
-            className={pathname === link.href ? "active" : ""}
-          >
-            {link.label}
-          </Link>
-        ))}
-        
-        {/* Mobile Menu - Auth Links */}
-        {session ? (
-          <>
-            <Link href="/profile" className="border-t border-charcoal/10 pt-2 mt-2">
-              Profile
-            </Link>
-            {session.user?.role === "ADMIN" && (
-              <Link href="/admin">
-                Admin Panel
-              </Link>
-            )}
-            <button
-              onClick={handleLogout}
-              className="text-left w-full"
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link href="/login" className="border-t border-charcoal/10 pt-2 mt-2">
-              Login
-            </Link>
-            <Link href="/register">
-              Register
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
+      {/* Backdrop overlay for mobile menu */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden animate-fadeIn"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+    </>
   );
 }
