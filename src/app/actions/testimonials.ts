@@ -2,6 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) throw new Error("Not authenticated");
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  if (!user || user.role !== "ADMIN") throw new Error("Not authorized");
+  return user;
+}
 
 export async function getTestimonials(onlyFeatured = false) {
   try {
@@ -10,9 +20,10 @@ export async function getTestimonials(onlyFeatured = false) {
       orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     });
     return { success: true, data: testimonials };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching Testimonials:", error);
-    return { success: false, error: error.message || "Failed to fetch Testimonials", data: [] };
+    const message = error instanceof Error ? error.message : "Failed to fetch Testimonials";
+    return { success: false, error: message, data: [] };
   }
 }
 
@@ -26,6 +37,7 @@ export async function createTestimonial(data: {
   isFeatured?: boolean;
   order?: number;
 }) {
+  await requireAdmin();
   try {
     const newTestimonial = await prisma.testimonial.create({
       data: {
@@ -44,9 +56,10 @@ export async function createTestimonial(data: {
     revalidatePath("/commission");
     revalidatePath("/admin/testimonials");
     return { success: true, data: newTestimonial };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating Testimonial:", error);
-    return { success: false, error: error.message || "Failed to create Testimonial" };
+    const message = error instanceof Error ? error.message : "Failed to create Testimonial";
+    return { success: false, error: message };
   }
 }
 
@@ -63,6 +76,7 @@ export async function updateTestimonial(
     order?: number;
   }
 ) {
+  await requireAdmin();
   try {
     const updated = await prisma.testimonial.update({
       where: { id },
@@ -73,13 +87,15 @@ export async function updateTestimonial(
     revalidatePath("/commission");
     revalidatePath("/admin/testimonials");
     return { success: true, data: updated };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating Testimonial:", error);
-    return { success: false, error: error.message || "Failed to update Testimonial" };
+    const message = error instanceof Error ? error.message : "Failed to update Testimonial";
+    return { success: false, error: message };
   }
 }
 
 export async function deleteTestimonial(id: string) {
+  await requireAdmin();
   try {
     await prisma.testimonial.delete({ where: { id } });
     revalidatePath("/");
@@ -87,8 +103,9 @@ export async function deleteTestimonial(id: string) {
     revalidatePath("/commission");
     revalidatePath("/admin/testimonials");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting Testimonial:", error);
-    return { success: false, error: error.message || "Failed to delete Testimonial" };
+    const message = error instanceof Error ? error.message : "Failed to delete Testimonial";
+    return { success: false, error: message };
   }
 }

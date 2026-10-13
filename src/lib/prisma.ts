@@ -23,8 +23,15 @@ function getPrismaClient(): PrismaClient {
       ssl: isLocal ? false : { rejectUnauthorized: false },
       max: process.env.NODE_ENV === "production" ? 5 : 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 30000,
+      keepAlive: true,
     });
+
+  if (!globalForPrisma.pool) {
+    pool.on("error", (err) => {
+      console.warn("Prisma pg pool idle connection notice:", err?.message || err);
+    });
+  }
 
   globalForPrisma.pool = pool;
 

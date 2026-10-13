@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { ShoppingBag, Truck, CheckCircle2, XCircle } from "lucide-react";
+import { ShoppingBag, Truck, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
@@ -22,10 +22,13 @@ export default async function ProfileOrdersPage() {
 
   const statusConfig: Record<string, { color: string; icon: any }> = {
     PENDING: { color: "text-blush", icon: ShoppingBag },
+    PAID: { color: "text-emerald-700", icon: CheckCircle2 },
     IN_PROGRESS: { color: "text-terra", icon: Truck },
     SHIPPED: { color: "text-moss", icon: Truck },
     DELIVERED: { color: "text-moss", icon: CheckCircle2 },
     CANCELLED: { color: "text-charcoal/40", icon: XCircle },
+    REFUND_REQUIRED: { color: "text-amber-700", icon: AlertCircle },
+    REFUNDED: { color: "text-rose-700", icon: XCircle },
   };
 
   return (

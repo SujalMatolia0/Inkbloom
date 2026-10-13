@@ -25,6 +25,15 @@ const CATEGORIES = [
   { id: "Canvas", label: "Canvas Paintings", icon: Layers },
 ];
 
+const OCCASIONS = [
+  { id: "all", label: "All Occasions" },
+  { id: "Wedding", label: "Wedding & Varmala" },
+  { id: "Anniversary", label: "Anniversary & Keepsake" },
+  { id: "Birthday", label: "Birthday Gifts" },
+  { id: "Housewarming", label: "Housewarming & Murals" },
+  { id: "under1000", label: "Gifts Under ₹1,000" },
+];
+
 const CRAFT_SUBCATEGORIES = [
   { id: "all", label: "All Crafts" },
   { id: "Resin Art", label: "Floral & Varmala Preservation" },
@@ -35,6 +44,7 @@ const CRAFT_SUBCATEGORIES = [
 export function ShopCatalog({ initialProducts }: { initialProducts: Product[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedCraftSub, setSelectedCraftSub] = useState<string>("all");
+  const [selectedOccasion, setSelectedOccasion] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [availabilityFilter, setAvailabilityFilter] = useState<"all" | "in-stock" | "commission">("all");
@@ -66,7 +76,21 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
         }
       }
 
-      // 3. Availability Filter
+      // 3. Occasion Filter
+      if (selectedOccasion !== "all") {
+        if (selectedOccasion === "under1000") {
+          if (product.price > 1000) return false;
+        } else {
+          const occQuery = selectedOccasion.toLowerCase();
+          const matchTitle = product.title.toLowerCase().includes(occQuery);
+          const matchDesc = product.description.toLowerCase().includes(occQuery);
+          const matchTag = meta?.tag.toLowerCase().includes(occQuery) || false;
+          const matchSub = meta?.subcategory.toLowerCase().includes(occQuery) || false;
+          if (!matchTitle && !matchDesc && !matchTag && !matchSub) return false;
+        }
+      }
+
+      // 4. Availability Filter
       if (availabilityFilter === "in-stock" && (product.stock <= 0 || product.category === "Wall Art")) {
         return false;
       }
@@ -74,7 +98,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
         return false;
       }
 
-      // 4. Search Query
+      // 5. Search Query
       if (searchQuery.trim() !== "") {
         const query = searchQuery.toLowerCase().trim();
         const matchesTitle = product.title.toLowerCase().includes(query);
@@ -100,7 +124,7 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
       }
       return 0;
     });
-  }, [initialProducts, selectedCategory, selectedCraftSub, availabilityFilter, searchQuery, sortBy, catalogLookup]);
+  }, [initialProducts, selectedCategory, selectedCraftSub, selectedOccasion, availabilityFilter, searchQuery, sortBy, catalogLookup]);
 
   // Counts by category
   const categoryCounts = useMemo(() => {
@@ -260,6 +284,29 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
             })}
           </div>
         )}
+
+        {/* Occasion & Collection Filter Pills */}
+        <div className="max-w-7xl mx-auto pt-2.5 border-t border-charcoal/10 mt-2.5 flex items-center gap-2 flex-wrap">
+          <span className="text-[9.5px] uppercase font-bold tracking-widest text-charcoal/50 mr-1 font-mono">
+            Occasion:
+          </span>
+          {OCCASIONS.map((occ) => {
+            const isActive = selectedOccasion === occ.id;
+            return (
+              <button
+                key={occ.id}
+                onClick={() => setSelectedOccasion(occ.id)}
+                className={`text-[9.5px] font-mono font-bold tracking-wide uppercase px-2.5 py-1 border transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-terra border-charcoal text-linen shadow-neo"
+                    : "border-charcoal/20 text-charcoal/70 hover:border-charcoal hover:text-charcoal bg-[#F6F1EA]"
+                }`}
+              >
+                {occ.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Content Area */}

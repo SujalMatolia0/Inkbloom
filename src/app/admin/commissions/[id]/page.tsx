@@ -3,14 +3,15 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, User, Mail, Calendar, Palette, Tag, CheckSquare } from "lucide-react";
+import { ArrowLeft, User, Mail, Calendar, Palette, Tag } from "lucide-react";
 import { updateCommissionStatus } from "../actions";
 import { StatusSelect } from "@/components/ui/StatusSelect";
+import { getPrivateImageUrl } from "@/lib/cloudinary";
 
 export default async function AdminCommissionDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
 
@@ -96,26 +97,25 @@ export default async function AdminCommissionDetailPage({
           </div>
 
           {/* Reference Image (If Any) */}
-          {commission.referenceImg && (
+          {(commission.referencePublicId || commission.referenceImg) && (
             <div className="bg-deep2 border border-linen/10 p-8">
               <h2 className="font-serif text-[20px] font-bold text-linen mb-6">
-                Reference Material
+                Private Reference Material
               </h2>
               <div className="relative aspect-video max-w-full overflow-hidden border border-linen/10 bg-deep/50">
                 <img
-                  src={commission.referenceImg}
+                  src={
+                    commission.referencePublicId
+                      ? getPrivateImageUrl(commission.referencePublicId)
+                      : commission.referenceImg || ""
+                  }
                   alt="Reference"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <a
-                href={commission.referenceImg}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-terra hover:underline"
-              >
-                View Full Size →
-              </a>
+              <p className="text-[10px] text-linen/40 font-mono mt-2">
+                🔒 Private authenticated Cloudinary asset. Signed URL expires in 1 hour.
+              </p>
             </div>
           )}
         </div>
@@ -132,7 +132,9 @@ export default async function AdminCommissionDetailPage({
                   <User size={14} className="text-terra" />
                 </div>
                 <div>
-                  <p className="text-[13px] font-bold text-linen">{commission.user.name}</p>
+                  <p className="text-[13px] font-bold text-linen">
+                    {commission.user?.name || commission.contactName || "Guest Collector"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -140,9 +142,21 @@ export default async function AdminCommissionDetailPage({
                   <Mail size={14} className="text-linen/60" />
                 </div>
                 <div>
-                  <p className="text-[12px] text-linen/60">{commission.user.email}</p>
+                  <p className="text-[12px] text-linen/60">
+                    {commission.user?.email || commission.contactEmail || "N/A"}
+                  </p>
                 </div>
               </div>
+              {commission.phone && (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-linen/5 flex items-center justify-center">
+                    <span className="text-terra font-mono text-xs font-bold">📱</span>
+                  </div>
+                  <div>
+                    <p className="text-[12px] text-linen/60 font-mono">{commission.phone}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

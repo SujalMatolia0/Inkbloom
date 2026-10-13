@@ -2,6 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) throw new Error("Not authenticated");
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  if (!user || user.role !== "ADMIN") throw new Error("Not authorized");
+  return user;
+}
 
 export async function getFaqs(onlyPublished = true) {
   try {
@@ -10,9 +20,10 @@ export async function getFaqs(onlyPublished = true) {
       orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     });
     return { success: true, data: faqs };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching FAQs:", error);
-    return { success: false, error: error.message || "Failed to fetch FAQs", data: [] };
+    const message = error instanceof Error ? error.message : "Failed to fetch FAQs";
+    return { success: false, error: message, data: [] };
   }
 }
 
@@ -23,6 +34,7 @@ export async function createFaq(data: {
   order?: number;
   isPublished?: boolean;
 }) {
+  await requireAdmin();
   try {
     const newFaq = await prisma.faq.create({
       data: {
@@ -38,9 +50,10 @@ export async function createFaq(data: {
     revalidatePath("/commission");
     revalidatePath("/admin/faqs");
     return { success: true, data: newFaq };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating FAQ:", error);
-    return { success: false, error: error.message || "Failed to create FAQ" };
+    const message = error instanceof Error ? error.message : "Failed to create FAQ";
+    return { success: false, error: message };
   }
 }
 
@@ -54,6 +67,7 @@ export async function updateFaq(
     isPublished?: boolean;
   }
 ) {
+  await requireAdmin();
   try {
     const updated = await prisma.faq.update({
       where: { id },
@@ -64,13 +78,15 @@ export async function updateFaq(
     revalidatePath("/commission");
     revalidatePath("/admin/faqs");
     return { success: true, data: updated };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating FAQ:", error);
-    return { success: false, error: error.message || "Failed to update FAQ" };
+    const message = error instanceof Error ? error.message : "Failed to update FAQ";
+    return { success: false, error: message };
   }
 }
 
 export async function deleteFaq(id: string) {
+  await requireAdmin();
   try {
     await prisma.faq.delete({ where: { id } });
     revalidatePath("/");
@@ -78,8 +94,9 @@ export async function deleteFaq(id: string) {
     revalidatePath("/commission");
     revalidatePath("/admin/faqs");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting FAQ:", error);
-    return { success: false, error: error.message || "Failed to delete FAQ" };
+    const message = error instanceof Error ? error.message : "Failed to delete FAQ";
+    return { success: false, error: message };
   }
 }

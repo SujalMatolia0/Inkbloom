@@ -33,6 +33,23 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model VerificationToken {
+  id         String    @id @default(cuid())
+  identifier String
+  tokenHash  String    @unique
+  type       TokenType
+  expires    DateTime
+  createdAt  DateTime  @default(now())
+
+  @@index([identifier, type])
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_SET
+  PASSWORD_RESET
+}
+
 model User {
   id                String       @id @default(cuid())
   name              String?
@@ -40,6 +57,7 @@ model User {
   emailVerified     DateTime?
   image             String?
   password          String?
+  passwordChangedAt DateTime?
   resetToken        String?
   resetTokenExpiry  DateTime?
   role              Role         @default(CUSTOMER)
@@ -68,21 +86,29 @@ model Product {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   orderItems   OrderItem[]
+
+  @@index([category])
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  user       User        @relation(fields: [userId], references: [id])
-  userId     String
-  items      OrderItem[]
-  total      Float
-  status     OrderStatus @default(PENDING)
-  address    String
-  paymentId  String?
-  couponCode String?
-  discount   Float?      @default(0)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id              String      @id @default(cuid())
+  user            User        @relation(fields: [userId], references: [id])
+  userId          String
+  items           OrderItem[]
+  total           Float
+  status          OrderStatus @default(PENDING)
+  address         String
+  paymentId       String?     @unique
+  razorpayOrderId String?     @unique
+  razorpayRefundId String?    @unique
+  couponCode      String?
+  discount        Float?      @default(0)
+  shippingFee     Float?      @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
 
 model Coupon {
@@ -97,6 +123,7 @@ model Coupon {
   isActive       Boolean      @default(true)
   validUntil     DateTime?
   usedCount      Int          @default(0)
+  usageLimit     Int?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -118,22 +145,52 @@ model OrderItem {
 
 enum OrderStatus {
   PENDING
+  PAID
   IN_PROGRESS
   SHIPPED
   DELIVERED
   CANCELLED
+  REFUND_REQUIRED
+  REFUND_PENDING
+  REFUNDED
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  action    String
+  orderId   String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([orderId])
 }
 
 model Commission {
-  id           String           @id @default(cuid())
-  user         User             @relation(fields: [userId], references: [id])
-  userId       String
-  referenceImg String
-  instructions String           @db.Text
-  status       CommissionStatus @default(PENDING)
-  price        Float?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id                String           @id @default(cuid())
+  userId            String?
+  user              User?            @relation(fields: [userId], references: [id])
+  contactName       String?
+  contactEmail      String?
+  phone             String?
+  service           String?
+  size              String?
+  budgetINR         Int?
+  details           Json?
+  instructions      String           @db.Text
+  referenceImg      String?
+  referencePublicId String?
+  consentAt         DateTime?
+  consentVersion    String?
+  notifiedAt        DateTime?
+  status            CommissionStatus @default(PENDING)
+  price             Float?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([status, createdAt])
+  @@index([contactEmail])
 }
 
 enum CommissionStatus {
@@ -170,15 +227,18 @@ model Faq {
 }
 
 model Testimonial {
-  id           String   @id @default(cuid())
-  clientName   String
-  clientRole   String?
-  content      String   @db.Text
-  artworkTitle String?
-  rating       Int      @default(5)
-  image        String?
-  isFeatured   Boolean  @default(true)
-  order        Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String   @id @default(cuid())
+  clientName       String
+  clientRole       String?
+  content          String   @db.Text
+  artworkTitle     String?
+  rating           Int      @default(5)
+  image            String?
+  verified         Boolean  @default(true)
+  source           String?  @default("Verified Patron")
+  consentToPublish Boolean  @default(true)
+  isFeatured       Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

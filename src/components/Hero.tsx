@@ -19,20 +19,20 @@ export function Hero() {
           </p>
           <div className="btn-row">
             <Link href="/portfolio" className="btn-primary">Enter Gallery</Link>
-            <Link href="/#commission" className="btn-outline">Commission Now</Link>
+            <Link href="/commission" className="btn-outline">Commission Now</Link>
           </div>
         </div>
         <div className="hero-stats reveal">
           <div>
-            <div className="stat-num">50+</div>
+            <div className="stat-num">250+</div>
             <div className="stat-label">Commissions</div>
           </div>
           <div>
-            <div className="stat-num">786</div>
+            <div className="stat-num">750+</div>
             <div className="stat-label">Works</div>
           </div>
           <div>
-            <div className="stat-num">5★</div>
+            <div className="stat-num">4.9★</div>
             <div className="stat-label">Rating</div>
           </div>
         </div>

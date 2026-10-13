@@ -85,10 +85,10 @@ export default async function AdminCommissionsPage() {
                     </td>
                     <td className="p-4">
                       <p className="text-[13px] font-bold text-linen">
-                        {commission.user.name}
+                        {commission.user?.name || commission.contactName || "Guest Collector"}
                       </p>
                       <p className="text-[11px] text-linen/60">
-                        {commission.user.email}
+                        {commission.user?.email || commission.contactEmail || "N/A"}
                       </p>
                     </td>
                     <td className="p-4">

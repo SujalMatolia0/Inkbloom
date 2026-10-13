@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { JourneySection } from "@/components/JourneySection";
@@ -16,10 +17,10 @@ const skills = [
 ];
 
 const stats = [
-  { value: "120", label: "Artworks Created", suffix: "+" },
-  { value: "50", label: "Happy Clients", suffix: "+" },
-  { value: "5", label: "Average Rating", suffix: " Stars" },
-  { value: "3", label: "Experience", suffix: " Yrs" },
+  { value: "750", label: "Artworks Created", suffix: "+" },
+  { value: "250", label: "Custom Commissions", suffix: "+" },
+  { value: "4.9", label: "Average Rating", suffix: " Stars" },
+  { value: "5", label: "Experience", suffix: "+ Yrs" },
 ];
 
 export default function AboutPage() {
@@ -43,7 +44,7 @@ export default function AboutPage() {
                 <h1 className="about-title">About the<br /><em>Artist.</em></h1>
                 <div className="divider-line"></div>
                 <p className="about-body">
-                  Based in the vibrant city of Jaipur, I create artwork that bridges the gap between editorial sophistication and playful doodle energy.
+                  Based in the soulful studio of Ratangarh, Churu, Rajasthan, I create artwork that bridges the gap between traditional craft heritage, editorial sophistication, and original mixed media energy.
                 </p>
               </motion.div>
             </div>
@@ -55,18 +56,20 @@ export default function AboutPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="portrait-card"
+              className="portrait-card relative overflow-hidden group"
             >
-              <div className="portrait-dot"></div>
-              <div className="portrait-img">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                  <circle cx="40" cy="28" r="16" stroke="#C17B5C" strokeWidth="1.2"/>
-                  <path d="M12 72 Q40 48 68 72" stroke="#C17B5C" strokeWidth="1.2" fill="none"/>
-                  <circle cx="40" cy="40" r="38" stroke="rgba(193,123,92,0.3)" strokeWidth="0.8" fill="none" strokeDasharray="3 6"/>
-                </svg>
+              <div className="portrait-dot z-20"></div>
+              <div className="relative w-full aspect-3/4 overflow-hidden border border-charcoal/20">
+                <Image
+                  src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&auto=format&fit=crop&q=85"
+                  alt="Anki Matolia in Studio"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
-              <div className="portrait-name">Studio Portrait</div>
-              <div className="portrait-since">Since 2021</div>
+              <div className="portrait-name mt-3">Anki Matolia</div>
+              <div className="portrait-since font-mono text-[10px] text-terra font-bold uppercase tracking-widest">Master Artist &amp; Founder · Ratangarh Studio</div>
             </motion.div>
           </div>
         </section>

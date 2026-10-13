@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { SITE_CONFIG } from '@/lib/site'
 
 export interface ItemCustomization {
   categoryType?: string;
@@ -47,6 +48,7 @@ interface CartState {
   getTotalItems: () => number;
   getTotalPrice: () => number;
   getDiscountAmount: () => number;
+  getShippingFee: () => number;
   getFinalTotal: () => number;
 }
 
@@ -162,11 +164,11 @@ export const useCartStore = create<CartState>()(
       },
 
       getTotalItems: () => {
-        return get().items.reduce((acc, item) => acc + item.quantity, 0)
+        return get().items.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
       },
 
       getTotalPrice: () => {
-        return get().items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+        return get().items.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0)
       },
 
       getDiscountAmount: () => {
@@ -180,10 +182,17 @@ export const useCartStore = create<CartState>()(
         return Math.min(coupon.discountValue, subtotal)
       },
 
+      getShippingFee: () => {
+        const subtotal = get().getTotalPrice()
+        if (subtotal === 0) return 0
+        return subtotal >= SITE_CONFIG.shipping.freeThresholdINR ? 0 : SITE_CONFIG.shipping.flatFeeINR
+      },
+
       getFinalTotal: () => {
         const subtotal = get().getTotalPrice()
         const discount = get().getDiscountAmount()
-        return Math.max(0, subtotal - discount)
+        const shippingFee = get().getShippingFee()
+        return Math.max(0, subtotal - discount + shippingFee)
       },
     }),
     {

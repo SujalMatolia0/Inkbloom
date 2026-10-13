@@ -88,8 +88,31 @@ async function FaqSectionWrapper() {
 }
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ArtGallery",
+    "name": "Vinyas Studio",
+    "image": "https://res.cloudinary.com/dcma5tbqk/image/upload/v1788711560/inkbloom/artworks/vinyas-art-053.jpg",
+    "description": "Original mixed media art, custom commissions & handmade resin flower keepsakes from a soulful studio in Ratangarh, Rajasthan.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Main Town",
+      "addressLocality": "Ratangarh",
+      "addressRegion": "Rajasthan",
+      "postalCode": "331022",
+      "addressCountry": "IN"
+    },
+    "url": "https://vinyas.art",
+    "telephone": "+919828536566",
+    "priceRange": "₹₹"
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ScrollReveal />
       
       <Navbar />

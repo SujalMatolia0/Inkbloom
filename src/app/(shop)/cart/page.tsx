@@ -134,85 +134,64 @@ export default function CartPage() {
         return;
       }
 
-      const orderRes = await fetch('/api/checkout/create-order', {
+      const orderRes = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: finalTotal, currency: 'INR' }),
+        body: JSON.stringify({ 
+          items: items.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+          })),
+          couponCode: appliedCoupon?.code || null,
+          currency: 'INR',
+        }),
       });
       const order = await orderRes.json();
 
-      if (order.error) throw new Error(order.error);
-
-      // Handle Demo Mode Bypass
-      if (order.demo) {
-        console.warn('Bypassing Razorpay Checkout (Demo Mode)');
-        const verifyRes = await fetch('/api/checkout/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            razorpay_order_id: order.id,
-            razorpay_payment_id: 'pay_demo_' + Math.random().toString(36).substring(7),
-            razorpay_signature: 'demo_signature',
-            userId: session.user?.id,
-            items: items.map((item) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              price: item.price,
-            })),
-            total: finalTotal,
-            couponCode: appliedCoupon?.code || null,
-            discount: discount,
-            address: 'Studio Vinyas Collector Address',
-          }),
-        });
-        const verify = await verifyRes.json();
-
-        if (verify.verified) {
-          clearCart();
-          router.push(`/shop/order-success?orderId=${verify.orderId || order.id}`);
-        } else {
-          alert('Demo payment verification failed.');
-        }
-        return;
+      if (!orderRes.ok || order.error) {
+        throw new Error(order.error || 'Failed to create order');
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TkZGqmoCrA123a',
         amount: order.amount,
         currency: order.currency,
         name: 'Studio Vinyas',
         description: 'Original Art & Keepsake Purchase',
-        order_id: order.id,
+        order_id: order.order_id || order.id,
         handler: async function (response: any) {
-          const verifyRes = await fetch('/api/checkout/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              userId: session.user?.id,
-              items: items.map((item) => ({
-                productId: item.id,
-                quantity: item.quantity,
-                price: item.price,
-              })),
-              total: finalTotal,
-              couponCode: appliedCoupon?.code || null,
-              discount: discount,
-              address: 'To be confirmed upon dispatch',
-            }),
-          });
-          const verify = await verifyRes.json();
+          try {
+            const verifyRes = await fetch('/api/checkout/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verify = await verifyRes.json();
 
-          if (verify.verified) {
-            clearCart();
-            router.push(
-              `/shop/order-success?orderId=${verify.orderId || response.razorpay_order_id}`,
-            );
-          } else {
+            if (verify.verified) {
+              clearCart();
+              router.push(
+                `/shop/order-success?orderId=${verify.orderId || response.razorpay_order_id}`,
+              );
+            } else {
+              alert(verify.error || 'Payment verification failed. Please contact studio support.');
+            }
+          } catch (verifyError) {
+            console.error('Verification request error:', verifyError);
             alert('Payment verification failed. Please contact studio support.');
+          } finally {
+            setIsProcessing(false);
           }
+        },
+        modal: {
+          ondismiss: function () {
+            console.log('Payment modal dismissed by user.');
+            setIsProcessing(false);
+          },
         },
         prefill: {
           name: session.user?.name || '',
@@ -224,11 +203,17 @@ export default function CartPage() {
       };
 
       const paymentObject = new (window as any).Razorpay(options);
+      
+      paymentObject.on('payment.failed', function (response: any) {
+        console.error('Razorpay payment failed:', response.error);
+        alert(`Payment failed: ${response.error?.description || response.error?.reason || 'Payment was unsuccessful'}`);
+        setIsProcessing(false);
+      });
+
       paymentObject.open();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Checkout failed. Please try again.');
-    } finally {
+      alert(err?.message || 'Checkout failed. Please try again.');
       setIsProcessing(false);
     }
   };

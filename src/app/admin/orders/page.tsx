@@ -2,15 +2,19 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { updateOrderStatus } from "./actions";
+import { updateOrderStatus, processAdminRefund } from "./actions";
 import { ShoppingBag, Truck, CheckCircle2, XCircle } from "lucide-react";
 
 const statusConfig = {
   PENDING: { label: "Pending", color: "text-blush", bg: "bg-blush/10", icon: ShoppingBag },
+  PAID: { label: "Paid", color: "text-emerald-400", bg: "bg-emerald-400/10", icon: CheckCircle2 },
   IN_PROGRESS: { label: "In Progress", color: "text-terra", bg: "bg-terra/10", icon: Truck },
   SHIPPED: { label: "Shipped", color: "text-moss", bg: "bg-moss/10", icon: Truck },
   DELIVERED: { label: "Delivered", color: "text-moss", bg: "bg-moss/10", icon: CheckCircle2 },
   CANCELLED: { label: "Cancelled", color: "text-linen/40", bg: "bg-linen/5", icon: XCircle },
+  REFUND_REQUIRED: { label: "Refund Required", color: "text-rose-400", bg: "bg-rose-400/10", icon: XCircle },
+  REFUND_PENDING: { label: "Refund Pending", color: "text-amber-400", bg: "bg-amber-400/10", icon: Truck },
+  REFUNDED: { label: "Refunded", color: "text-amber-400", bg: "bg-amber-400/10", icon: CheckCircle2 },
 };
 
 export default async function AdminOrdersPage({
@@ -141,13 +145,23 @@ export default async function AdminOrdersPage({
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          {order.status === "PENDING" && (
+                          {(order.status === "PAID" || order.status === "PENDING") && (
                             <form action={updateOrderStatus.bind(null, order.id, "IN_PROGRESS")}>
                               <button
                                 type="submit"
-                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-terra text-linen hover:bg-terra-dark transition-colors"
+                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-terra text-linen hover:bg-terra-dark transition-colors cursor-pointer"
                               >
                                 Start
+                              </button>
+                            </form>
+                          )}
+                          {order.status === "REFUND_REQUIRED" && (
+                            <form action={processAdminRefund.bind(null, order.id)}>
+                              <button
+                                type="submit"
+                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-rose-700 text-linen hover:bg-rose-800 transition-colors cursor-pointer"
+                              >
+                                Issue Refund
                               </button>
                             </form>
                           )}
@@ -155,7 +169,7 @@ export default async function AdminOrdersPage({
                             <form action={updateOrderStatus.bind(null, order.id, "SHIPPED")}>
                               <button
                                 type="submit"
-                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-moss text-linen hover:opacity-90 transition-colors"
+                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-moss text-linen hover:opacity-90 transition-colors cursor-pointer"
                               >
                                 Ship
                               </button>
@@ -165,7 +179,7 @@ export default async function AdminOrdersPage({
                             <form action={updateOrderStatus.bind(null, order.id, "DELIVERED")}>
                               <button
                                 type="submit"
-                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-moss text-linen hover:opacity-90 transition-colors"
+                                className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] bg-moss text-linen hover:opacity-90 transition-colors cursor-pointer"
                               >
                                 Deliver
                               </button>

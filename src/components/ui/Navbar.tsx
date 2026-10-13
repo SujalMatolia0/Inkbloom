@@ -49,7 +49,7 @@ export function Navbar() {
     { label: "Gallery", href: "/portfolio" },
     { label: "Shop", href: "/shop" },
     { label: "Commission", href: "/commission" },
-    { label: "Journal", href: "/#journal" },
+    { label: "Journal", href: "/journal" },
     { label: "About", href: "/about" },
   ];
 

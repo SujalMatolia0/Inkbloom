@@ -305,7 +305,7 @@ export default async function AdminDashboard() {
                 <div key={comm.id} className="p-4 hover:bg-linen/[0.02] transition-colors flex items-center justify-between gap-3">
                   <div className="max-w-[240px]">
                     <p className="text-xs font-bold text-linen line-clamp-1">
-                      {comm.user.name || "Client"}
+                      {comm.user?.name || comm.contactName || "Client"}
                     </p>
                     <p className="text-[10px] text-linen/40 line-clamp-1 mt-0.5">
                       {comm.instructions || "Custom artwork request"}

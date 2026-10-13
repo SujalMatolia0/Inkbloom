@@ -1,31 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (!name.trim() || !email.trim()) {
+      setError("Please provide your name and email address");
       return;
     }
 
@@ -35,17 +27,17 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Registration failed");
+        setError(data.error || "Registration request failed. Please try again.");
         return;
       }
 
-      router.push("/login?registered=true");
+      setSubmittedEmail(email.trim().toLowerCase());
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -59,7 +51,7 @@ export default function RegisterPage() {
         :root{--li:#F0EBE3;--ch:#2D2D2D;--te:#C17B5C;--te-pale:#E8C4B0;--te-dark:#9A5C40;--mo:#7B9E87;--bl:#D4A5A5;--dp:#1C1410;--dp2:#241810;--font-display:'Playfair Display',serif;--font-body:'Nunito',sans-serif;--font-ghost:'Syne',sans-serif;}
         .hero-wrap{padding-top:59px;display:flex;flex-direction:column;min-height:100vh}
         .hero{display:grid;grid-template-columns:58% 42%;flex:1;position:relative}
-        .hero-left{background:var(--li);padding:64px 64px 48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;border-right:4px solid var(--te);}
+        .hero-left{background:var(--li);padding:64px 64px 48px;display:flex;flex-direction:column;justify-space-between;position:relative;overflow:hidden;border-right:4px solid var(--te);}
         .bg-type-hero{font-family:var(--font-ghost);font-size:clamp(120px,18vw,220px);font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(45,45,45,0.055);letter-spacing:-0.04em;line-height:0.88;position:absolute;top:0;left:-20px;z-index:0;pointer-events:none;}
         .hero-left-inner{position:relative;z-index:1}
         .eyebrow{font-size:9.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--te);margin-bottom:18px}
@@ -104,7 +96,7 @@ export default function RegisterPage() {
                 <span className="outline">journey.</span>
               </h1>
               <p className="hero-body">
-                Create your account to access exclusive artworks, commission custom pieces, and join our creative community.
+                Join Vinyas Art Studio to access exclusive handcrafted originals, commission custom resin & canvas works, and manage your patron orders.
               </p>
             </div>
             <div className="hero-stats">
@@ -126,90 +118,99 @@ export default function RegisterPage() {
           <div className="hero-right">
             <div className="dark-grid"></div>
             <div style={{ position: 'relative', zIndex: 1, maxWidth: '400px' }}>
-              <div className="sec-label" style={{ color: 'rgba(240,235,227,0.6)' }}>
-                Create Account
-              </div>
-              <h2 className="comm-right-heading">
-                Join the <em>studio.</em>
-              </h2>
-              <p style={{ fontSize: '12px', color: 'rgba(240,235,227,0.65)', margin: '16px 0 28px', lineHeight: 1.7 }}>
-                Start your creative journey with us today.
-              </p>
-
-              {error && (
-                <div style={{
-                  marginBottom: '18px',
-                  padding: '12px 14px',
-                  border: '1.5px solid rgba(193,123,92,0.4)',
-                  background: 'rgba(193,123,92,0.08)',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: 'var(--te)',
-                  letterSpacing: '0.05em'
-                }}>
-                  {error}
+              {submittedEmail ? (
+                <div>
+                  <div className="sec-label" style={{ color: 'var(--te)' }}>
+                    Check Your Email
+                  </div>
+                  <h2 className="comm-right-heading">
+                    Activation link <em>sent ✓</em>
+                  </h2>
+                  <p style={{ fontSize: '13px', color: 'rgba(240,235,227,0.8)', margin: '18px 0 24px', lineHeight: 1.7 }}>
+                    We&apos;ve sent an account activation link to <strong>{submittedEmail}</strong>. Please check your inbox and click the button to set your password.
+                  </p>
+                  <p style={{ fontSize: '11px', color: 'rgba(240,235,227,0.5)', lineHeight: 1.6 }}>
+                    Did not receive the email? Check your spam folder or visit the{' '}
+                    <Link href="/login" style={{ color: 'var(--te)', fontWeight: 700 }}>
+                      login page
+                    </Link>{' '}
+                    to resend.
+                  </p>
                 </div>
+              ) : (
+                <>
+                  <div className="sec-label" style={{ color: 'rgba(240,235,227,0.6)' }}>
+                    Create Account
+                  </div>
+                  <h2 className="comm-right-heading">
+                    Join the <em>studio.</em>
+                  </h2>
+                  <p style={{ fontSize: '12px', color: 'rgba(240,235,227,0.65)', margin: '16px 0 28px', lineHeight: 1.7 }}>
+                    Enter your details below. We&apos;ll send an activation link to set your password.
+                  </p>
+
+                  {error && (
+                    <div style={{
+                      marginBottom: '18px',
+                      padding: '12px 14px',
+                      border: '1.5px solid rgba(193,123,92,0.4)',
+                      background: 'rgba(193,123,92,0.08)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: 'var(--te)',
+                      letterSpacing: '0.05em'
+                    }}>
+                      {error}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit}>
+                    <input
+                      className="form-field"
+                      type="text"
+                      name="name"
+                      id="name-input"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your Full Name"
+                      required
+                    />
+                    <input
+                      className="form-field"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email address"
+                      required
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="btn-linen"
+                      style={{ opacity: loading ? 0.7 : 1 }}
+                    >
+                      {loading ? 'Sending link...' : 'Continue with Email →'}
+                    </button>
+
+                    <p style={{
+                      textAlign: 'center',
+                      fontSize: '11.5px',
+                      color: 'rgba(240,235,227,0.55)',
+                      marginTop: '20px'
+                    }}>
+                      Already have an account?{' '}
+                      <Link href="/login" style={{
+                        color: 'var(--te)',
+                        fontWeight: 700,
+                        textDecoration: 'none'
+                      }}>
+                        Sign in
+                      </Link>
+                    </p>
+                  </form>
+                </>
               )}
-
-              <form onSubmit={handleSubmit}>
-                <input
-                  className="form-field"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                  required
-                />
-                <input
-                  className="form-field"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  required
-                />
-                <input
-                  className="form-field"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                />
-                <input
-                  className="form-field"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm password"
-                  required
-                />
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-linen"
-                  style={{ opacity: loading ? 0.7 : 1 }}
-                >
-                  {loading ? 'Creating account...' : 'Create Account →'}
-                </button>
-
-                <p style={{
-                  textAlign: 'center',
-                  fontSize: '11.5px',
-                  color: 'rgba(240,235,227,0.55)',
-                  marginTop: '20px'
-                }}>
-                  Already have an account?{' '}
-                  <Link href="/login" style={{
-                    color: 'var(--te)',
-                    fontWeight: 700,
-                    textDecoration: 'none'
-                  }}>
-                    Sign in
-                  </Link>
-                </p>
-              </form>
             </div>
           </div>
         </div>

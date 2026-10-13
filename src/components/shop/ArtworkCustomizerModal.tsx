@@ -536,7 +536,7 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : 'None'}
                     </div>
                     <div>
                       <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
-                        Phone / WhatsApp
+                        Phone
                       </label>
                       <input
                         type="tel"

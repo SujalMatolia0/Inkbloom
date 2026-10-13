@@ -60,24 +60,38 @@ function OrderSuccessContent() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12"
           >
-            <div className="border-[1.5px] border-charcoal p-8 text-left bg-linen shadow-[4px_4px_0_var(--ch)]">
-              <div className="flex items-center gap-3 mb-4">
-                <Package size={16} className="text-[var(--te)]" />
-                <span className="meta-label-muted">
-                  Order Number
-                </span>
+            <div className="border-[1.5px] border-charcoal p-6 sm:p-8 text-left bg-linen shadow-[4px_4px_0_var(--ch)] overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <Package size={16} className="text-[var(--te)] shrink-0" />
+                  <span className="meta-label-muted">
+                    Order Number
+                  </span>
+                </div>
+                <p 
+                  className="font-mono text-xs sm:text-sm md:text-base font-bold text-charcoal break-all tracking-tight select-all bg-white/60 p-2.5 border border-charcoal/20 rounded-none shadow-inner"
+                  title={orderId}
+                >
+                  {orderId}
+                </p>
               </div>
-              <p className="font-serif text-[24px] font-bold text-charcoal">{orderId}</p>
             </div>
 
-            <div className="border-[1.5px] border-charcoal p-8 text-left bg-linen shadow-[4px_4px_0_var(--ch)]">
-              <div className="flex items-center gap-3 mb-4">
-                <Mail size={16} className="text-[var(--te)]" />
-                <span className="meta-label-muted">
-                  Confirmation
-                </span>
+            <div className="border-[1.5px] border-charcoal p-6 sm:p-8 text-left bg-linen shadow-[4px_4px_0_var(--ch)] overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <Mail size={16} className="text-[var(--te)] shrink-0" />
+                  <span className="meta-label-muted">
+                    Confirmation
+                  </span>
+                </div>
+                <p className="font-serif text-xl sm:text-2xl font-bold text-charcoal">
+                  Email Sent
+                </p>
               </div>
-              <p className="font-serif text-[24px] font-bold text-charcoal">Email Sent</p>
+              <p className="text-[11px] text-charcoal/60 font-sans mt-2">
+                Sent to your registered email
+              </p>
             </div>
           </motion.div>
 

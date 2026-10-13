@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Head from "next/head";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams.get("token") || "";
+  const email = searchParams.get("email") || "";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,8 +23,8 @@ export default function ResetPasswordForm() {
     e.preventDefault();
     setError("");
 
-    if (!token) {
-      setError("Invalid or missing reset token");
+    if (!token || !email) {
+      setError("Invalid or missing reset token or email address.");
       return;
     }
 
@@ -31,8 +33,8 @@ export default function ResetPasswordForm() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -42,16 +44,16 @@ export default function ResetPasswordForm() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, email, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Something went wrong");
+        setError(data.error || "Something went wrong. The link may have expired.");
       } else {
         setSuccess(true);
-        setTimeout(() => router.push("/login"), 2000);
+        setTimeout(() => router.push("/login?reset=true"), 2000);
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -62,6 +64,9 @@ export default function ResetPasswordForm() {
 
   return (
     <>
+      <Head>
+        <meta name="referrer" content="no-referrer" />
+      </Head>
       <style jsx global>{`
         :root{--li:#F0EBE3;--ch:#2D2D2D;--te:#C17B5C;--te-pale:#E8C4B0;--te-dark:#9A5C40;--mo:#7B9E87;--bl:#D4A5A5;--dp:#1C1410;--dp2:#241810;--font-display:'Playfair Display',serif;--font-body:'Nunito',sans-serif;--font-ghost:'Syne',sans-serif;}
         .hero-wrap{padding-top:59px;display:flex;flex-direction:column;min-height:100vh}
@@ -106,7 +111,7 @@ export default function ResetPasswordForm() {
                   color: 'rgba(45,45,45,0.7)',
                   marginBottom: '28px'
                 }}>
-                  Your password has been successfully reset. Redirecting to login...
+                  Your password has been successfully reset and active sessions invalidated. Redirecting to login...
                 </p>
               </div>
             ) : (
@@ -139,7 +144,7 @@ export default function ResetPasswordForm() {
                   textAlign: 'center',
                   marginBottom: '28px'
                 }}>
-                  Enter your new password below.
+                  Enter your new password for <strong>{email || 'your email'}</strong>.
                 </p>
 
                 {error && (
@@ -163,7 +168,7 @@ export default function ResetPasswordForm() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="New password"
+                    placeholder="New password (min 8 chars)"
                     required
                   />
                   <input
@@ -171,13 +176,13 @@ export default function ResetPasswordForm() {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm password"
+                    placeholder="Confirm new password"
                     required
                   />
 
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !token || !email}
                     className="btn-primary"
                     style={{ opacity: loading ? 0.7 : 1 }}
                   >

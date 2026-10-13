@@ -44,7 +44,7 @@ const DEFAULT_FAQS: FaqData[] = [
   {
     id: "def-5",
     question: "Can I request revisions or see work-in-progress (WIP) previews?",
-    answer: "Absolutely! We share work-in-progress (WIP) photos and videos on WhatsApp/Email at key milestones before final sealing, resin curing, and framing so you are completely confident in the result.",
+    answer: "Absolutely! We share work-in-progress (WIP) photos and videos via email at key milestones before final sealing, resin curing, and framing so you are completely confident in the result.",
     category: "Commissions & Orders",
     order: 5,
   },

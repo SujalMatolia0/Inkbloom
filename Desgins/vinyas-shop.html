@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Shop — Vinyas Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Syne:wght@800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--li:#F0EBE3;--ch:#2D2D2D;--te:#C17B5C;--te-pale:#E8C4B0;--te-dark:#9A5C40;--mo:#7B9E87;--bl:#D4A5A5;--dp:#1C1410;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--li);color:var(--ch);font-family:'Nunito',sans-serif;overflow-x:hidden;cursor:none;}
+#cur{width:9px;height:9px;background:var(--te);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .18s,height .18s,background .18s;}
+#cur-ring{width:34px;height:34px;border:1.5px solid var(--te);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.45;transition:width .28s,height .28s;}
+body.hov #cur{width:5px;height:5px;background:var(--ch);}
+body.hov #cur-ring{width:52px;height:52px;opacity:.18;}
+
+/* NAV */
+.nav-accent{height:3px;background:var(--te);}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:56px;background:var(--li);border-bottom:1px solid var(--ch);position:sticky;top:3px;z-index:100;}
+.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--ch);text-decoration:none;}
+.logo span{color:var(--te);}
+.nav-links{display:flex;gap:32px;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ch);text-decoration:none;opacity:.4;transition:opacity .2s;position:relative;padding-bottom:2px;}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--te);transition:width .25s;}
+.nav-links a:hover{opacity:1;}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%;}
+.nav-links a.active{opacity:1;}
+.nav-r{display:flex;gap:10px;align-items:center;}
+.nb{width:33px;height:33px;border:1.5px solid rgba(45,45,45,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;background:transparent;cursor:none;transition:background .2s;}
+.nb:hover{background:var(--ch);}
+.nb:hover svg{stroke:var(--li)!important;}
+.nb.dk{background:var(--ch);}
+.cart-wrap{position:relative;}
+.cart-dot{position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--te);border-radius:50%;font-size:7.5px;font-weight:700;color:var(--li);display:flex;align-items:center;justify-content:center;}
+
+/* SHOP HERO STRIP */
+.shop-hero{
+  background:var(--dp);
+  border-bottom:1px solid var(--ch);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:200px;
+  position:relative;
+  overflow:hidden;
+}
+.shop-hero-left{
+  padding:48px 56px 48px 64px;
+  border-right:4px solid var(--te);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.shop-hero-right{
+  padding:48px 64px 48px 56px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.shop-bg-type{
+  position:absolute;top:-20px;left:-8px;
+  font-family:'Syne',sans-serif;font-size:180px;font-weight:800;
+  color:transparent;-webkit-text-stroke:1px rgba(240,235,227,.04);
+  pointer-events:none;z-index:0;letter-spacing:-.04em;line-height:.88;
+}
+.shop-hero-label{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--te);margin-bottom:12px;}
+.shop-hero-heading{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;line-height:.95;letter-spacing:-.03em;color:var(--li);}
+.shop-hero-heading em{font-style:italic;color:var(--te);}
+.shop-hero-sub{font-size:12.5px;color:rgba(240,235,227,.45);line-height:1.7;margin-top:14px;max-width:280px;}
+.shop-hero-stats{display:flex;gap:32px;margin-top:28px;}
+.sh-stat-n{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--te);line-height:1;margin-bottom:3px;}
+.sh-stat-l{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,235,227,.3);}
+
+/* FILTER BAR */
+.filter-bar{
+  position:sticky;top:59px;z-index:90;
+  background:var(--li);border-bottom:1px solid var(--ch);
+  padding:0 64px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;
+}
+.filter-pills{display:flex;gap:8px;align-items:center;}
+.pill{
+  font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:5px 14px;border:1.5px solid rgba(45,45,45,.22);
+  color:var(--ch);opacity:.55;cursor:none;transition:all .18s;
+  background:transparent;font-family:'Nunito',sans-serif;
+}
+.pill:hover{opacity:1;border-color:var(--ch);}
+.pill.active{background:var(--ch);color:var(--li);border-color:var(--ch);opacity:1;}
+.filter-right{display:flex;align-items:center;gap:16px;}
+.product-count{font-size:11px;color:var(--ch);opacity:.4;font-weight:600;}
+.sort-select{
+  font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:transparent;border:1.5px solid rgba(45,45,45,.22);
+  padding:5px 12px;color:var(--ch);cursor:none;outline:none;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232D2D2D' opacity='.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  padding-right:28px;
+}
+
+/* PRODUCT GRID */
+.shop-content{padding:40px 64px 80px;}
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.product-card{border:1.5px solid var(--ch);background:var(--li);cursor:none;position:relative;overflow:hidden;transition:transform .22s,box-shadow .22s;}
+.product-card:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--te);}
+.product-img{width:100%;aspect-ratio:.9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.product-img.tall{aspect-ratio:.72;}
+.product-badge{position:absolute;top:12px;left:12px;background:var(--te);color:var(--li);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;z-index:2;}
+.product-badge.sale{background:var(--mo);}
+.sold-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);border:2.5px solid #B03030;color:#B03030;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:4px 11px;z-index:3;opacity:.85;}
+.add-btn{position:absolute;bottom:12px;right:12px;width:32px;height:32px;background:var(--ch);border:none;display:flex;align-items:center;justify-content:center;cursor:none;box-shadow:3px 3px 0 var(--te);z-index:2;opacity:0;transition:opacity .18s;}
+.product-card:hover .add-btn{opacity:1;}
+.wishlist-btn{position:absolute;top:12px;right:12px;width:28px;height:28px;background:var(--li);border:1.5px solid var(--ch);display:flex;align-items:center;justify-content:center;cursor:none;z-index:2;opacity:0;transition:opacity .18s;}
+.product-card:hover .wishlist-btn{opacity:1;}
+.product-info{padding:13px 15px;border-top:1.5px solid var(--ch);display:flex;justify-content:space-between;align-items:center;}
+.product-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ch);margin-bottom:2px;}
+.product-meta{font-size:10px;opacity:.45;}
+.product-price{font-size:13px;font-weight:700;color:var(--te);}
+.product-price.sold-price{color:var(--ch);opacity:.3;text-decoration:line-through;font-size:11px;}
+.price-group{text-align:right;}
+.price-original{font-size:10px;color:var(--ch);opacity:.35;text-decoration:line-through;font-family:'Nunito',sans-serif;}
+
+/* featured wide card */
+.product-card.wide{grid-column:span 2;}
+.product-card.wide .product-img{aspect-ratio:2.1;}
+
+/* COMMISSION CTA BANNER */
+.commission-banner{
+  margin-top:40px;
+  background:var(--dp);
+  border:1.5px solid var(--ch);
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  padding:32px 40px;
+  gap:24px;
+  position:relative;
+  overflow:hidden;
+}
+.cb-bg{position:absolute;right:160px;top:-10px;font-family:'Playfair Display',serif;font-size:80px;font-style:italic;font-weight:700;color:rgba(193,123,92,.08);pointer-events:none;white-space:nowrap;}
+.cb-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--te);margin-bottom:8px;}
+.cb-heading{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--li);line-height:1.1;}
+.cb-heading em{font-style:italic;}
+.cb-sub{font-size:12px;color:rgba(240,235,227,.42);margin-top:8px;line-height:1.6;}
+.btn-linen{background:var(--li);color:var(--ch);border:1.5px solid var(--dp);padding:12px 28px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:none;box-shadow:4px 4px 0 var(--te);white-space:nowrap;transition:box-shadow .18s,transform .18s;}
+.btn-linen:hover{box-shadow:2px 2px 0 var(--te);transform:translate(2px,2px);}
+
+/* MARQUEE */
+.mq{overflow:hidden;background:var(--te);border-top:1px solid var(--ch);border-bottom:1px solid var(--ch);padding:10px 0;white-space:nowrap;}
+.mq-track{display:inline-flex;animation:mqs 22s linear infinite;}
+@keyframes mqs{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mi{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--li);padding:0 26px;}
+.ms{color:rgba(28,20,16,.5);padding:0 4px;font-size:11px;}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ART BG COLORS */
+.art-warm{background:#E2B8A0;} .art-cool{background:#C8DAD0;} .art-blush{background:#E8D0D0;} .art-sand{background:#E4DDD4;} .art-green{background:#D0E4D8;} .art-pale{background:#EDE4D9;}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-ring"></div>
+
+<div style="position:sticky;top:0;z-index:200;">
+  <div class="nav-accent"></div>
+  <div class="nav-bar">
+    <a href="vinyas-preview.html" class="logo">Vin<span>yas</span></a>
+    <ul class="nav-links">
+      <li><a href="vinyas-preview.html">Gallery</a></li>
+      <li><a href="#" class="active">Shop</a></li>
+      <li><a href="#">Commission</a></li>
+      <li><a href="#">Journal</a></li>
+    </ul>
+    <div class="nav-r">
+      <div class="nb cart-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <div class="cart-dot">2</div>
+      </div>
+      <div class="nb dk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP HERO -->
+<div class="shop-hero">
+  <div class="shop-bg-type">SHOP</div>
+  <div class="shop-hero-left">
+    <div class="shop-hero-label">The Collection</div>
+    <div class="shop-hero-heading">Original<br><em>artworks.</em></div>
+    <p class="shop-hero-sub">Every piece is one of a kind — painted, inked, and made by hand in a dusty studio in Jaipur.</p>
+  </div>
+  <div class="shop-hero-right">
+    <div class="shop-hero-stats">
+      <div><div class="sh-stat-n">24</div><div class="sh-stat-l">Available</div></div>
+      <div><div class="sh-stat-n">8</div><div class="sh-stat-l">Sold</div></div>
+      <div><div class="sh-stat-n">5</div><div class="sh-stat-l">Categories</div></div>
+    </div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(240,235,227,.1);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,235,227,.3);margin-bottom:10px;">Browse by medium</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--te);color:var(--te);">Watercolour</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(240,235,227,.2);color:rgba(240,235,227,.4);">Oil</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(240,235,227,.2);color:rgba(240,235,227,.4);">Ink</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(240,235,227,.2);color:rgba(240,235,227,.4);">Acrylic</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(240,235,227,.2);color:rgba(240,235,227,.4);">Mixed Media</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="mq"><div class="mq-track">
+  <span class="mi">Original Paintings</span><span class="ms">✦</span><span class="mi">Custom Commissions</span><span class="ms">✦</span><span class="mi">Handmade Goods</span><span class="ms">✦</span><span class="mi">Watercolour Art</span><span class="ms">✦</span><span class="mi">Ink Illustrations</span><span class="ms">✦</span><span class="mi">Limited Editions</span><span class="ms">✦</span>
+  <span class="mi">Original Paintings</span><span class="ms">✦</span><span class="mi">Custom Commissions</span><span class="ms">✦</span><span class="mi">Handmade Goods</span><span class="ms">✦</span><span class="mi">Watercolour Art</span><span class="ms">✦</span><span class="mi">Ink Illustrations</span><span class="ms">✦</span><span class="mi">Limited Editions</span><span class="ms">✦</span>
+</div></div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-pills">
+    <button class="pill active">All</button>
+    <button class="pill">Watercolour</button>
+    <button class="pill">Oil</button>
+    <button class="pill">Ink</button>
+    <button class="pill">Acrylic</button>
+    <button class="pill">Mixed Media</button>
+  </div>
+  <div class="filter-right">
+    <span class="product-count">24 works</span>
+    <select class="sort-select"><option>Newest First</option><option>Price: Low–High</option><option>Price: High–Low</option></select>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="shop-content">
+  <div class="product-grid">
+
+    <!-- wide featured -->
+    <div class="product-card wide reveal">
+      <span class="product-badge">New</span>
+      <div class="product-img tall art-warm" style="aspect-ratio:2.1;">
+        <svg viewBox="0 0 400 220" width="400" height="220" style="opacity:.72;">
+          <path d="M10 180 Q100 140 200 165 Q300 190 390 160" stroke="#C17B5C" stroke-width="22" opacity=".08" fill="none" stroke-linecap="round"/>
+          <ellipse cx="200" cy="100" rx="70" ry="85" fill="none" stroke="#2D2D2D" stroke-width="1.4" opacity=".4"/>
+          <path d="M145 155 Q200 190 255 155" fill="none" stroke="#C17B5C" stroke-width="2.2" opacity=".75"/>
+          <circle cx="200" cy="78" r="36" fill="none" stroke="#7B9E87" stroke-width="1" opacity=".4"/>
+          <ellipse cx="183" cy="94" rx="6" ry="4" fill="none" stroke="rgba(45,45,45,.4)" stroke-width=".9"/>
+          <ellipse cx="217" cy="94" rx="6" ry="4" fill="none" stroke="rgba(45,45,45,.4)" stroke-width=".9"/>
+          <circle cx="268" cy="36" r="5" fill="#C17B5C" opacity=".55"/>
+          <circle cx="280" cy="52" r="2.5" fill="#7B9E87" opacity=".5"/>
+          <circle cx="50" cy="195" r="3" fill="#D4A5A5" opacity=".6"/>
+          <path d="M30 50 Q26 72 31 94" stroke="#C17B5C" stroke-width="1.2" fill="none" opacity=".25"/>
+        </svg>
+        <button class="add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="wishlist-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Monsoon Portrait</div><div class="product-meta">Oil on Canvas · 18×24" · 2025</div></div>
+        <div class="product-price">₹8,400</div>
+      </div>
+    </div>
+
+    <!-- card 2 -->
+    <div class="product-card reveal">
+      <div class="product-img art-cool">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="opacity:.78;">
+          <circle cx="80" cy="75" r="40" fill="none" stroke="#7B9E87" stroke-width="1.5" opacity=".6"/>
+          <path d="M44 108 Q80 62 116 108" fill="none" stroke="#C17B5C" stroke-width="1.5" opacity=".6"/>
+          <ellipse cx="46" cy="50" rx="11" ry="19" fill="none" stroke="#7B9E87" stroke-width=".9" opacity=".45" transform="rotate(-28 46 50)"/>
+          <ellipse cx="114" cy="50" rx="11" ry="19" fill="none" stroke="#7B9E87" stroke-width=".9" opacity=".45" transform="rotate(28 114 50)"/>
+          <circle cx="80" cy="63" r="13" fill="#7B9E87" opacity=".18"/>
+        </svg>
+        <button class="add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="wishlist-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Bloom Study</div><div class="product-meta">Watercolour · 8×8"</div></div>
+        <div class="product-price">₹2,800</div>
+      </div>
+    </div>
+
+    <!-- card 3 SOLD -->
+    <div class="product-card reveal">
+      <div class="product-img art-blush" style="position:relative;">
+        <div class="sold-stamp">Sold</div>
+        <svg viewBox="0 0 160 160" width="160" height="160" style="opacity:.38;">
+          <path d="M20 120 Q80 20 140 120" fill="none" stroke="#2D2D2D" stroke-width="1.8"/>
+          <circle cx="80" cy="65" r="32" fill="none" stroke="#D4A5A5" stroke-width="1.3"/>
+          <circle cx="80" cy="55" r="10" fill="#D4A5A5" opacity=".5"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Crimson Dusk</div><div class="product-meta">Ink on Paper · 10×12"</div></div>
+        <div class="product-price sold-price">₹3,200</div>
+      </div>
+    </div>
+
+    <!-- card 4 SALE -->
+    <div class="product-card reveal">
+      <span class="product-badge sale">Sale</span>
+      <div class="product-img art-sand">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="opacity:.78;">
+          <rect x="28" y="28" width="104" height="104" fill="none" stroke="#C17B5C" stroke-width="1.2" opacity=".45"/>
+          <path d="M28 80 Q80 28 132 80" fill="none" stroke="#C17B5C" stroke-width="1.5" opacity=".55"/>
+          <path d="M28 90 Q80 138 132 90" fill="none" stroke="#7B9E87" stroke-width="1.1" opacity=".45"/>
+          <circle cx="80" cy="80" r="18" fill="#C17B5C" opacity=".18"/>
+          <circle cx="80" cy="80" r="5" fill="#C17B5C" opacity=".6"/>
+        </svg>
+        <button class="add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="wishlist-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Terracotta No.7</div><div class="product-meta">Acrylic · 12×12"</div></div>
+        <div class="price-group"><div class="price-original">₹4,100</div><div class="product-price">₹3,200</div></div>
+      </div>
+    </div>
+
+    <!-- card 5 -->
+    <div class="product-card reveal">
+      <div class="product-img art-green">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="opacity:.75;">
+          <path d="M80 20 Q120 60 80 100 Q40 60 80 20Z" fill="none" stroke="#7B9E87" stroke-width="1.5" opacity=".6"/>
+          <path d="M80 40 Q110 70 80 100 Q50 70 80 40Z" fill="#7B9E87" opacity=".12"/>
+          <line x1="80" y1="20" x2="80" y2="140" stroke="#7B9E87" stroke-width="1" opacity=".4"/>
+          <path d="M50 70 Q65 55 80 70" fill="none" stroke="#C17B5C" stroke-width="1.2" opacity=".5"/>
+          <circle cx="80" cy="110" r="12" fill="none" stroke="#C17B5C" stroke-width="1" opacity=".45"/>
+          <circle cx="80" cy="110" r="4" fill="#C17B5C" opacity=".5"/>
+        </svg>
+        <button class="add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Verdant Study</div><div class="product-meta">Watercolour · 6×9"</div></div>
+        <div class="product-price">₹1,950</div>
+      </div>
+    </div>
+
+    <!-- card 6 -->
+    <div class="product-card reveal">
+      <div class="product-img art-pale">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="opacity:.75;">
+          <rect x="20" y="20" width="120" height="120" fill="none" stroke="#C17B5C" stroke-width="1" opacity=".3" transform="rotate(8 80 80)"/>
+          <rect x="30" y="30" width="100" height="100" fill="none" stroke="#C17B5C" stroke-width=".7" opacity=".2" transform="rotate(-5 80 80)"/>
+          <circle cx="80" cy="80" r="30" fill="none" stroke="#2D2D2D" stroke-width="1.2" opacity=".3"/>
+          <path d="M55 80 Q80 50 105 80 Q80 110 55 80Z" fill="#C17B5C" opacity=".15"/>
+          <circle cx="80" cy="80" r="8" fill="#C17B5C" opacity=".5"/>
+          <circle cx="55" cy="45" r="3" fill="#D4A5A5" opacity=".5"/>
+          <circle cx="110" cy="125" r="2.5" fill="#7B9E87" opacity=".5"/>
+        </svg>
+        <button class="add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0EBE3" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </div>
+      <div class="product-info">
+        <div><div class="product-name">Orbit No.3</div><div class="product-meta">Mixed Media · 10×10"</div></div>
+        <div class="product-price">₹3,600</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COMMISSION BANNER -->
+  <div class="commission-banner reveal">
+    <div class="cb-bg">commission</div>
+    <div style="position:relative;z-index:2;">
+      <div class="cb-label">Custom Work</div>
+      <div class="cb-heading">Can't find what you're looking for?<br>Let's make something <em>just for you.</em></div>
+      <p class="cb-sub">Upload a reference, describe your vision — I'll quote within 48 hours.</p>
+    </div>
+    <button class="btn-linen" style="position:relative;z-index:2;">Start a Commission →</button>
+  </div>
+</div>
+
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function t(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(t);})();
+document.querySelectorAll('a,button,.product-card,.nb,.pill,.sort-select').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));});
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+document.querySelectorAll('.pill').forEach(p=>{p.addEventListener('click',()=>{document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));p.classList.add('active');});});
+</script>
+</body>
+</html>

@@ -71,9 +71,9 @@ export default function ContactPage() {
                     Studio Location
                   </p>
                   <p className="text-[14px] text-charcoal/70 leading-relaxed">
-                    123 Artist Colony
+                    Vinyas Art Studio, Main Town
                     <br />
-                    Jaipur, Rajasthan 302001
+                    Ratangarh, Churu District, Rajasthan 331022
                     <br />
                     India
                   </p>
@@ -89,7 +89,7 @@ export default function ContactPage() {
                     Email
                   </p>
                   <p className="text-[14px] text-charcoal/70">
-                    hello@Vinyas.art
+                    artistankimatolia@inkbloom.com
                   </p>
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function ContactPage() {
                     Phone
                   </p>
                   <p className="text-[14px] text-charcoal/70">
-                    +91 12345 67890
+                    +91 98285 36566
                   </p>
                 </div>
               </div>
@@ -117,11 +117,9 @@ export default function ContactPage() {
                     Studio Hours
                   </p>
                   <p className="text-[14px] text-charcoal/70 leading-relaxed">
-                    Monday - Friday: 10:00 AM - 6:00 PM
+                    Monday - Saturday: 10:00 AM - 7:00 PM
                     <br />
-                    Saturday: 11:00 AM - 4:00 PM
-                    <br />
-                    Sunday: Closed
+                    Sunday: By appointment only
                   </p>
                 </div>
               </div>

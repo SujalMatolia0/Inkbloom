@@ -15,12 +15,16 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [unverified, setUnverified] = useState(false);
+  const [resendStatus, setResendStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setUnverified(false);
+    setResendStatus("");
     setLoading(true);
 
     try {
@@ -31,7 +35,12 @@ function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        if (result.error.includes("UNVERIFIED_EMAIL")) {
+          setUnverified(true);
+          setError("Your email address is unverified. Please verify your email before logging in.");
+        } else {
+          setError("Invalid email or password");
+        }
       } else {
         router.push(callbackUrl);
         router.refresh();
@@ -40,6 +49,26 @@ function LoginForm() {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) return;
+    setResendStatus("Sending verification link...");
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setResendStatus("Verification link sent! Please check your email inbox.");
+      } else {
+        setResendStatus(data.error || "Failed to resend link. Try again later.");
+      }
+    } catch {
+      setResendStatus("Failed to resend verification link.");
     }
   };
 
@@ -141,6 +170,30 @@ function LoginForm() {
                   letterSpacing: '0.05em'
                 }}>
                   {error}
+                  {unverified && (
+                    <div style={{ marginTop: '10px' }}>
+                      <button
+                        type="button"
+                        onClick={handleResend}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--li)',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                          fontSize: '11px'
+                        }}
+                      >
+                        Click here to resend verification link
+                      </button>
+                    </div>
+                  )}
+                  {resendStatus && (
+                    <div style={{ marginTop: '8px', color: 'var(--li)', fontSize: '11px', fontWeight: 600 }}>
+                      {resendStatus}
+                    </div>
+                  )}
                 </div>
               )}
 

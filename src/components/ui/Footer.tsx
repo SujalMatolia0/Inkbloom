@@ -64,13 +64,16 @@ export function Footer() {
             <li><Link href="/shop">Shop</Link></li>
             <li><Link href="/about">About</Link></li>
             <li><Link href="/journal">Journal</Link></li>
+            <li><Link href="/resin-preservation">Resin Preservation</Link></li>
+            <li><Link href="/reviews">Reviews</Link></li>
           </ul>
         </div>
         <div>
           <div className="footer-col-title">Support</div>
           <ul className="footer-links">
             <li><Link href="/shipping">Shipping</Link></li>
-            <li><Link href="/returns">Returns</Link></li>
+            <li><Link href="/returns">Returns Policy</Link></li>
+            <li><Link href="/care-instructions">Care Guide</Link></li>
             <li><Link href="/contact">Contact</Link></li>
             <li><Link href="/faq">FAQ</Link></li>
           </ul>
@@ -78,19 +81,17 @@ export function Footer() {
         <div>
           <div className="footer-col-title">Connect</div>
           <ul className="footer-links">
-            <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-            <li><a href="https://pinterest.com" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
-            <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a></li>
-            <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="https://instagram.com/vinyas_art" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href="https://pinterest.com/vinyas_art" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
           </ul>
         </div>
       </div>
       <div className="footer-bottom">
-        <div className="footer-copy">© 2025 Vinyas Studio. Made by hand, made with heart.</div>
+        <div className="footer-copy">© {new Date().getFullYear()} Vinyas Studio. Made by hand, made with heart.</div>
         <div className="social-row">
           <Link href="/contact" className="social-link">Contact Us</Link>
-          <a href="#" className="social-link">Privacy</a>
-          <a href="#" className="social-link">Terms</a>
+          <Link href="/privacy" className="social-link">Privacy Policy</Link>
+          <Link href="/terms" className="social-link">Terms &amp; Conditions</Link>
         </div>
       </div>
     </footer>
