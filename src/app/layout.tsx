@@ -8,22 +8,18 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
-  weight: ["400", "700"],
-  style: ["normal", "italic"]
 });
 
 const nunito = Nunito({ 
   subsets: ["latin"],
   variable: "--font-nunito",
   display: "swap",
-  weight: ["400", "600", "700"]
 });
 
 const syne = Syne({ 
   subsets: ["latin"],
   variable: "--font-syne",
   display: "swap",
-  weight: ["700", "800"]
 });
 
 export const metadata: Metadata = {

@@ -10,11 +10,13 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 const DUMMY_HASH = bcrypt.hashSync("dummy_password_timing_attack_protection_vinyas_2026", 12);
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "Credentials",

@@ -11,10 +11,28 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const urlError = searchParams.get("error");
+
+  const getInitialError = () => {
+    if (!urlError) return "";
+    switch (urlError) {
+      case "OAuthAccountNotLinked":
+        return "This email is already associated with another login method. Try signing in with your email and password.";
+      case "OAuthSignin":
+      case "OAuthCallback":
+        return "Could not sign in with Google. Please check Google OAuth settings or try again.";
+      case "AccessDenied":
+        return "Google sign-in was denied or your Google account is not added as a test user.";
+      case "Configuration":
+        return "Authentication configuration error on the server.";
+      default:
+        return `Sign-in error: ${urlError}`;
+    }
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(getInitialError);
   const [unverified, setUnverified] = useState(false);
   const [resendStatus, setResendStatus] = useState("");
   const [loading, setLoading] = useState(false);
