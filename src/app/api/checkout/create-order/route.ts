@@ -75,7 +75,15 @@ export async function POST(req: Request) {
     }
 
     // 1. Strict Quantity & Item Validation
-    const itemMap = new Map<string, number>();
+    interface ValidatedCartLine {
+      productId: string;
+      quantity: number;
+      selectedAddOns: { id: string; quantity: number }[];
+      customization?: Record<string, any>;
+    }
+
+    const parsedLines: ValidatedCartLine[] = [];
+    const qtyByProduct = new Map<string, number>();
 
     for (const rawItem of items) {
       const pid = rawItem?.productId || rawItem?.id;
@@ -94,11 +102,22 @@ export async function POST(req: Request) {
         );
       }
 
-      const currentQty = itemMap.get(pid) || 0;
-      itemMap.set(pid, currentQty + qty);
+      const selectedAddOns = Array.isArray(rawItem?.selectedAddOns)
+        ? rawItem.selectedAddOns
+            .filter((a: any) => a && typeof a.id === "string" && typeof a.quantity === "number")
+            .map((a: any) => ({ id: a.id, quantity: a.quantity }))
+        : [];
+
+      const customization =
+        rawItem?.customization && typeof rawItem.customization === "object"
+          ? rawItem.customization
+          : undefined;
+
+      parsedLines.push({ productId: pid, quantity: qty, selectedAddOns, customization });
+      qtyByProduct.set(pid, (qtyByProduct.get(pid) || 0) + qty);
     }
 
-    const productIds = Array.from(itemMap.keys());
+    const productIds = Array.from(qtyByProduct.keys());
     const dbProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
     });
@@ -111,24 +130,88 @@ export async function POST(req: Request) {
     }
 
     const dbProductMap = new Map(dbProducts.map((p) => [p.id, p]));
-    let subtotal = 0;
-    const sanitizedItems: { productId: string; quantity: number; price: number }[] = [];
 
-    for (const [pid, qty] of itemMap.entries()) {
+    for (const [pid, totalQty] of qtyByProduct.entries()) {
       const product = dbProductMap.get(pid)!;
-
-      if (product.stock < qty) {
+      if (product.stock < totalQty) {
         return NextResponse.json(
           { error: `"${product.title}" has only ${product.stock} left in stock.` },
           { status: 400 }
         );
       }
+    }
 
-      subtotal += product.price * qty;
+    let subtotal = 0;
+    const sanitizedItems: {
+      productId: string;
+      quantity: number;
+      price: number;
+      customization?: any;
+    }[] = [];
+
+    for (const line of parsedLines) {
+      const product = dbProductMap.get(line.productId)!;
+      const dbAddOns: any[] = Array.isArray(product.addOns) ? (product.addOns as any[]) : [];
+
+      let addOnsTotal = 0;
+      const validatedAddOns: {
+        id: string;
+        label: string;
+        quantity: number;
+        pricePerUnit: number;
+        unit: string;
+        emoji?: string;
+      }[] = [];
+
+      for (const reqAddon of line.selectedAddOns) {
+        if (!Number.isInteger(reqAddon.quantity) || reqAddon.quantity <= 0) {
+          return NextResponse.json(
+            { error: "Add-on quantity must be a positive whole integer." },
+            { status: 400 }
+          );
+        }
+        const dbAddon = dbAddOns.find((a) => a && a.id === reqAddon.id);
+        if (!dbAddon) {
+          return NextResponse.json(
+            { error: `Selected add-on is no longer available for "${product.title}".` },
+            { status: 400 }
+          );
+        }
+        const maxQty = typeof dbAddon.max === "number" ? dbAddon.max : 20;
+        if (reqAddon.quantity > maxQty) {
+          return NextResponse.json(
+            { error: `Maximum ${maxQty} ${dbAddon.unit || "units"} allowed for "${dbAddon.label}".` },
+            { status: 400 }
+          );
+        }
+        const pricePerUnit = Number(dbAddon.pricePerUnit) || 0;
+        addOnsTotal += pricePerUnit * reqAddon.quantity;
+        validatedAddOns.push({
+          id: dbAddon.id,
+          label: dbAddon.label,
+          quantity: reqAddon.quantity,
+          pricePerUnit,
+          unit: dbAddon.unit || "unit",
+          emoji: dbAddon.emoji,
+        });
+      }
+
+      const unitPrice = product.price + addOnsTotal;
+      subtotal += unitPrice * line.quantity;
+
+      const mergedCustomization =
+        validatedAddOns.length > 0 || line.customization
+          ? {
+              ...(line.customization || {}),
+              ...(validatedAddOns.length > 0 ? { addOns: validatedAddOns } : {}),
+            }
+          : undefined;
+
       sanitizedItems.push({
         productId: product.id,
-        quantity: qty,
-        price: product.price, // DB authoritative price
+        quantity: line.quantity,
+        price: unitPrice,
+        customization: mergedCustomization,
       });
     }
 
@@ -220,6 +303,7 @@ export async function POST(req: Request) {
             productId: item.productId,
             quantity: item.quantity,
             price: item.price,
+            ...(item.customization ? { customization: item.customization } : {}),
           })),
         },
       },

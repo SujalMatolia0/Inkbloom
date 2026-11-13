@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { ToastContainer } from "@/components/ui/Toast";
 
 export function Providers({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: ReactNode }) {
     return (
       <SessionProvider>
         <ScrollReveal />
+        <ToastContainer />
         <AnimatePresence mode="wait" initial={false}>
           {children}
         </AnimatePresence>
@@ -30,6 +32,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
       <ScrollReveal />
+      <ToastContainer />
       <ReactLenis root>
         <AnimatePresence mode="wait" initial={false}>
           {children}

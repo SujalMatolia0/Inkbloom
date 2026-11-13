@@ -16,6 +16,7 @@ import {
   Layers,
   ArrowRight
 } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
 
 interface Product {
   id: string;
@@ -58,7 +59,18 @@ export function AdminGalleryManager({
   const [statusMessage, setStatusMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
   // Categories list
-  const categories = ["All", "Sketch", "Canvas", "Wall Art", "Craft"];
+  const categories = [
+    "All",
+    "Sketch",
+    "Canvas",
+    "Wall Art",
+    "Resin Art",
+    "Pipe Cleaner",
+    "Home Decor",
+    "Accessories",
+    "Craft",
+    "Other",
+  ];
 
   // Filter catalog artworks
   const filteredCatalog = allArtworks.filter((art) => {
@@ -140,13 +152,14 @@ export function AdminGalleryManager({
           prev.map((a) => (a.id === artworkId ? { ...a, inGallery: false, galleryOrder: 0 } : a))
         );
         setStatusMessage({ text: `Removed "${title}" from gallery corridor.`, isError: false });
+        toast.success("Removed from Gallery", `Removed "${title}" from gallery corridor.`);
         setTimeout(() => setStatusMessage(null), 3000);
       } else {
-        alert("Failed to remove artwork from gallery.");
+        toast.error("Remove Failed", "Failed to remove artwork from gallery.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error removing artwork.");
+      toast.error("Remove Failed", "Error removing artwork.");
     } finally {
       setIsUpdating(false);
     }
@@ -155,7 +168,7 @@ export function AdminGalleryManager({
   // Add artwork to gallery (into specific slot or next available)
   const handleAddToGallery = async (artworkId: string, targetSlot?: number) => {
     if (gallery.length >= 8 && typeof targetSlot !== "number") {
-      alert("All 8 corridor slots are currently occupied. Please replace an existing slot or remove one first.");
+      toast.warning("Gallery Full", "All 8 corridor slots are currently occupied. Please replace an existing slot or remove one first.");
       return;
     }
 
@@ -172,7 +185,7 @@ export function AdminGalleryManager({
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || "Failed to add artwork to gallery.");
+        toast.error("Add Failed", data.error || "Failed to add artwork to gallery.");
       } else {
         // Refetch or update state
         const targetArt = allArtworks.find((a) => a.id === artworkId);
@@ -192,11 +205,12 @@ export function AdminGalleryManager({
           );
         }
         setStatusMessage({ text: `Added to 3D gallery corridor.`, isError: false });
+        toast.success("Added to 3D Gallery", "Artwork placed in 3D gallery corridor.");
         setTimeout(() => setStatusMessage(null), 3000);
       }
     } catch (err) {
       console.error(err);
-      alert("Error adding artwork to gallery.");
+      toast.error("Add Failed", "Error adding artwork to gallery.");
     } finally {
       setIsUpdating(false);
     }

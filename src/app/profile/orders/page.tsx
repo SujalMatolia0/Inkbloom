@@ -17,7 +17,7 @@ export default async function ProfileOrdersPage() {
   const orders = await prisma.order.findMany({
     where: { user: { email: session.user.email } },
     orderBy: { createdAt: "desc" },
-    include: { items: true },
+    include: { items: { include: { product: true } } },
   });
 
   const statusConfig: Record<string, { color: string; icon: any }> = {
@@ -97,17 +97,57 @@ export default async function ProfileOrdersPage() {
                       <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-charcoal/40 mb-3">
                         Items
                       </p>
-                      <div className="space-y-2">
-                        {order.items.map((item) => (
-                          <div key={item.id} className="flex items-center justify-between text-xs gap-2">
-                            <p className="text-[12px] text-charcoal truncate">
-                              {item.quantity}x Item #{item.productId.slice(-6)}
-                            </p>
-                            <p className="text-[12px] text-charcoal/60 shrink-0">
-                              ₹{(item.price * item.quantity).toFixed(2)}
-                            </p>
-                          </div>
-                        ))}
+                      <div className="space-y-2.5">
+                        {order.items.map((item) => {
+                          const cust = item.customization as {
+                            addOns?: { id: string; label: string; quantity: number; pricePerUnit: number; unit: string; emoji?: string }[];
+                            instructions?: string;
+                            style?: string;
+                            namesDate?: string;
+                            referenceImg?: string;
+                          } | null;
+                          return (
+                            <div key={item.id} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs gap-2">
+                                <p className="text-[12px] font-medium text-charcoal truncate">
+                                  {item.quantity}× {item.product?.title || `Item #${item.productId.slice(-6)}`}
+                                </p>
+                                <p className="text-[12px] text-charcoal/70 font-semibold shrink-0">
+                                  ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                                </p>
+                              </div>
+                              {cust?.addOns && cust.addOns.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 pl-2">
+                                  {cust.addOns.map((a) => (
+                                    <span
+                                      key={a.id}
+                                      className="text-[10px] px-2 py-0.5 bg-terra/10 border border-terra/30 text-terra-dark font-medium"
+                                    >
+                                      {a.emoji ? `${a.emoji} ` : ""}+{a.quantity}× {a.label} (₹{a.pricePerUnit}/{a.unit})
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              {(cust?.style || cust?.namesDate || cust?.instructions || cust?.referenceImg) && (
+                                <div className="pl-2 text-[11px] text-charcoal/70 space-y-0.5">
+                                  {cust.style && <p>Theme: {cust.style}</p>}
+                                  {cust.namesDate && <p>Custom Text: {cust.namesDate}</p>}
+                                  {cust.instructions && <p className="italic">&ldquo;{cust.instructions}&rdquo;</p>}
+                                  {cust.referenceImg && (
+                                    <a
+                                      href={cust.referenceImg}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-block text-[10px] text-terra underline"
+                                    >
+                                      View Reference Photo ↗
+                                    </a>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

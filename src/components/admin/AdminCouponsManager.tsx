@@ -16,6 +16,7 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
 
 interface Coupon {
   id: string;
@@ -89,13 +90,16 @@ export function AdminCouponsManager({ initialCoupons }: AdminCouponsManagerProps
         setCoupons((prev) =>
           prev.map((c) => (c.id === id ? { ...c, isActive: currentStatus } : c))
         );
-        alert("Failed to update coupon status.");
+        toast.error("Update Failed", "Failed to update coupon status.");
+      } else {
+        toast.success("Coupon Updated", `Coupon ${!currentStatus ? "activated" : "paused"}.`);
       }
     } catch (err) {
       console.error(err);
       setCoupons((prev) =>
         prev.map((c) => (c.id === id ? { ...c, isActive: currentStatus } : c))
       );
+      toast.error("Error", "Error updating coupon status.");
     }
   };
 
@@ -110,12 +114,13 @@ export function AdminCouponsManager({ initialCoupons }: AdminCouponsManagerProps
 
       if (res.ok) {
         setCoupons((prev) => prev.filter((c) => c.id !== id));
+        toast.success("Coupon Deleted", `Coupon "${code}" was deleted.`);
       } else {
-        alert("Failed to delete coupon.");
+        toast.error("Delete Failed", "Failed to delete coupon.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error deleting coupon.");
+      toast.error("Delete Failed", "Error deleting coupon.");
     }
   };
 

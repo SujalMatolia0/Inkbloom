@@ -16,8 +16,8 @@ const prisma = new PrismaClient({
 const USERS = [
   {
     name: 'artistankimatolia',
-    email: 'artistankimatolia@vinyas.com',
-    password: '2wsx@WSX', // Will be hashed
+    email: process.env.ADMIN_EMAIL || 'artistankimatolia@inkbloom.com',
+    password: 'Password123!', // Will be hashed
     role: 'ADMIN',
   },
   {

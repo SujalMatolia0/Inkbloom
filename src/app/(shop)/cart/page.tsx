@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/ui/Navbar';
 import { FestiveBanner } from '@/components/shop/FestiveBanner';
+import { toast } from '@/components/ui/Toast';
 
 const loadScript = (src: string) => {
   return new Promise((resolve) => {
@@ -46,6 +47,7 @@ export default function CartPage() {
     applyCoupon,
     removeCoupon,
     getDiscountAmount,
+    getShippingFee,
     getFinalTotal,
   } = useCartStore();
 
@@ -59,6 +61,7 @@ export default function CartPage() {
 
   const subtotal = getTotalPrice();
   const discount = getDiscountAmount();
+  const shippingFee = getShippingFee();
   const finalTotal = getFinalTotal();
 
   const handleApplyCoupon = async (codeOverride?: string) => {
@@ -118,7 +121,7 @@ export default function CartPage() {
     }
 
     if (items.length === 0) {
-      alert('Your cart is empty.');
+      toast.warning('Cart is empty', 'Please add an artwork before checking out.');
       return;
     }
 
@@ -129,7 +132,7 @@ export default function CartPage() {
         'https://checkout.razorpay.com/v1/checkout.js',
       );
       if (!res) {
-        alert('Razorpay SDK failed to load. Are you online?');
+        toast.error('Payment Gateway Unavailable', 'Razorpay SDK failed to load. Please check your connection.');
         setIsProcessing(false);
         return;
       }
@@ -139,8 +142,13 @@ export default function CartPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           items: items.map((item) => ({
-            productId: item.id,
+            productId: item.productId || item.id,
             quantity: item.quantity,
+            selectedAddOns: item.selectedAddOns?.map((a) => ({
+              id: a.id,
+              quantity: a.quantity,
+            })),
+            customization: item.customization,
           })),
           couponCode: appliedCoupon?.code || null,
           currency: 'INR',
@@ -173,23 +181,24 @@ export default function CartPage() {
             const verify = await verifyRes.json();
 
             if (verify.verified) {
+              toast.success('Order Confirmed!', 'Thank you for your Studio Vinyas order.');
               clearCart();
               router.push(
                 `/shop/order-success?orderId=${verify.orderId || response.razorpay_order_id}`,
               );
             } else {
-              alert(verify.error || 'Payment verification failed. Please contact studio support.');
+              toast.error('Verification Failed', verify.error || 'Payment verification failed. Please contact studio support.');
             }
           } catch (verifyError) {
             console.error('Verification request error:', verifyError);
-            alert('Payment verification failed. Please contact studio support.');
+            toast.error('Verification Failed', 'Payment verification failed. Please contact studio support.');
           } finally {
             setIsProcessing(false);
           }
         },
         modal: {
           ondismiss: function () {
-            console.log('Payment modal dismissed by user.');
+            toast.info('Checkout Cancelled', 'You closed the payment window.');
             setIsProcessing(false);
           },
         },
@@ -206,14 +215,14 @@ export default function CartPage() {
       
       paymentObject.on('payment.failed', function (response: any) {
         console.error('Razorpay payment failed:', response.error);
-        alert(`Payment failed: ${response.error?.description || response.error?.reason || 'Payment was unsuccessful'}`);
+        toast.error('Payment Failed', response.error?.description || response.error?.reason || 'Payment was unsuccessful');
         setIsProcessing(false);
       });
 
       paymentObject.open();
     } catch (err: any) {
       console.error(err);
-      alert(err?.message || 'Checkout failed. Please try again.');
+      toast.error('Checkout Failed', err?.message || 'Checkout failed. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -362,6 +371,31 @@ export default function CartPage() {
                       </div>
                     </div>
 
+                    {/* Selected Add-ons Strip if available */}
+                    {item.selectedAddOns && item.selectedAddOns.length > 0 && (
+                      <div className="p-3 bg-terra/5 border border-terra/30 text-xs text-charcoal/85 space-y-1.5 mt-1 font-sans">
+                        <span className="font-bold text-[10.5px] uppercase tracking-wider text-terra block">
+                          ✦ Added Extras:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {item.selectedAddOns.map((addon) => (
+                            <span
+                              key={addon.id}
+                              className="inline-flex items-center gap-1 bg-white border border-terra/30 px-2 py-1 text-[11px] font-medium text-charcoal"
+                            >
+                              {addon.emoji && <span>{addon.emoji}</span>}
+                              <span>
+                                +{addon.quantity}× {addon.label}
+                              </span>
+                              <span className="text-terra font-mono text-[10px]">
+                                (₹{(addon.quantity * addon.pricePerUnit).toLocaleString('en-IN')})
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Customization Details Strip if available */}
                     {item.customization && (
                       <div className="p-3 bg-linen/50 border border-charcoal/20 text-xs text-charcoal/85 space-y-1 mt-1 font-sans">
@@ -376,13 +410,26 @@ export default function CartPage() {
 
                         {item.customization.namesDate && (
                           <div className="text-[11px] text-charcoal/80">
-                            <strong>Engraved Details:</strong> {item.customization.namesDate}
+                            <strong>Custom Details:</strong> {item.customization.namesDate}
                           </div>
                         )}
 
                         {item.customization.instructions && (
                           <div className="text-[11px] text-charcoal/70 italic">
                             &ldquo;{item.customization.instructions}&rdquo;
+                          </div>
+                        )}
+
+                        {item.customization.referenceImg && (
+                          <div className="pt-1 flex items-center gap-2">
+                            <a
+                              href={item.customization.referenceImg}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10.5px] font-bold text-terra underline hover:text-charcoal"
+                            >
+                              View Uploaded Reference Photo ↗
+                            </a>
                           </div>
                         )}
 
@@ -529,13 +576,26 @@ export default function CartPage() {
                   </div>
                 )}
 
-                <div className="flex justify-between items-center text-[13px] pb-4 border-b border-charcoal/15">
-                  <span className="font-bold uppercase tracking-[0.1em] text-charcoal/60">
-                    Insured Shipping
-                  </span>
-                  <span className="font-bold text-terracotta uppercase text-[11.5px] tracking-wider">
-                    Complimentary across India
-                  </span>
+                <div className="flex justify-between items-start text-[13px] pb-4 border-b border-charcoal/15 gap-3">
+                  <div>
+                    <span className="font-bold uppercase tracking-[0.1em] text-charcoal/60 block">
+                      Insured Shipping
+                    </span>
+                    {shippingFee > 0 && (
+                      <span className="text-[10px] text-charcoal/50 font-sans">
+                        Free shipping on orders ₹2,499+
+                      </span>
+                    )}
+                  </div>
+                  {shippingFee === 0 ? (
+                    <span className="font-bold text-emerald-700 uppercase text-[11.5px] tracking-wider text-right">
+                      Complimentary
+                    </span>
+                  ) : (
+                    <span className="font-bold text-charcoal text-right">
+                      ₹{shippingFee.toLocaleString('en-IN')}
+                    </span>
+                  )}
                 </div>
               </div>
 

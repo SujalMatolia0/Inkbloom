@@ -1,14 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Upload,
-  Loader2,
-  Check,
-  Sparkles,
-  X,
-  Image as ImageIcon,
-} from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Upload, Loader2, Check, X, Image as ImageIcon } from 'lucide-react';
 import { uploadFile } from '@/lib/storage';
 
 interface CloudinaryImageUploaderProps {
@@ -16,6 +9,8 @@ interface CloudinaryImageUploaderProps {
   onUploadSuccess: (url: string) => void;
   label?: string;
   multiple?: boolean;
+  /** Already-added URLs — used to deduplicate before uploading */
+  existingUrls?: string[];
 }
 
 export function CloudinaryImageUploader({
@@ -23,10 +18,14 @@ export function CloudinaryImageUploader({
   onUploadSuccess,
   label = 'Upload Image to Cloudinary',
   multiple = false,
+  existingUrls = [],
 }: CloudinaryImageUploaderProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Track file fingerprints (name + size + lastModified) to skip re-uploads within this session
+  const uploadedFingerprintsRef = useRef<Set<string>>(new Set());
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -37,13 +36,27 @@ export function CloudinaryImageUploader({
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
+        // Deduplicate by fingerprint (same file selected twice in one session)
+        const fingerprint = `${file.name}::${file.size}::${file.lastModified}`;
+        if (uploadedFingerprintsRef.current.has(fingerprint)) {
+          setErrorMessage(`"${file.name}" was already uploaded this session.`);
+          continue;
+        }
+
         if (file.size > 15 * 1024 * 1024) {
-          throw new Error(
-            `File ${file.name} is too large. Max allowed size is 15MB.`,
-          );
+          throw new Error(`File "${file.name}" is too large. Max allowed size is 15 MB.`);
         }
 
         const url = await uploadFile(file, folder);
+
+        // Deduplicate against parent-provided existing URLs
+        if (existingUrls.includes(url)) {
+          setErrorMessage(`"${file.name}" already exists in the image list.`);
+          continue;
+        }
+
+        uploadedFingerprintsRef.current.add(fingerprint);
         setUploadedUrls((prev) => [...prev, url]);
         onUploadSuccess(url);
       }
@@ -52,13 +65,16 @@ export function CloudinaryImageUploader({
       setErrorMessage(error.message || 'Failed to upload image to Cloudinary.');
     } finally {
       setIsUploading(false);
+      // Reset input so the same file can be re-selected if needed after removal
+      if (inputRef.current) inputRef.current.value = '';
     }
   };
 
   return (
     <div className="space-y-3">
-      <div className="relative border-1.5 border-dashed border-terra/40 hover:border-terra bg-black/20 p-4 transition-all group flex flex-col items-center justify-center text-center cursor-pointer">
+      <div className="relative border border-dashed border-terra/40 hover:border-terra bg-black/20 p-4 transition-all group flex flex-col items-center justify-center text-center cursor-pointer">
         <input
+          ref={inputRef}
           type="file"
           accept="image/*"
           multiple={multiple}
@@ -83,8 +99,7 @@ export function CloudinaryImageUploader({
               {label}
             </span>
             <span className="text-[10px] font-mono text-linen/50 mt-1">
-              Drag & drop or click to upload PNG, JPG, WebP directly to
-              Cloudinary
+              Drag &amp; drop or click to upload PNG, JPG, WebP directly to Cloudinary
             </span>
           </div>
         )}
@@ -99,7 +114,7 @@ export function CloudinaryImageUploader({
         </div>
       )}
 
-      {/* Uploaded Thumbnails Preview */}
+      {/* Uploaded Thumbnails Preview (this session) */}
       {uploadedUrls.length > 0 && (
         <div className="space-y-1.5">
           <span className="text-[10px] font-mono uppercase tracking-wider text-linen/50 block">
@@ -112,9 +127,7 @@ export function CloudinaryImageUploader({
                 className="flex items-center gap-2 px-2.5 py-1.5 bg-deep2 border border-terra/30 text-[11px] font-mono text-linen/90 max-w-full"
               >
                 <ImageIcon size={12} className="text-terra shrink-0" />
-                <span className="truncate max-w-[200px] text-[10px]">
-                  {url}
-                </span>
+                <span className="truncate max-w-[200px] text-[10px]">{url}</span>
                 <Check size={12} className="text-emerald-400 shrink-0" />
               </div>
             ))}

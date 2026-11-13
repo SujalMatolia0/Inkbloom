@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowRight, Sparkles, Palette, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ShopPage() {
   let products: any[] = [];

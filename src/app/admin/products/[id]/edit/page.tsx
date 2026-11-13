@@ -34,6 +34,7 @@ export default async function EditProductPage({
     stock: product.stock,
     category: product.category,
     images: product.images,
+    addOns: Array.isArray(product.addOns) ? (product.addOns as any[]) : [],
   };
 
   return (

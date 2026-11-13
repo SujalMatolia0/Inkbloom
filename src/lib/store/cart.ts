@@ -15,6 +15,15 @@ export interface ItemCustomization {
   isPhysicalCourierRequired?: boolean;
 }
 
+export interface SelectedAddOn {
+  id: string;
+  label: string;
+  quantity: number;
+  pricePerUnit: number;
+  unit: string;
+  emoji?: string;
+}
+
 export interface CartItem {
   id: string;
   productId?: string;
@@ -23,6 +32,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   slug: string;
+  selectedAddOns?: SelectedAddOn[];
   customization?: ItemCustomization;
 }
 

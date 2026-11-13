@@ -128,9 +128,56 @@ export default async function AdminOrdersPage({
                         </p>
                       </td>
                       <td className="p-4">
-                        <p className="text-[12px] text-linen/60">
-                          {order.items.length} item(s)
-                        </p>
+                        <div className="space-y-1.5">
+                          {order.items.map((item) => {
+                            const cust = item.customization as {
+                              addOns?: { id: string; label: string; quantity: number; pricePerUnit: number; unit: string; emoji?: string }[];
+                              instructions?: string;
+                              style?: string;
+                              namesDate?: string;
+                              referenceImg?: string;
+                            } | null;
+                            return (
+                              <div key={item.id} className="text-[12px]">
+                                <span className="text-linen font-medium">
+                                  {item.quantity}× {item.product?.title || "Artwork"}
+                                </span>
+                                <span className="text-linen/40 text-[10px] ml-1.5">
+                                  (₹{item.price.toLocaleString("en-IN")})
+                                </span>
+                                {cust?.addOns && cust.addOns.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {cust.addOns.map((a) => (
+                                      <span
+                                        key={a.id}
+                                        className="text-[10px] px-1.5 py-0.5 bg-terra/15 border border-terra/30 text-terra-pale"
+                                      >
+                                        {a.emoji ? `${a.emoji} ` : ""}+{a.quantity}× {a.label}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                                {(cust?.style || cust?.namesDate || cust?.instructions) && (
+                                  <div className="mt-1 text-[10.5px] text-linen/65 space-y-0.5">
+                                    {cust.style && <p>Theme: {cust.style}</p>}
+                                    {cust.namesDate && <p>Text: {cust.namesDate}</p>}
+                                    {cust.instructions && <p className="italic">&ldquo;{cust.instructions}&rdquo;</p>}
+                                  </div>
+                                )}
+                                {cust?.referenceImg && (
+                                  <a
+                                    href={cust.referenceImg}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-block mt-1 text-[10px] text-terra-pale underline hover:text-terra"
+                                  >
+                                    View Reference Photo ↗
+                                  </a>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </td>
                       <td className="p-4">
                         <span className="text-[13px] font-bold text-terra">

@@ -36,7 +36,12 @@ const CATEGORIES = [
   { id: "Sketch", label: "Sketch & Portraits" },
   { id: "Canvas", label: "Canvas Paintings" },
   { id: "Wall Art", label: "Wall Art & Murals" },
+  { id: "Resin Art", label: "Resin & Varmala" },
+  { id: "Pipe Cleaner", label: "Pipe Cleaner" },
+  { id: "Home Decor", label: "Home Decor" },
+  { id: "Accessories", label: "Accessories" },
   { id: "Craft", label: "Craft & Keepsakes" },
+  { id: "Other", label: "Other" },
 ];
 
 export function AdminProductsManager({ initialProducts }: { initialProducts: Product[] }) {
@@ -363,7 +368,12 @@ export function AdminProductsManager({ initialProducts }: { initialProducts: Pro
                           product.category === "Sketch" && "border-blue-500/30 text-blue-300/80 bg-blue-500/10",
                           product.category === "Canvas" && "border-terra/40 text-terra-pale bg-terra/10",
                           product.category === "Wall Art" && "border-amber-500/40 text-amber-300/80 bg-amber-500/10",
-                          product.category === "Craft" && "border-emerald-500/40 text-emerald-300/80 bg-emerald-500/10"
+                          product.category === "Craft" && "border-emerald-500/40 text-emerald-300/80 bg-emerald-500/10",
+                          product.category === "Resin Art" && "border-purple-500/40 text-purple-300/80 bg-purple-500/10",
+                          product.category === "Pipe Cleaner" && "border-pink-500/40 text-pink-300/80 bg-pink-500/10",
+                          product.category === "Home Decor" && "border-orange-500/40 text-orange-300/80 bg-orange-500/10",
+                          product.category === "Accessories" && "border-cyan-500/40 text-cyan-300/80 bg-cyan-500/10",
+                          !["Sketch", "Canvas", "Wall Art", "Craft", "Resin Art", "Pipe Cleaner", "Home Decor", "Accessories"].includes(product.category) && "border-linen/30 text-linen/80 bg-linen/10"
                         )}>
                           {product.category}
                         </span>

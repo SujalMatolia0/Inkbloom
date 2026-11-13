@@ -46,7 +46,7 @@ export default function PortfolioPage() {
   const cartItems = useCartStore((state) => state.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const [galleryArtworks, setGalleryArtworks] = useState<any[]>(GALLERY_3D_ARTWORKS);
+  const [galleryArtworks, setGalleryArtworks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingText, setLoadingText] = useState(LOADING_TEXTS[0]);
   const [isAudioMuted, setIsAudioMuted] = useState(true);
@@ -118,34 +118,50 @@ export default function PortfolioPage() {
   }, []); 
 
   useEffect(() => {
-    preloadPaintingTextures(paintingsList);
+    let cancelled = false;
 
-    // Fetch dynamic admin-curated gallery artworks
-    async function loadCuratedGallery() {
-      try {
-        const res = await fetch('/api/gallery');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.artworks && data.artworks.length > 0) {
-            setGalleryArtworks(data.artworks);
-            preloadPaintingTextures(data.artworks.map((a: any) => a.image));
+    async function initGallery() {
+      // Run loading messages and gallery fetch in parallel so live DB products appear right away
+      const fetchPromise = (async () => {
+        try {
+          const res = await fetch('/api/gallery', { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (!cancelled && data.artworks && data.artworks.length > 0) {
+              setGalleryArtworks(data.artworks);
+              preloadPaintingTextures(data.artworks.map((a: any) => a.image));
+              return;
+            }
           }
+        } catch (e) {
+          console.warn('Using default curated collection fallback:', e);
         }
-      } catch (e) {
-        console.warn('Using default curated collection fallback:', e);
+        if (!cancelled) {
+          setGalleryArtworks(GALLERY_3D_ARTWORKS);
+          preloadPaintingTextures(GALLERY_3D_ARTWORKS.map((a) => a.image));
+        }
+      })();
+
+      const textPromise = (async () => {
+        for (const text of LOADING_TEXTS) {
+          if (cancelled) return;
+          setLoadingText(text);
+          await new Promise((r) => setTimeout(r, 450));
+        }
+      })();
+
+      await Promise.all([fetchPromise, textPromise]);
+      if (!cancelled) {
+        setLoading(false);
       }
     }
-    loadCuratedGallery();
 
-    const sequence = async () => {
-      for (const text of LOADING_TEXTS) {
-        setLoadingText(text);
-        await new Promise((r) => setTimeout(r, 600));
-      }
-      setLoading(false);
+    initGallery();
+
+    return () => {
+      cancelled = true;
     };
-    sequence();
-  }, [paintingsList]);
+  }, []);
 
   const startExperience = async () => {
     setHasStarted(true);
@@ -222,6 +238,7 @@ export default function PortfolioPage() {
   const handleAddToCart = (painting: any) => {
     addItem({
       id: painting.id ? String(painting.id) : `gallery-artwork-${painting.slug || 'art'}`,
+      productId: painting.id ? String(painting.id) : undefined,
       title: painting.title,
       price: painting.priceNumber || painting.price || 8400,
       image: painting.url || painting.image,
@@ -514,7 +531,7 @@ export default function PortfolioPage() {
                           <ArrowRight size={13} />
                         </button>
                       ) : (
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
                           <button 
                             onClick={() => handleAddToCart(selectedPainting)}
                             className="btn-primary flex items-center gap-2 py-2.5 px-5 text-[10px] tracking-wider uppercase shadow-[3px_3px_0px_0px_rgba(45,45,45,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
@@ -531,6 +548,14 @@ export default function PortfolioPage() {
                               </>
                             )}
                           </button>
+                          {selectedPainting.slug && (
+                            <Link
+                              href={`/shop/${selectedPainting.slug}`}
+                              className="btn-outline py-2.5 px-4 text-[10px] tracking-wider uppercase"
+                            >
+                              Full Page →
+                            </Link>
+                          )}
                           {cartSuccessId === (selectedPainting.id || selectedPainting.slug) && (
                             <Link 
                               href="/cart"

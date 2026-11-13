@@ -5,6 +5,7 @@ import { useCartStore } from "@/lib/store/cart";
 import Link from "next/link";
 import Image from "next/image";
 import { ArtworkCustomizerModal } from "./ArtworkCustomizerModal";
+import { toast } from "@/components/ui/Toast";
 import { Sparkles, ShoppingBag, Eye, Heart, ArrowUpRight, Check, Brush } from "lucide-react";
 
 interface Product {
@@ -40,7 +41,12 @@ export function ProductCard({
   const isSold = product.stock <= 0;
   const isMural = product.category === "Wall Art";
   const isSketch = product.category === "Sketch" || product.title.toLowerCase().includes("portrait") || product.title.toLowerCase().includes("sketch");
-  const isCraftOrResin = product.category === "Craft" || (subcategory && subcategory.includes("Resin")) || product.title.toLowerCase().includes("resin") || product.title.toLowerCase().includes("varmala") || product.title.toLowerCase().includes("keepsake");
+  const isCraftOrResin =
+    product.category === "Resin Art" ||
+    (subcategory && subcategory.includes("Resin")) ||
+    product.title.toLowerCase().includes("resin") ||
+    product.title.toLowerCase().includes("varmala") ||
+    product.title.toLowerCase().includes("preservation");
   const isCustomizable = isMural || isSketch || isCraftOrResin || isSold;
 
   const [isAdded, setIsAdded] = useState(false);
@@ -52,12 +58,14 @@ export function ProductCard({
     e.stopPropagation();
     addItem({
       id: product.id,
+      productId: product.id,
       title: product.title,
       price: product.price,
       image: product.image,
       slug: product.slug,
     });
     setIsAdded(true);
+    toast.success("Added to Bag!", `${product.title} — ₹${product.price.toLocaleString("en-IN")}`);
     setTimeout(() => setIsAdded(false), 2000);
   };
 

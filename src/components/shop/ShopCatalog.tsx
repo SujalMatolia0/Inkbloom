@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { ProductCard } from "./ProductCard";
 import { VINYAS_CATALOG, Artwork } from "@/data/artworks";
-import { Search, SlidersHorizontal, X, Sparkles, Filter, Package, Brush, Layers, Palette, LayoutGrid, Grid3X3 } from "lucide-react";
+import { Search, SlidersHorizontal, X, Sparkles, Filter, Package, Brush, Layers, Palette, LayoutGrid, Grid3X3, Flower2, Home, Gem, Shapes } from "lucide-react";
 import Link from "next/link";
 
 interface Product {
@@ -21,8 +21,13 @@ const CATEGORIES = [
   { id: "all", label: "All Works", icon: Sparkles },
   { id: "Wall Art", label: "Wall Art & Murals", icon: Brush },
   { id: "Sketch", label: "Sketches & Portraits", icon: Palette },
+  { id: "Resin Art", label: "Resin & Varmala", icon: Gem },
+  { id: "Pipe Cleaner", label: "Pipe Cleaner", icon: Flower2 },
+  { id: "Home Decor", label: "Home Decor", icon: Home },
+  { id: "Accessories", label: "Accessories", icon: Sparkles },
   { id: "Craft", label: "Craft & Keepsakes", icon: Package },
   { id: "Canvas", label: "Canvas Paintings", icon: Layers },
+  { id: "Other", label: "Other", icon: Shapes },
 ];
 
 const OCCASIONS = [
@@ -165,10 +170,14 @@ export function ShopCatalog({ initialProducts }: { initialProducts: Product[] })
           
           {/* Main Category Tabs */}
           <div
-            className="flex items-center gap-2 overflow-x-auto flex-nowrap pb-0.5 no-scrollbar shrink-0 [&::-webkit-scrollbar]:hidden"
+            className="flex items-center gap-2 overflow-x-auto flex-nowrap pb-0.5 no-scrollbar min-w-0 flex-1 [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {CATEGORIES.map((cat) => {
+            {CATEGORIES.filter((cat) => {
+              if (cat.id === "all") return true;
+              if (["Wall Art", "Sketch", "Craft", "Canvas"].includes(cat.id)) return true;
+              return (categoryCounts[cat.id] || 0) > 0;
+            }).map((cat) => {
               const isActive = selectedCategory === cat.id;
               const count = categoryCounts[cat.id] || 0;
               const Icon = cat.icon;

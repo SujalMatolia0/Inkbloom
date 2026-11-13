@@ -11,18 +11,18 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const cleanId = decodeURIComponent(id).replace(/^\/+/, '').trim();
     
-    // Try to find by slug first (most common), then by ID
-    let product = await prisma.product.findUnique({
-      where: { slug: id },
+    // Try to find by slug (exact or case-insensitive) or by ID
+    const product = await prisma.product.findFirst({
+      where: {
+        OR: [
+          { slug: cleanId },
+          { slug: { equals: cleanId, mode: 'insensitive' } },
+          { id: cleanId },
+        ],
+      },
     });
-
-    // If not found by slug, try by ID
-    if (!product) {
-      product = await prisma.product.findUnique({
-        where: { id },
-      });
-    }
 
     if (!product) {
       return NextResponse.json(

@@ -50,19 +50,29 @@ export function ArtworkCustomizerModal({
 
   const isMural = product.category === 'Wall Art';
   const isSketch =
-    product.category === 'Sketch' ||
-    product.title.toLowerCase().includes('portrait') ||
-    product.title.toLowerCase().includes('sketch');
+    !isMural &&
+    (product.category === 'Sketch' ||
+      product.title.toLowerCase().includes('portrait') ||
+      product.title.toLowerCase().includes('sketch'));
   const isResinOrCraft =
-    product.category === 'Craft' ||
-    (product.subcategory && product.subcategory.includes('Resin')) ||
-    product.title.toLowerCase().includes('resin') ||
-    product.title.toLowerCase().includes('varmala') ||
-    product.title.toLowerCase().includes('keepsake');
+    !isMural &&
+    !isSketch &&
+    (product.category === 'Resin Art' ||
+      (product.subcategory && product.subcategory.includes('Resin')) ||
+      product.title.toLowerCase().includes('resin') ||
+      product.title.toLowerCase().includes('varmala') ||
+      product.title.toLowerCase().includes('preservation'));
   const isCanvas =
-    product.category === 'Canvas' ||
-    product.title.toLowerCase().includes('canvas') ||
-    product.title.toLowerCase().includes('pichwai');
+    !isMural &&
+    !isSketch &&
+    !isResinOrCraft &&
+    (product.category === 'Canvas' ||
+      product.title.toLowerCase().includes('canvas') ||
+      product.title.toLowerCase().includes('pichwai'));
+  const isGeneralCustom = !isMural && !isSketch && !isResinOrCraft && !isCanvas;
+
+  // General Craft / Pipe Cleaner / Home Decor / Accessories / Other fields
+  const [preferredStyle, setPreferredStyle] = useState('');
 
   // Common fields
   const [clientName, setClientName] = useState('');
@@ -246,6 +256,9 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : 'None'}
     } else if (isCanvas) {
       customizationData.size = canvasSize;
       customizationData.style = canvasStyle;
+    } else if (isGeneralCustom) {
+      if (preferredStyle.trim()) customizationData.style = preferredStyle.trim();
+      if (namesAndDate.trim()) customizationData.namesDate = namesAndDate.trim();
     }
 
     const customCartItemId = `${product.id}-custom-${Date.now()}`;
@@ -292,7 +305,9 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : 'None'}
                   ? 'Custom Sketch & Portrait Studio Configurator'
                   : isResinOrCraft
                     ? 'Resin Keepsake & Floral Preservation Configurator'
-                    : 'Custom Artwork Configurator'}
+                    : isCanvas
+                      ? 'Custom Canvas Configurator'
+                      : `Custom ${product.category || 'Artwork'} Request`}
             </span>
           </div>
           <button
@@ -1044,6 +1059,147 @@ Reference Attached: ${fileName ? `Yes (${fileName})` : 'None'}
                       className="btn-primary py-3 px-8 text-xs font-bold tracking-wider uppercase w-full sm:w-auto shadow-[3px_3px_0px_0px_rgba(45,45,45,1)]"
                     >
                       Add Custom Canvas to Cart ➔
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* CATEGORY E: GENERAL HANDMADE / PIPE CLEANER / HOME DECOR / ACCESSORIES / OTHER */}
+              {isGeneralCustom && (
+                <div className="space-y-5">
+                  <div className="p-3.5 bg-terra/5 border border-terra/30 text-xs text-charcoal/80 font-sans">
+                    Tell Anki Matolia exactly how you&apos;d like this{' '}
+                    <strong>{product.category}</strong> piece customized — share
+                    your preferred colors, theme, custom text, or upload a
+                    reference photo.
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
+                        Preferred Colors / Design Theme
+                      </label>
+                      <input
+                        type="text"
+                        value={preferredStyle}
+                        onChange={(e) => setPreferredStyle(e.target.value)}
+                        placeholder={
+                          product.category === 'Pipe Cleaner'
+                            ? 'e.g. Pastel pink & white wrap, black ribbon'
+                            : product.category === 'Home Decor'
+                              ? 'e.g. Red & gold festive tones, mirror accents'
+                              : 'e.g. Color palette, pattern, or finish'
+                        }
+                        className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
+                        Custom Name / Text / Occasion (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={namesAndDate}
+                        onChange={(e) => setNamesAndDate(e.target.value)}
+                        placeholder="e.g. Happy Birthday, Initials, Gift Note"
+                        className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Reference Image Upload */}
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
+                      Upload Reference Photo / Inspiration (Optional)
+                    </label>
+                    <div className="border-1.5 border-dashed border-charcoal/40 bg-white/70 p-4 text-center hover:bg-white transition-colors cursor-pointer relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                      />
+                      {isUploadingPhoto ? (
+                        <div className="flex flex-col items-center py-1">
+                          <Loader2 size={20} className="animate-spin text-terra mb-1" />
+                          <span className="text-xs font-bold text-charcoal">
+                            Uploading reference image...
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload size={20} className="mx-auto text-charcoal/50 mb-1" />
+                          <span className="text-xs font-bold text-charcoal block">
+                            {fileName
+                              ? `Attached: ${fileName}`
+                              : 'Click to upload a reference photo of any design'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {referenceImgUrl && (
+                      <div className="mt-2 flex items-center gap-3 p-2 bg-white border border-charcoal/20">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={referenceImgUrl}
+                          alt="Reference preview"
+                          className="w-12 h-12 object-cover border border-charcoal/20"
+                        />
+                        <span className="text-[11px] text-charcoal/70 flex-1 truncate">
+                          Reference photo attached
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReferenceImgUrl('');
+                            setFileName('');
+                          }}
+                          className="text-[10px] font-bold uppercase text-red-600 hover:underline px-2"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Expectations / Comment */}
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-charcoal/80 block mb-1">
+                      What Are You Expecting? (Comments &amp; Notes)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={instructions}
+                      onChange={(e) => setInstructions(e.target.value)}
+                      placeholder="Describe the design details, flower types, size, packaging, or anything you expect from this piece..."
+                      className="w-full px-3 py-2 bg-white border-1.5 border-charcoal/30 text-xs font-sans text-charcoal focus:border-terra outline-none"
+                    />
+                  </div>
+
+                  {/* Price & Add to Cart */}
+                  <div className="p-4 bg-white/90 border-1.5 border-charcoal flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-widest text-charcoal/60 block">
+                        Customized Piece Total
+                      </span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-serif text-2xl font-bold text-terra">
+                          ₹{calculatedTotal.toLocaleString('en-IN')}
+                        </span>
+                        <span className="text-[10.5px] text-charcoal/60 font-sans">
+                          (Includes custom notes)
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleAddToCartCustomized}
+                      disabled={isUploadingPhoto}
+                      className="btn-primary py-3 px-8 text-xs font-bold tracking-wider uppercase w-full sm:w-auto shadow-[3px_3px_0px_0px_rgba(45,45,45,1)] disabled:opacity-50"
+                    >
+                      Add Customized Order to Cart ➔
                     </button>
                   </div>
                 </div>

@@ -1,14 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Truck, Sparkles, ArrowRight, Heart } from "lucide-react";
+import { ShieldCheck, Truck, Sparkles, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/ui/Navbar";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
+import { ProductImageGallery } from "@/components/shop/ProductImageGallery";
+import { ProductAddOns } from "@/components/shop/ProductAddOns";
 import { VINYAS_CATALOG } from "@/data/artworks";
+import type { AddOnOption } from "@/components/shop/ProductAddOns";
 
+// Always fetch fresh — no caching so newly added products always resolve
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function slugify(text: string) {
   return text
@@ -25,9 +29,27 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
+  const cleanSlug = decodeURIComponent(slug).replace(/^\/+/, "").trim();
+  let product = await prisma.product.findFirst({
+    where: {
+      OR: [
+        { slug: cleanSlug },
+        { slug: { equals: cleanSlug, mode: "insensitive" } },
+        { id: cleanSlug },
+      ],
+    },
   });
+
+  if (!product) {
+    const normalizedTarget = slugify(cleanSlug);
+    const allProducts = await prisma.product.findMany();
+    product =
+      allProducts.find(
+        (p) =>
+          slugify(p.slug) === normalizedTarget ||
+          slugify(p.title) === normalizedTarget
+      ) || null;
+  }
 
   if (!product) {
     notFound();
@@ -38,7 +60,7 @@ export default async function ProductDetailPage({
     (a) => slugify(a.title) === slug || a.title.toLowerCase().trim() === product.title.toLowerCase().trim()
   );
 
-  // Fetch recommendations from same category or others
+  // Fetch recommendations
   const recommendations = await prisma.product.findMany({
     where: { id: { not: product.id } },
     take: 4,
@@ -47,6 +69,13 @@ export default async function ProductDetailPage({
 
   const isSold = product.stock <= 0;
   const isMural = product.category === "Wall Art";
+
+  // Parse add-ons from JSON field
+  const addOns: AddOnOption[] = Array.isArray(product.addOns)
+    ? (product.addOns as any[]).filter(
+        (a) => a && typeof a.id === 'string' && typeof a.label === 'string'
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-linen selection:bg-terra selection:text-linen">
@@ -67,56 +96,27 @@ export default async function ProductDetailPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
-          {/* LEFT — Image Gallery Column (55%) */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden bg-charcoal/5 border-2 border-charcoal shadow-[8px_8px_0px_0px_rgba(45,45,45,1)]">
-              <Image
-                src={product.images[0] || "/placeholder.jpg"}
-                alt={product.title}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 55vw"
-                className="object-cover"
-              />
-              
-              {/* Badges */}
-              <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
-                {meta?.tag && (
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-linen text-charcoal border border-charcoal/30 shadow-md">
-                    {meta.tag}
-                  </span>
-                )}
-                {isMural && (
-                  <span className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 bg-terra text-linen shadow-md">
-                    Bespoke Mural
-                  </span>
-                )}
-              </div>
-
-              {isSold && !isMural && (
-                <div className="absolute inset-0 bg-charcoal/30 backdrop-blur-[2px] flex items-center justify-center">
-                  <span className="font-serif text-3xl font-bold uppercase tracking-widest text-linen border-2 border-linen px-6 py-2 shadow-2xl">
-                    Made to Order
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Thumbnails if multiple images exist */}
-            {product.images.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {product.images.map((img, i) => (
-                  <div
-                    key={i}
-                    className={`relative w-20 h-24 border-1.5 border-charcoal cursor-pointer flex-shrink-0 overflow-hidden ${
-                      i === 0 ? "ring-2 ring-terra" : "opacity-75 hover:opacity-100"
-                    }`}
-                  >
-                    <Image src={img} alt={`${product.title} view ${i + 1}`} fill className="object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
+          {/* LEFT — Interactive Image Gallery (55%) */}
+          <div className="lg:col-span-7">
+            <ProductImageGallery
+              images={product.images}
+              title={product.title}
+              soldOverlay={isSold && !isMural}
+              badges={
+                <>
+                  {meta?.tag && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-linen text-charcoal border border-charcoal/30 shadow-md">
+                      {meta.tag}
+                    </span>
+                  )}
+                  {isMural && (
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 bg-terra text-linen shadow-md">
+                      Bespoke Mural
+                    </span>
+                  )}
+                </>
+              }
+            />
           </div>
 
           {/* RIGHT — Info & Purchase Column (45%) */}
@@ -138,7 +138,7 @@ export default async function ProductDetailPage({
                 {product.title}
               </h1>
 
-              {/* Pricing & Valuation */}
+              {/* Pricing */}
               <div className="mt-4 pb-6 border-b border-charcoal/15 flex items-baseline gap-3">
                 <span className="font-serif text-3xl sm:text-4xl font-bold text-terra">
                   ₹{product.price.toLocaleString("en-IN")}
@@ -148,23 +148,61 @@ export default async function ProductDetailPage({
                 </span>
               </div>
 
-              {/* Actions: Add to Cart, Personalize, or Mural Commission */}
-              <div className="mt-6 flex flex-col gap-3">
-                <AddToCartButton
-                  product={{
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.images[0] || "/placeholder.jpg",
-                    slug: product.slug,
-                    category: product.category,
-                    stock: product.stock,
-                    subcategory: meta?.subcategory,
-                    medium: meta?.medium,
-                  }}
-                  isSold={isSold}
-                />
-              </div>
+              {/* Add-ons section (shown when product has add-ons configured) */}
+              {addOns.length > 0 ? (
+                <div className="mt-6">
+                  <ProductAddOns
+                    product={{
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      image: product.images[0] || "/placeholder.jpg",
+                      slug: product.slug,
+                      category: product.category,
+                      stock: product.stock,
+                    }}
+                    addOns={addOns}
+                    isSold={isSold}
+                  />
+
+                  {/* Still show the standard customizer button */}
+                  <div className="mt-3">
+                    <AddToCartButton
+                      product={{
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.images[0] || "/placeholder.jpg",
+                        slug: product.slug,
+                        category: product.category,
+                        stock: product.stock,
+                        subcategory: meta?.subcategory,
+                        medium: meta?.medium,
+                      }}
+                      isSold={isSold}
+                      hideAddToCart={true}
+                    />
+                  </div>
+                </div>
+              ) : (
+                /* Standard actions: Add to Cart / Personalize / Mural Commission */
+                <div className="mt-6 flex flex-col gap-3">
+                  <AddToCartButton
+                    product={{
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      image: product.images[0] || "/placeholder.jpg",
+                      slug: product.slug,
+                      category: product.category,
+                      stock: product.stock,
+                      subcategory: meta?.subcategory,
+                      medium: meta?.medium,
+                    }}
+                    isSold={isSold}
+                  />
+                </div>
+              )}
 
               {/* Trust Badges */}
               <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-charcoal/15 text-xs text-charcoal/80 font-sans">
