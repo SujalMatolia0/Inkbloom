@@ -315,6 +315,7 @@ export async function POST(req: Request) {
       dbOrderId: pendingOrder.id,
       amount: razorpayOrder.amount,
       currency: "INR",
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || "",
       computedSubtotal: subtotal,
       computedDiscount: discount,
       computedShipping: shippingFee,

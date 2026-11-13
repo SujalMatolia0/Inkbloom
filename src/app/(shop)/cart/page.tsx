@@ -160,8 +160,13 @@ export default function CartPage() {
         throw new Error(order.error || 'Failed to create order');
       }
 
+      const razorpayKey = order.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        throw new Error('Payment gateway key is missing. Please ensure RAZORPAY_KEY_ID is configured.');
+      }
+
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TkZGqmoCrA123a',
+        key: razorpayKey,
         amount: order.amount,
         currency: order.currency,
         name: 'Studio Vinyas',
